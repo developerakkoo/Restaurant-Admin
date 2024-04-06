@@ -1,0 +1,7 @@
+{
+  "name": "Admin-Restaurant",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
