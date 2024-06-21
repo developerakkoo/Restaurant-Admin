@@ -1,0 +1,64 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Chat</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+ <ion-grid >
+  <ion-row>
+    <ion-col size="4">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Messages</ion-card-title>
+          <ion-searchbar placeholder="Search" inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item *ngFor="let msg of messages" detail>
+              <ion-avatar slot="start">
+                <img [src]="msg.image" />
+              </ion-avatar>
+              <ion-label>
+                {{msg.name}}
+                <p> {{msg.message}} </p>
+              </ion-label>
+              <ion-badge color="light" mode="ios"> {{msg.date}} </ion-badge>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+    <ion-col size="8">
+      <ion-card class="chat-card-container">
+        <ion-card-header>
+          <ion-item>
+            <ion-avatar slot="start">
+              <img src="assets/icon/favicon.png" />
+            </ion-avatar>
+            <ion-label>NAme</ion-label>
+          </ion-item>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item color="secondary">
+          
+              <ion-label> Lorem, ipsum dolor sit amet consectetur adipisicing elit. Maiores aperiam cumque ducimus quisquam soluta numquam voluptatibus velit assumenda? Illo libero illum repellat culpa. </ion-label>
+            </ion-item>
+            <ion-item>
+              <img src="assets/icon/favicon.png" alt="" srcset="">
+            </ion-item>
+          </ion-list>
+          
+        </ion-card-content>
+        <div class="card-footer">
+          <ion-input fill="outline" type="text" placeholder="Start a new message"></ion-input>
+          <ion-button fill="clear">
+            <ion-icon slot="icon-only" name="send"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+ </ion-grid>
+</ion-content>

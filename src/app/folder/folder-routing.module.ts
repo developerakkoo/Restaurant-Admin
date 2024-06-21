@@ -7,6 +7,46 @@ const routes: Routes = [
   {
     path: '',
     component: FolderPage
+  },
+  {
+    path: 'login',
+    loadChildren: () => import('./auth/login/login.module').then( m => m.LoginPageModule)
+  },
+  {
+    path: 'orders',
+    loadChildren: () => import('./auth/orders/orders.module').then( m => m.OrdersPageModule)
+  },
+  {
+    path: 'partners',
+    loadChildren: () => import('./auth/partners/partners.module').then( m => m.PartnersPageModule)
+  },
+  {
+    path: 'reviews',
+    loadChildren: () => import('./auth/reviews/reviews.module').then( m => m.ReviewsPageModule)
+  },
+  {
+    path: 'delivery-boy',
+    loadChildren: () => import('./auth/delivery-boy/delivery-boy.module').then( m => m.DeliveryBoyPageModule)
+  },
+  {
+    path: 'customer',
+    loadChildren: () => import('./auth/customer/customer.module').then( m => m.CustomerPageModule)
+  },
+  {
+    path: 'chat',
+    loadChildren: () => import('./auth/chat/chat.module').then( m => m.ChatPageModule)
+  },
+  {
+    path: 'promo-code',
+    loadChildren: () => import('./auth/promo-code/promo-code.module').then( m => m.PromoCodePageModule)
+  },
+  {
+    path: 'settings',
+    loadChildren: () => import('./auth/settings/settings.module').then( m => m.SettingsPageModule)
+  },
+  {
+    path: 'register',
+    loadChildren: () => import('./auth/register/register.module').then( m => m.RegisterPageModule)
   }
 ];
 

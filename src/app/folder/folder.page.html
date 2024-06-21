@@ -3,19 +3,127 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>{{ folder }}</ion-title>
+    <ion-title>Dashboard</ion-title>
+    <ion-button  color="primary" (click)="viewNotifications()" slot="end" fill="clear">
+      <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
+    </ion-button>
+    <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
+      <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">{{ folder }}</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  
+ <ion-grid>
 
-  <div id="container">
-    <strong class="capitalize">{{ folder }}</strong>
-    <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ion-row>
+    
+    <ion-col size="3">
+      <ion-card>
+        <ion-card-header>
+          <ion-grid fixed>
+            <ion-row>
+              <ion-col size="6">
+                <img src="assets/Icon_Order.svg" alt="" srcset="">
+              </ion-col>
+              <ion-col size="6">
+                <ion-card-subtitle>Total Orders</ion-card-subtitle>
+                <ion-card-title>12345677</ion-card-title></ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-header>
+      
+      </ion-card>
+    </ion-col>
+    <ion-col size="3">
+      <ion-card>
+        <ion-card-header>
+          <ion-grid fixed>
+            <ion-row>
+              <ion-col size="6">
+                <img src="assets/icon Delivered.svg" alt="" srcset="">
+              </ion-col>
+              <ion-col size="6">
+                <ion-card-subtitle>Total Delivered</ion-card-subtitle>
+                <ion-card-title>12345677</ion-card-title></ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-header>
+      
+      </ion-card>
+    </ion-col>
+    <ion-col size="3">
+      <ion-card>
+        <ion-card-header>
+          <ion-grid fixed>
+            <ion-row>
+              <ion-col size="6">
+                <img src="assets/total_cancelled.svg" alt="" srcset="">
+              </ion-col>
+              <ion-col size="6">
+                <ion-card-subtitle>Total Canceled</ion-card-subtitle>
+                <ion-card-title>12345677</ion-card-title></ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-header>
+      
+      </ion-card>
+    </ion-col>
+    <ion-col size="3">
+      <ion-card>
+        <ion-card-header>
+          <ion-grid fixed>
+            <ion-row>
+              <ion-col size="6">
+                <img src="assets/total_revenue.svg" alt="" srcset="">
+              </ion-col>
+              <ion-col size="6">
+                <ion-card-subtitle>Total Revenue</ion-card-subtitle>
+                <ion-card-title>12345677</ion-card-title></ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-header>
+      
+      </ion-card>
+    </ion-col>
+  </ion-row>
+ </ion-grid>
+
+ <!-- Chart Grid -->
+
+ <ion-grid >
+  <ion-row>
+    <ion-col size="4">
+      <ion-card>
+        <div style="display: flex; flex-direction: row;">
+          <canvasjs-chart [options]="userChartOptions"></canvasjs-chart>
+         
+         
+        </div>
+        
+      </ion-card>
+    </ion-col>
+    <ion-col size="4">
+      <ion-card>
+        <div style="display: flex; flex-direction: row;">
+          <canvasjs-chart [options]="partnerChartOptions"></canvasjs-chart>
+         
+         
+        </div>
+        
+      </ion-card>
+    </ion-col>
+    <ion-col size="4">
+      <ion-card>
+        <div style="display: flex; flex-direction: row;">
+          <canvasjs-chart [options]="boyChartOptions"></canvasjs-chart>
+         
+         
+        </div>
+        
+      </ion-card>
+    </ion-col>
+  </ion-row>
+ </ion-grid>
 </ion-content>

@@ -1,0 +1,73 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Orders</ion-title>
+    <ion-button  color="primary" (click)="viewNotifications()" slot="end" fill="clear">
+      <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
+    </ion-button>
+    <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
+      <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+  <ion-searchbar mode="ios" placeholder="Search here" inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid >
+    <ion-row>
+      <ion-col size="6">
+        <ion-item lines="none">
+          <ion-label>Orders
+            <p>Your orders here</p>
+          </ion-label>
+        </ion-item>
+      </ion-col>
+      <ion-col size="6">
+        <div class="container">
+          <ion-item lines="none">
+            <ion-select value="All" fill="outline"  interface="popover" placeholder="Select Pizza">
+              <ion-select-option value="All">All</ion-select-option>
+              <ion-select-option value="new">New Order</ion-select-option>
+              <ion-select-option value="otw">On the Way</ion-select-option>
+              <ion-select-option value="delivered">Delivered</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-select value="peperoni" fill="outline"  interface="popover" placeholder="Select Pizza">
+              <ion-select-option value="peperoni">Peperoni</ion-select-option>
+              <ion-select-option value="hawaii">Hawaii</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#ID</th>
+          <th scope="col">Date</th>
+          <th scope="col">Customer name</th>
+          <th scope="col">Address</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>000</th>
+          <th>23/08/2024</th>
+          <th>Akshay Jadhav</th>
+          <th>Shiv nagar, pune</th>
+          <th>500</th>
+          <th>
+            <ion-badge class="ion-padding" color="danger" mode="ios">New Order</ion-badge>
+          </th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+</ion-content>

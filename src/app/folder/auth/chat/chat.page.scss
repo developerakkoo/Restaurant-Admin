@@ -1,0 +1,18 @@
+.chat-card-container{
+    height: 90vh;
+}
+
+ion-item:hover{
+    cursor: pointer;
+}
+
+.card-footer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 50rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+

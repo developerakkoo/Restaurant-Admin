@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { DataService } from './services/data.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -6,13 +8,34 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   public appPages = [
-    { title: 'Inbox', url: '/folder/inbox', icon: 'mail' },
-    { title: 'Outbox', url: '/folder/outbox', icon: 'paper-plane' },
-    { title: 'Favorites', url: '/folder/favorites', icon: 'heart' },
-    { title: 'Archived', url: '/folder/archived', icon: 'archive' },
-    { title: 'Trash', url: '/folder/trash', icon: 'trash' },
-    { title: 'Spam', url: '/folder/spam', icon: 'warning' },
+    { title: 'Dashboard', url: '/folder', icon: 'mail' },
+    { title: 'Orders', url: '/folder/orders', icon: 'paper-plane' },
+    { title: 'Partners', url: '/folder/partners', icon: 'heart' },
+    { title: 'Customers', url: '/folder/customer', icon: 'archive' },
+    { title: 'Delivery Boy', url: '/folder/delivery-boy', icon: 'trash' },
+    { title: 'Chat', url: '/folder/chat', icon: 'warning' },
+    { title: 'Promo code', url: '/folder/promo-code', icon: 'warning' },
+    { title: 'Delivery/handling Charges', url: '/folder/settings', icon: 'warning' },
   ];
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
-  constructor() {}
+  constructor(private data:DataService,
+              private router:Router
+  ) {
+    this.checkForLoginStatus();
+  }
+
+
+  async checkForLoginStatus(){
+    let userId = await this.data.get("userId");
+    console.log(userId);
+    if(userId != null || userId != undefined){
+      console.log("userid not null");
+      this.router.navigate(['folder']);
+      
+    }
+    else{
+      this.router.navigate(['folder','login']);
+    }
+    
+  }
 }
