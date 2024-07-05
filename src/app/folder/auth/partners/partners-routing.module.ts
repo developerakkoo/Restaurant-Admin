@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: PartnersPage
+  },
+  {
+    path: 'add',
+    loadChildren: () => import('./add/add.module').then( m => m.AddPageModule)
   }
 ];
 

@@ -1,13 +1,60 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
-    <ion-title>settings</ion-title>
+    <ion-title>Settings</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">settings</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-card class="ion-padding">
+    <ion-card-header>
+      <ion-card-title>Delivery Charges {{delivery | currency:
+        "INR"}}</ion-card-title>
+    </ion-card-header>
+    <ion-range
+      min="10" max="200"
+      dualKnobs="false" pin="true"
+      snaps="true" step="1"
+      ticks="true" [value]="delivery"
+      color="primary"
+      (ionChange)="rangeChangeDelivery($event)">
+        <ion-label slot="start">10</ion-label>
+        <ion-label slot="end">200</ion-label>
+    </ion-range>
+  </ion-card>
+  <ion-card class="ion-padding">
+    <ion-card-header>
+      <ion-card-title>Platform Handling Charges {{handling | currency:
+        "INR"}}</ion-card-title>
+    </ion-card-header>
+    <ion-range
+      min="10" max="200"
+      dualKnobs="false" pin="true"
+      snaps="true" step="1"
+      ticks="true" [value]="handling"
+      color="primary"
+      (ionChange)="rangeChangeHandling($event)">
+        <ion-label slot="start">10</ion-label>
+        <ion-label slot="end">200</ion-label>
+    </ion-range>
+  </ion-card>
+
+  <ion-card class="ion-padding">
+    <ion-card-header>
+      <ion-card-title>GST Charges {{gst}}% </ion-card-title>
+    </ion-card-header>
+    <ion-range
+      min="1" max="30"
+      dualKnobs="false" pin="true"
+      snaps="true" step="1"
+      ticks="true" [value]="gst"
+      color="primary"
+      (ionChange)="rangeChangeGST($event)">
+        <ion-label slot="start">1</ion-label>
+        <ion-label slot="end">30</ion-label>
+    </ion-range>
+  </ion-card>
+
+  <ion-button (click)="onSubmit()" expand="block">
+    Update Charges
+  </ion-button>
 </ion-content>

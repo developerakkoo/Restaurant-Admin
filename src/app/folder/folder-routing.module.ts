@@ -5,7 +5,7 @@ import { FolderPage } from './folder.page';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'folder',
     component: FolderPage
   },
   {
@@ -47,7 +47,16 @@ const routes: Routes = [
   {
     path: 'register',
     loadChildren: () => import('./auth/register/register.module').then( m => m.RegisterPageModule)
-  }
+  },
+  {
+    path: 'dash',
+    loadChildren: () => import('./dash/dash.module').then( m => m.DashPageModule)
+  },
+  {
+    path: 'add',
+    loadChildren: () => import('./partner/add/add.module').then( m => m.AddPageModule)
+  },
+ 
 ];
 
 @NgModule({

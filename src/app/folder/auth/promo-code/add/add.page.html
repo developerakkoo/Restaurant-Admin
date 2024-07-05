@@ -1,0 +1,39 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Add new Promo Code</ion-title>
+    <ion-button fill="clear" (click)="close()" slot="end" color="primary">
+      <ion-icon slot="icon-only" name="close"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+ <ion-grid fixed>
+  <ion-row>
+    <ion-col size="12">
+      <form [formGroup]="form" >
+       <ion-input type="text" label="Name" labelPlacement="stacked" fill="outline" formControlName="name"></ion-input>
+       <ion-input type="text" label="Code" labelPlacement="stacked" fill="outline" formControlName="code"></ion-input>
+       <ion-input type="text" label="Discount Amount" labelPlacement="stacked" fill="outline" formControlName="discountAmount"></ion-input>
+       <ion-input type="text" label="Min Order Amount" labelPlacement="stacked" fill="outline" formControlName="minOrderAmount"></ion-input>
+       <ion-input type="text" label="Description" labelPlacement="stacked" fill="outline" formControlName="description"></ion-input>
+       
+       <br>
+       <ion-input type="date" label="Expiry Date" labelPlacement="stacked" fill="outline" formControlName="expiry"></ion-input>
+       <br>
+       <ion-item>
+        <ion-label>Offer Type</ion-label>
+        <ion-select value="1" formControlName="codeType" multiple="false" placeholder="Select Type">
+          <ion-select-option value="1">Free Delivery</ion-select-option>
+          <ion-select-option value="2">Order Above Amount</ion-select-option>
+          <ion-select-option value="3">New User</ion-select-option>
+        </ion-select>
+       </ion-item>
+       <ion-button (click)="onSubmit()" block color="primary" type="submit" [disabled]="form.invalid">
+          Add Promo
+        </ion-button>
+      </form>
+    </ion-col>
+  </ion-row>
+ </ion-grid>
+</ion-content>

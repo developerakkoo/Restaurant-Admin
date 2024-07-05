@@ -1,0 +1,142 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Dashboard</ion-title>
+    <ion-button  color="primary" (click)="viewNotifications()" slot="end" fill="clear">
+      <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
+    </ion-button>
+    <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
+      <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-grid>
+
+    <ion-row>
+      
+      <ion-col size="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-grid fixed>
+              <ion-row>
+                <ion-col size="6">
+                  <img src="assets/Icon_Order.svg" alt="" srcset="">
+                </ion-col>
+                <ion-col size="6">
+                  <ion-card-subtitle>Total Orders</ion-card-subtitle>
+                  <ion-card-title>{{totalOrders }}</ion-card-title></ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-header>
+        
+        </ion-card>
+      </ion-col>
+      <ion-col size="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-grid fixed>
+              <ion-row>
+                <ion-col size="6">
+                  <img src="assets/icon Delivered.svg" alt="" srcset="">
+                </ion-col>
+                <ion-col size="6">
+                  <ion-card-subtitle>Total Delivered</ion-card-subtitle>
+                  <ion-card-title>{{totalDeliveredOrders}}</ion-card-title></ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-header>
+        
+        </ion-card>
+      </ion-col>
+      <ion-col size="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-grid fixed>
+              <ion-row>
+                <ion-col size="6">
+                  <img src="assets/total_cancelled.svg" alt="" srcset="">
+                </ion-col>
+                <ion-col size="6">
+                  <ion-card-subtitle>Total Canceled</ion-card-subtitle>
+                  <ion-card-title>{{totalCanceledOrders}}</ion-card-title></ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-header>
+        
+        </ion-card>
+      </ion-col>
+      <ion-col size="3">
+        <ion-card>
+          <ion-card-header>
+            <ion-grid fixed>
+              <ion-row>
+                <ion-col size="6">
+                  <img src="assets/total_revenue.svg" alt="" srcset="">
+                </ion-col>
+                <ion-col size="6">
+                  <ion-card-subtitle>Total Revenue</ion-card-subtitle>
+                  <ion-card-title>{{totalRevenue}}</ion-card-title></ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-header>
+        
+        </ion-card>
+      </ion-col>
+    </ion-row>
+   </ion-grid>
+   <ion-grid >
+    <ion-row>
+      <ion-col size="4">
+        <ion-card>
+          <div style="display: flex; flex-direction: row;">
+          
+            <div class="chart-container">
+              <canvas  id="MyChart" >{{ chart }}</canvas>
+        </div>
+           
+          </div>
+          
+        </ion-card>
+      </ion-col>
+      <ion-col size="4">
+        <ion-card>
+          <div style="display: flex; flex-direction: row;">
+            
+           
+           <div class="chart-container-revenue">
+            <canvas  id="MyRevenueChart" >{{ revenueChart }}</canvas>
+
+           </div>
+          </div>
+          
+        </ion-card>
+      </ion-col>
+      <ion-col size="4">
+        <ion-card>
+          <div style="display: flex; flex-direction: row;">
+           
+           
+           
+          </div>
+          
+        </ion-card>
+      </ion-col>
+    </ion-row>
+   </ion-grid>
+
+   <ion-grid >
+    <ion-row>
+      <ion-col size="6">
+
+        <div class="chart-container-orders">
+          <canvas  id="MyChartOrder" >{{ chartOrder }}</canvas>
+
+        </div>
+      </ion-col>
+      <ion-col size="6"></ion-col>
+    </ion-row>
+   </ion-grid>
+</ion-content>

@@ -1,0 +1,113 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Register new Partner</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding ion-margin-top">
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col size="6">
+        <form [formGroup]="form">
+          
+          <ion-input
+            class="animate__animated animate__fadeIn"
+            color="medium"
+            labelPlacement="stacked"
+            label="Full name"
+            placeholder="Robin"
+            fill="outline"
+            type="text"
+            formControlName="name"
+          >
+            <ion-icon
+              color="primary"
+              slot="start"
+              name="mail-outline"
+              aria-hidden="true"
+            ></ion-icon>
+          </ion-input>
+          <br />
+          <ion-input
+            class="animate__animated animate__fadeIn"
+            color="medium"
+            labelPlacement="stacked"
+            label="Phone No"
+            placeholder="+91XXXXXXXXXX"
+            fill="outline"
+            type="number"
+            formControlName="phoneNumber"
+          >
+            <ion-icon
+              color="primary"
+              slot="start"
+              name="call-outline"
+              aria-hidden="true"
+            ></ion-icon>
+          </ion-input>
+          <br />
+          <ion-input
+            class="animate__animated animate__fadeIn"
+            color="medium"
+            labelPlacement="stacked"
+            label="Email"
+            placeholder="email@domain.com"
+            fill="outline"
+            type="email"
+            formControlName="email"
+          >
+            <ion-icon
+              color="primary"
+              slot="start"
+              name="mail-outline"
+              aria-hidden="true"
+            ></ion-icon>
+          </ion-input>
+      
+          <br />
+          <ion-input
+            class="animate__animated animate__fadeIn"
+            color="medium"
+            labelPlacement="stacked"
+            label="Password"
+            type="password"
+            fill="outline"
+            formControlName="password"
+          >
+            <ion-icon
+              color="primary"
+              slot="start"
+              name="lock-closed-outline"
+              aria-hidden="true"
+            ></ion-icon>
+            <ion-button fill="clear" slot="end" aria-label="Show/hide">
+              <ion-icon
+                slot="icon-only"
+                name="eye-outline"
+                aria-hidden="true"
+              ></ion-icon>
+            </ion-button>
+          </ion-input>
+         
+      
+          <br />
+      
+          <ion-button
+            fill="clear"
+            [disabled]="form.invalid"
+            (click)="register()"
+            class="button-primary"
+          >
+            Register
+          </ion-button>
+      
+          <br />
+        </form>
+      </ion-col>
+      <ion-col size="6"></ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

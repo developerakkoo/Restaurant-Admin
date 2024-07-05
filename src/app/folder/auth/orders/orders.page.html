@@ -11,7 +11,12 @@
   <ion-searchbar mode="ios" placeholder="Search here" inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="false">
+  <ion-text *ngIf="orders.length == 0" color="primary" class="ion-text-center">
+    <h1>
+      No Orders Found!
+    </h1>
+  </ion-text>
   <ion-grid >
     <ion-row>
       <ion-col size="6">
@@ -21,29 +26,28 @@
           </ion-label>
         </ion-item>
       </ion-col>
-      <ion-col size="6">
+
+    
+      <ion-col size="6" >
         <div class="container">
           <ion-item lines="none">
-            <ion-select value="All" fill="outline"  interface="popover" placeholder="Select Pizza">
-              <ion-select-option value="All">All</ion-select-option>
-              <ion-select-option value="new">New Order</ion-select-option>
-              <ion-select-option value="otw">On the Way</ion-select-option>
-              <ion-select-option value="delivered">Delivered</ion-select-option>
+            <ion-select value="All" fill="outline"  interface="popover" placeholder="Select Status" (ionChange)="filterEvent($event)">
+              <ion-select-option value="">All</ion-select-option>
+              <ion-select-option value="0">New Order</ion-select-option>
+              <ion-select-option value="5">Rejected</ion-select-option>
+              <ion-select-option value="2">Delivery Boy Assigned</ion-select-option>
+              <ion-select-option value="4">On the Way</ion-select-option>
+              <ion-select-option value="3">Delivered</ion-select-option>
             </ion-select>
           </ion-item>
-          <ion-item lines="none">
-            <ion-select value="peperoni" fill="outline"  interface="popover" placeholder="Select Pizza">
-              <ion-select-option value="peperoni">Peperoni</ion-select-option>
-              <ion-select-option value="hawaii">Hawaii</ion-select-option>
-            </ion-select>
-          </ion-item>
+         
         </div>
       </ion-col>
     </ion-row>
   </ion-grid>
 
 
-  <div class="table-responsive">
+  <div class="table-responsive" *ngIf="orders.length > 0">
     <table class="table">
       <thead>
         <tr>
@@ -52,22 +56,38 @@
           <th scope="col">Customer name</th>
           <th scope="col">Address</th>
           <th scope="col">Amount</th>
+          <th scope="col">Action</th>
           <th scope="col">Status</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <th>000</th>
-          <th>23/08/2024</th>
-          <th>Akshay Jadhav</th>
-          <th>Shiv nagar, pune</th>
-          <th>500</th>
+        <tr *ngFor="let item of orders">
+          <th>{{item.orderId}}</th>
+          <th>{{item.createdAt | date:"fullDate"}}</th>
+          <th>{{item?.user?.name}}</th>
+          <th>{{item?.userAddress?.address}}</th>
+          <th>{{item?.priceDetails?.totalAmountToPay | currency:"INR"}}</th>
           <th>
-            <ion-badge class="ion-padding" color="danger" mode="ios">New Order</ion-badge>
+            <ion-badge class="ion-padding" color="danger" mode="ios" (click)="presentActionSheet(item._id)">View</ion-badge>
+            <!-- <ion-badge *ngIf="item?.orderStatus === 4" class="ion-padding" color="tertiary" mode="ios" (click)="presentActionSheet(item._id)">Assign Driver</ion-badge> -->
+           
+              <ion-select (ionChange)="assignDriverEvent($event, item._id)" *ngIf="item?.orderStatus === 4" fill="outline"  multiple="false" placeholder="Select Driver">
+                <ion-select-option *ngFor="let d of drivers" [value]="d._id">{{d.firstName}} {{d.lastName}}</ion-select-option>
+              </ion-select>
+          
+          </th>
+          <th>
+          <ion-badge *ngIf="item?.orderStatus === 0" class="ion-padding" color="primary" mode="ios">New</ion-badge>
+          <ion-badge *ngIf="item?.orderStatus === 3" class="ion-padding" color="success" mode="ios">Delivered</ion-badge>
+          <ion-badge *ngIf="item?.orderStatus === 2" class="ion-padding" color="tertiary" mode="ios">Delivery Assigned</ion-badge>
+          <ion-badge *ngIf="item?.orderStatus === 5" class="ion-padding" color="danger" mode="ios">Rejected</ion-badge>
+          <ion-badge *ngIf="item?.orderStatus === 4" class="ion-padding" color="warning" mode="ios">On the way</ion-badge>
+
           </th>
         </tr>
       </tbody>
     </table>
   </div>
+  
   
 </ion-content>

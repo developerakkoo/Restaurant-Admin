@@ -1,0 +1,53 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Register New Delivery Boy</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col size="6">
+        <ion-label color="medium">
+          Enter the details below so we can get to know and serve you better.
+        </ion-label>
+        auth/partner/register
+        <form [formGroup]="form">
+          <br>
+          <ion-input type="text" placeholder="Please enter your first name" formControlName="firstName" fill="outline" labelPlacement="stacked" label="First Name"></ion-input>
+         <br>
+         <ion-input type="text" placeholder="Please enter your last name" formControlName="lastName" fill="outline" labelPlacement="stacked" label="Last Name"></ion-input>
+      <br>
+      <ion-input type="text" placeholder="Please enter your father's name" formControlName="fatherName" fill="outline" labelPlacement="stacked" label="Father's Name"></ion-input>
+      <br>
+      <ion-input type="date"  formControlName="dateOfBirth" fill="outline" labelPlacement="stacked" label="Date of Birth"></ion-input>
+      <br>
+      <ion-input type="text" placeholder="Please enter your blood group" formControlName="bloodGroup" fill="outline" labelPlacement="stacked" label="Blood Group"></ion-input>
+      <br>
+      <ion-input type="text" placeholder="Please enter your first name" formControlName="address" fill="outline" labelPlacement="stacked" label="Address"></ion-input>
+      <br>
+      <ion-input type="text" placeholder="Please enter your first name" formControlName="languages" fill="outline" labelPlacement="stacked" label="Language"></ion-input>
+      <br>
+      <ion-input type="text" placeholder="Please enter your first name" formControlName="phoneNumber" fill="outline" labelPlacement="stacked" label="Phone Number"></ion-input>
+      
+        
+        </form>
+      <!-- <img [src]="imageSrc" *ngIf="imageSrc" alt="" style="height: 60px; width:60px;">
+        <div class="div">
+         <input    (change)="onFileSelected($event)" style="display: none;" type="file" accept="image/png, image/jpeg, image/jpg" name="image" #file id="">
+          <ion-item (click)="file.click()">
+            <ion-icon name="camera" slot="end"></ion-icon>
+            <ion-label>Pick a Profile Image</ion-label>
+          </ion-item>
+        </div> -->
+        <ion-button (click)="onSubmit()" expand="block" mode="ios" color="primary" type="submit" [disabled]="form.invalid">
+          Next
+        </ion-button>
+      </ion-col>
+      <ion-col size="6"></ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

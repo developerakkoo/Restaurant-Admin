@@ -1,4 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { LoadingController } from '@ionic/angular';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-partners',
@@ -7,9 +11,44 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PartnersPage implements OnInit {
 
-  constructor() { }
+  partner:any[] = [];
+  query:string ="";
+
+  constructor(private auth: AuthService,
+    private router: Router,
+              private loadingController: LoadingController
+  ) { }
 
   ngOnInit() {
   }
 
+  ionViewDidEnter(){
+    this.getAllPartners();
+  }
+
+  async getAllPartners(){
+    this.auth.getAllPartners(this.query, 1, 50, "","", "")
+    .subscribe({
+      next:async(value:any) =>{
+        console.log(value);
+        this.partner = value['data']['content'];
+        
+      },
+      error:async(error:HttpErrorResponse) =>{
+        console.log(error.error);
+        
+      }
+    })
+  }
+
+  onSearchChange(ev: any) {
+    console.log(ev.detail.value);
+    this.query = ev.detail.value;
+
+    this.getAllPartners();
+  }
+  openPartnerRegisterPage(){
+this.router.navigate(['folder','partners','add'])
+  }
+  viewNotifications(){}
 }

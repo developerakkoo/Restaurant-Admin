@@ -30,14 +30,14 @@ export class LoginPage implements OnInit {
     this.menuController.enable(false);
     this.loginForm = this.formBuilder.group({
       email: [
-        'admin@dropeat.com',
+        'admindropeat@email.com',
         [
           Validators.required,
           Validators.email,
           Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
         ],
       ],
-      password: ['Admin@123', [Validators.required, Validators.minLength(6)]],
+      password: ['Pass@123', [Validators.required, Validators.minLength(6)]],
     });
   }
 
@@ -79,7 +79,7 @@ export class LoginPage implements OnInit {
         await this.data.set('userId', userId);
         await loading.dismiss();
         this.presentToast("Login Successfull!", 2000, "top","success");
-        this.router.navigate(["folder"]);
+        this.router.navigate(["folder", "dash"]);
       },
       error: async (error: HttpErrorResponse) => {
         console.log(error);

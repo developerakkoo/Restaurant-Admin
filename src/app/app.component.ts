@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 })
 export class AppComponent {
   public appPages = [
-    { title: 'Dashboard', url: '/folder', icon: 'mail' },
+    { title: 'Dashboard', url: '/folder/dash', icon: 'mail' },
     { title: 'Orders', url: '/folder/orders', icon: 'paper-plane' },
     { title: 'Partners', url: '/folder/partners', icon: 'heart' },
     { title: 'Customers', url: '/folder/customer', icon: 'archive' },
@@ -30,7 +30,7 @@ export class AppComponent {
     console.log(userId);
     if(userId != null || userId != undefined){
       console.log("userid not null");
-      this.router.navigate(['folder']);
+      this.router.navigate(['folder', 'dash']);
       
     }
     else{

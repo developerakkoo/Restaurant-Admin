@@ -1,0 +1,42 @@
+.top-container{
+    width: 100vw;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: blue;
+}
+
+.title-div{
+    width:20vw;
+}
+
+.container{
+    display: flex;
+    flex-direction: row;
+    justify-content:center;
+    gap: 10px;
+    align-items: center;
+    width: auto;
+}
+
+ion-select{
+    min-width: 200px;
+    --max-width: 400px;
+  
+}
+
+.badge{
+    height: 57px;
+    width: 149px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.badge .primary{
+    background-color: #F5DBE0;
+    color: #FF5B5B;
+}

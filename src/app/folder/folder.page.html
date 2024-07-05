@@ -97,7 +97,19 @@
     <ion-col size="4">
       <ion-card>
         <div style="display: flex; flex-direction: row;">
-          <canvasjs-chart [options]="userChartOptions"></canvasjs-chart>
+        
+          <div class="chart-container">
+            <canvas  id="MyChart" >{{ chart }}</canvas>
+      </div>
+         
+        </div>
+        
+      </ion-card>
+    </ion-col>
+    <ion-col size="4">
+      <ion-card>
+        <div style="display: flex; flex-direction: row;">
+          
          
          
         </div>
@@ -107,17 +119,7 @@
     <ion-col size="4">
       <ion-card>
         <div style="display: flex; flex-direction: row;">
-          <canvasjs-chart [options]="partnerChartOptions"></canvasjs-chart>
          
-         
-        </div>
-        
-      </ion-card>
-    </ion-col>
-    <ion-col size="4">
-      <ion-card>
-        <div style="display: flex; flex-direction: row;">
-          <canvasjs-chart [options]="boyChartOptions"></canvasjs-chart>
          
          
         </div>

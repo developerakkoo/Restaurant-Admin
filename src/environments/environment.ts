@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  URL: 'http://localhost:8000/api/v1/',
+  URL:"https://api.dropeat.in/api/v1/",
 };
 
 /*
