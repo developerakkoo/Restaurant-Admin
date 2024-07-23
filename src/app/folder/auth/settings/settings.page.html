@@ -10,31 +10,65 @@
       <ion-card-title>Delivery Charges {{delivery | currency:
         "INR"}}</ion-card-title>
     </ion-card-header>
+    <ion-item>
+    
+      <ion-label>Price</ion-label>
+      <ion-input type="number" placeholder="Price"></ion-input>
+    </ion-item>
     <ion-range
-      min="10" max="200"
-      dualKnobs="false" pin="true"
+      min="1" max="50"
+      dualKnobs="true" pin="true"
       snaps="true" step="1"
       ticks="true" [value]="delivery"
       color="primary"
       (ionChange)="rangeChangeDelivery($event)">
-        <ion-label slot="start">10</ion-label>
-        <ion-label slot="end">200</ion-label>
+        <ion-label slot="start">1</ion-label>
+        <ion-label slot="end">50</ion-label>
+    </ion-range> <ion-item>
+    
+      <ion-label>Price</ion-label>
+      <ion-input type="number" placeholder="Price"></ion-input>
+    </ion-item>
+    <ion-range
+      min="1" max="50"
+      dualKnobs="true" pin="true"
+      snaps="true" step="1"
+      ticks="true" [value]="delivery"
+      color="primary"
+      (ionChange)="rangeChangeDelivery($event)">
+        <ion-label slot="start">1</ion-label>
+        <ion-label slot="end">50</ion-label>
+    </ion-range>
+
+    <ion-item>
+    <br>
+      <ion-label>Price</ion-label>
+      <ion-input type="number" placeholder="Price"></ion-input>
+    </ion-item>
+    <ion-range
+      min="1" max="50"
+      dualKnobs="true" pin="true"
+      snaps="true" step="1"
+      ticks="true" [value]="delivery"
+      color="primary"
+      (ionChange)="rangeChangeDelivery($event)">
+        <ion-label slot="start">1</ion-label>
+        <ion-label slot="end">50</ion-label>
     </ion-range>
   </ion-card>
   <ion-card class="ion-padding">
     <ion-card-header>
-      <ion-card-title>Platform Handling Charges {{handling | currency:
-        "INR"}}</ion-card-title>
+      <ion-card-title>Platform Handling Charges {{handling}}%</ion-card-title>
     </ion-card-header>
     <ion-range
-      min="10" max="200"
+      min="1" max="100"
       dualKnobs="false" pin="true"
       snaps="true" step="1"
       ticks="true" [value]="handling"
       color="primary"
       (ionChange)="rangeChangeHandling($event)">
-        <ion-label slot="start">10</ion-label>
-        <ion-label slot="end">200</ion-label>
+        <ion-label slot="start">1</ion-label>
+        <ion-label slot="end">100</ion-label>
     </ion-range>
   </ion-card>
 

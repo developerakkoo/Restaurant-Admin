@@ -13,6 +13,7 @@ export class AppComponent {
     { title: 'Partners', url: '/folder/partners', icon: 'heart' },
     { title: 'Customers', url: '/folder/customer', icon: 'archive' },
     { title: 'Delivery Boy', url: '/folder/delivery-boy', icon: 'trash' },
+    { title: 'Categories', url: '/folder/category', icon: 'card' },
     { title: 'Chat', url: '/folder/chat', icon: 'warning' },
     { title: 'Promo code', url: '/folder/promo-code', icon: 'warning' },
     { title: 'Delivery/handling Charges', url: '/folder/settings', icon: 'warning' },

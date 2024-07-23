@@ -83,6 +83,13 @@ export class AuthService {
         'x-access-token': this.accessToken.value,
       },})
   }
+
+  uploadCategoryImage(formdata:any){
+    return this.http.post(environment.URL + `admin/category/upload/image`, formdata,{
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },})
+  }
   setHotelLiveStatus(isOnline:number, hotelId:any){
     return this.http.put(environment.URL + `partner/hotel/update`,{
       hotelId:hotelId,
@@ -124,6 +131,13 @@ export class AuthService {
     })
   }
 
+  getAllCategories(query:string){
+    return this.http.get(environment.URL + `admin/category/get/all?search=${query}&pageSize=100`, {
+      headers:{
+        'x-access-token': this.accessToken.value
+      }
+    })
+  }
   getAllDeliveryBoys(query:string, pageNumber:any, pageSize:any, startDate:any, endDate:any, status:any){
     return this.http.get(environment.URL + `admin/get/all-deliveryBoy?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1`, {
       headers:{
@@ -220,6 +234,14 @@ export class AuthService {
       }
     })
   }
+
+  addCategory(body:{}){
+    return this.http.post(environment.URL + `admin/category/add`,body, {
+      headers:{
+        'x-access-token': this.accessToken.value
+      }
+    })
+  }
   AcceptRejectOrder(orderId:any, status:any){
     return this.http.put(environment.URL + `order/accept-reject`,{
       orderId,
@@ -237,6 +259,14 @@ export class AuthService {
       status:"2",
       deliveryBoyId
     },{
+      headers:{
+        'x-access-token': this.accessToken.value.toString()
+      }
+    })
+  }
+
+  deleteCategory(categoryId:any,){
+    return this.http.delete(environment.URL + `admin/category/delete/${categoryId}`,{
       headers:{
         'x-access-token': this.accessToken.value.toString()
       }

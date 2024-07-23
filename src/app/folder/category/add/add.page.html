@@ -1,0 +1,24 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Add Category</ion-title>
+    <ion-button (click)="close()" slot="end" fill="clear">
+      <ion-icon slot="icon-only" name="close"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <form [formGroup]="fb" (ngSubmit)="add()" *ngIf="!isCategoryAdded">
+   
+      <ion-input required formControlName="categoryName" mode="md" fill="outline" label="Category Name" labelPlacement="stacked" type="text"></ion-input>
+  
+  
+    <ion-button block color="primary" type="submit" [disabled]="fb.invalid">
+      Add 
+    </ion-button>
+  </form>
+
+  <div *ngIf="isCategoryAdded">
+    <input type="file"  (change)="fileEvent($event)" id="file">
+  </div>
+</ion-content>
