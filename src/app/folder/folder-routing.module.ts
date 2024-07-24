@@ -52,14 +52,13 @@ const routes: Routes = [
     path: 'dash',
     loadChildren: () => import('./dash/dash.module').then( m => m.DashPageModule)
   },
-  {
-    path: 'add',
-    loadChildren: () => import('./partner/add/add.module').then( m => m.AddPageModule)
-  },
+
   {
     path: 'category',
     loadChildren: () => import('./category/category.module').then( m => m.CategoryPageModule)
   },
+
+
  
 ];
 

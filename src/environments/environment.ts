@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  URL:"https://api.dropeat.in/api/v1/",
+  URL: 'https://api.dropeat.in/api/v1/',
+  apiKey: 'AIzaSyBZpWLVERR-bDIsI1JGePSFPXraMlhAnP4',
 };
 
 /*

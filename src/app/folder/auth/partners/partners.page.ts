@@ -51,4 +51,7 @@ export class PartnersPage implements OnInit {
 this.router.navigate(['folder','partners','add'])
   }
   viewNotifications(){}
+  openLocationPage(){
+    this.router.navigate(['folder','partners','map']);
+  }
 }
