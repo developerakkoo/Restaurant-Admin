@@ -7,88 +7,122 @@
 <ion-content [fullscreen]="true">
   <ion-card class="ion-padding">
     <ion-card-header>
-      <ion-card-title>Delivery Charges {{delivery | currency:
-        "INR"}}</ion-card-title>
+      <ion-card-title
+        >Delivery Charges {{100 | currency: "INR"}}</ion-card-title
+      >
     </ion-card-header>
     <ion-item>
-    
       <ion-label>Price</ion-label>
-      <ion-input type="number" placeholder="Price"></ion-input>
+      <ion-input type="number" placeholder="Price" [(ngModel)]="deliveryPriceOne"></ion-input>
     </ion-item>
     <ion-range
-      min="1" max="50"
-      dualKnobs="true" pin="true"
-      snaps="true" step="1"
-      ticks="true" [value]="delivery"
+      min="1"
+      max="50"
+      dualKnobs="true"
+      pin="true"
+      snaps="true"
+      step="1"
+      ticks="true"
+      [value]="deliveryOne"
       color="primary"
-      (ionChange)="rangeChangeDelivery($event)">
-        <ion-label slot="start">1</ion-label>
-        <ion-label slot="end">50</ion-label>
-    </ion-range> <ion-item>
-    
-      <ion-label>Price</ion-label>
-      <ion-input type="number" placeholder="Price"></ion-input>
-    </ion-item>
-    <ion-range
-      min="1" max="50"
-      dualKnobs="true" pin="true"
-      snaps="true" step="1"
-      ticks="true" [value]="delivery"
-      color="primary"
-      (ionChange)="rangeChangeDelivery($event)">
-        <ion-label slot="start">1</ion-label>
-        <ion-label slot="end">50</ion-label>
+      (ionChange)="rangeChangeDeliveryOne($event)"
+    >
+      <ion-label slot="start">1</ion-label>
+      <ion-label slot="end">50</ion-label>
     </ion-range>
+    
+<br>
 
-    <ion-item>
-    <br>
-      <ion-label>Price</ion-label>
-      <ion-input type="number" placeholder="Price"></ion-input>
-    </ion-item>
-    <ion-range
-      min="1" max="50"
-      dualKnobs="true" pin="true"
-      snaps="true" step="1"
-      ticks="true" [value]="delivery"
-      color="primary"
-      (ionChange)="rangeChangeDelivery($event)">
-        <ion-label slot="start">1</ion-label>
-        <ion-label slot="end">50</ion-label>
-    </ion-range>
+<ion-item>
+  <ion-label>Price</ion-label>
+  <ion-input type="number" placeholder="Price" [(ngModel)]="deliveryPriceTwo"></ion-input>
+</ion-item>
+<ion-range
+  min="1"
+  max="50"
+  dualKnobs="true"
+  pin="true"
+  snaps="true"
+  step="1"
+  ticks="true"
+  [value]="deliveryTwo"
+  color="primary"
+  (ionChange)="rangeChangeDeliveryTwo($event)"
+>
+  <ion-label slot="start">1</ion-label>
+  <ion-label slot="end">50</ion-label>
+</ion-range>
+
+<br>
+
+<ion-item>
+  <ion-label>Price</ion-label>
+  <ion-input type="number" placeholder="Price" [(ngModel)]="deliveryPriceThree"></ion-input>
+</ion-item>
+<ion-range
+  min="1"
+  max="50"
+  dualKnobs="true"
+  pin="true"
+  snaps="true"
+  step="1"
+  ticks="true"
+  [value]="deliveryThree"
+  color="primary"
+  (ionChange)="rangeChangeDeliveryThree($event)"
+>
+  <ion-label slot="start">1</ion-label>
+  <ion-label slot="end">50</ion-label>
+</ion-range>
+
+
+     
   </ion-card>
   <ion-card class="ion-padding">
     <ion-card-header>
       <ion-card-title>Platform Handling Charges {{handling}}%</ion-card-title>
     </ion-card-header>
     <ion-range
-      min="1" max="100"
-      dualKnobs="false" pin="true"
-      snaps="true" step="1"
-      ticks="true" [value]="handling"
+      min="1"
+      max="100"
+      dualKnobs="false"
+      pin="true"
+      snaps="true"
+      step="1"
+      ticks="true"
+      [value]="handling"
       color="primary"
-      (ionChange)="rangeChangeHandling($event)">
-        <ion-label slot="start">1</ion-label>
-        <ion-label slot="end">100</ion-label>
+      (ionChange)="rangeChangeHandling($event)"
+    >
+      <ion-label slot="start">1</ion-label>
+      <ion-label slot="end">100</ion-label>
     </ion-range>
   </ion-card>
 
   <ion-card class="ion-padding">
     <ion-card-header>
       <ion-card-title>GST Charges {{gst}}% </ion-card-title>
+      <ion-item>
+        <ion-label>Gst Enabled? </ion-label>
+        <ion-toggle [checked]="gstToggle" (ionChange)="gstToggleEvent($event)" slot="end"></ion-toggle>
+      </ion-item>
     </ion-card-header>
     <ion-range
-      min="1" max="30"
-      dualKnobs="false" pin="true"
-      snaps="true" step="1"
-      ticks="true" [value]="gst"
+      min="1"
+      max="30"
+      dualKnobs="false"
+      pin="true"
+      snaps="true"
+      step="1"
+      ticks="true"
+      [value]="gst"
       color="primary"
-      (ionChange)="rangeChangeGST($event)">
-        <ion-label slot="start">1</ion-label>
-        <ion-label slot="end">30</ion-label>
+      (ionChange)="rangeChangeGST($event)"
+    >
+      <ion-label slot="start">1</ion-label>
+      <ion-label slot="end">30</ion-label>
     </ion-range>
   </ion-card>
 
-  <ion-button (click)="onSubmit()" expand="block">
-    Update Charges
-  </ion-button>
+  <ion-button (click)="onSubmit()" expand="block"> Update Charges </ion-button>
 </ion-content>

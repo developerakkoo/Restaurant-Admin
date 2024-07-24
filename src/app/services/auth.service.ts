@@ -8,20 +8,17 @@ import { DataService } from './data.service';
   providedIn: 'root',
 })
 export class AuthService {
-  userAuthState:BehaviorSubject<any> = new BehaviorSubject(false);
-  accessToken: BehaviorSubject<string> = new BehaviorSubject("");
-  userId: BehaviorSubject<string> = new BehaviorSubject("");
-  address: BehaviorSubject<string> = new BehaviorSubject("");
-  constructor(private http: HttpClient,
-              private data: DataService
-  ) {
+  userAuthState: BehaviorSubject<any> = new BehaviorSubject(false);
+  accessToken: BehaviorSubject<string> = new BehaviorSubject('');
+  userId: BehaviorSubject<string> = new BehaviorSubject('');
+  address: BehaviorSubject<string> = new BehaviorSubject('');
+  constructor(private http: HttpClient, private data: DataService) {
     this.init();
-   }
+  }
 
-
-  async init(){
-    let token = await this.data.get("accessToken");
-    let userId = await this.data.get("userId");
+  async init() {
+    let token = await this.data.get('accessToken');
+    let userId = await this.data.get('userId');
 
     this.accessToken.next(token);
     this.userId.next(userId);
@@ -31,245 +28,434 @@ export class AuthService {
     return this.http.post(environment.URL + 'auth/admin/register', body);
   }
 
-
   login(body: {}) {
     return this.http
       .post(environment.URL + 'auth/admin/login', body)
       .pipe(map((value: any) => value['data']));
   }
 
-  registerPartner(body:{}){
-    return this.http.post(environment.URL + "auth/partner/register", body);
+  registerPartner(body: {}) {
+    return this.http.post(environment.URL + 'auth/partner/register', body);
   }
 
-  registerDeliveryBoy(body:{}){
-    return this.http.post(environment.URL + "auth/delivery-boy/register", body);
+  registerDeliveryBoy(body: {}) {
+    return this.http.post(environment.URL + 'auth/delivery-boy/register', body);
   }
 
-  getPartnerById(){
-    return this.http.get(environment.URL + `partner/get/byId/${this.userId.value}`,{
-      headers: {
-        'x-access-token': this.accessToken.value,
-      },})
-  }
-
-  updatePartnerById(body:{}){
-    return this.http.put(environment.URL + `partner/update/${this.userId.value}`,body,{
-      headers: {
-        'x-access-token': this.accessToken.value,
-      },})
-  }
-  hotelRegister(name:any, address:any, category:any[]){
-    return this.http.post(environment.URL + `partner/hotel/register`, {
-      hotelName: name,
-      userId:this.userId.value,
-      address:address,
-      category
-    },{
-      headers: {
-        'x-access-token': this.accessToken.value,
-      },})
-  }
-
-  uploadHotelImage(formdata:any){
-    return this.http.post(environment.URL + `partner/hotel/upload/image`, formdata,{
-      headers: {
-        'x-access-token': this.accessToken.value,
-      },})
-  }
-  uploadDishImage(formdata:any){
-    return this.http.post(environment.URL + `partner/hotel/dish/upload-image`, formdata,{
-      headers: {
-        'x-access-token': this.accessToken.value,
-      },})
-  }
-
-  uploadCategoryImage(formdata:any){
-    return this.http.post(environment.URL + `admin/category/upload/image`, formdata,{
-      headers: {
-        'x-access-token': this.accessToken.value,
-      },})
-  }
-  setHotelLiveStatus(isOnline:number, hotelId:any){
-    return this.http.put(environment.URL + `partner/hotel/update`,{
-      hotelId:hotelId,
-      isOnline:isOnline
-    },{
-      headers: {
-        'x-access-token': this.accessToken.value,
-      },})
-  }
-  getDashboardData(sort:any){
-    return this.http.get(environment.URL + `admin/get/dashboard-data?sort=${sort}`,{headers:{
-      'x-access-token': this.accessToken.value
-    }})
-  }
-  getRevenueChartData(sort:any){
-    return this.http.get(environment.URL + `admin/get/revenueChartData?sort=${sort}`,{headers:{
-      'x-access-token': this.accessToken.value
-    }})
-  }
-
-  getOrderChartData(sort:any){
-    return this.http.get(environment.URL + `admin/get/orderChartData?sort=${sort}`,{headers:{
-      'x-access-token': this.accessToken.value
-    }})
-  }
-  getAllPartners(query:string, pageNumber:any, pageSize:any, startDate:any, endDate:any, status:any){
-    return this.http.get(environment.URL + `admin/get/all-partners?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=0&status=${status}`, {
-      headers:{
-        'x-access-token': this.accessToken.value
+  getPartnerById() {
+    return this.http.get(
+      environment.URL + `partner/get/byId/${this.userId.value}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
       }
-    })
+    );
   }
 
-  getAllCustomers(query:string, pageNumber:any, pageSize:any, startDate:any, endDate:any, status:any){
-    return this.http.get(environment.URL + `admin/get/all-users?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1&status=${status}`, {
-      headers:{
-        'x-access-token': this.accessToken.value
+  updatePartnerById(body: {}) {
+    return this.http.put(
+      environment.URL + `partner/update/${this.userId.value}`,
+      body,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
       }
-    })
+    );
+  }
+  hotelRegister(name: any, address: any, category: any[]) {
+    return this.http.post(
+      environment.URL + `partner/hotel/register`,
+      {
+        hotelName: name,
+        userId: this.userId.value,
+        address: address,
+        category,
+      },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
   }
 
-  getAllCategories(query:string){
-    return this.http.get(environment.URL + `admin/category/get/all?search=${query}&pageSize=100`, {
-      headers:{
-        'x-access-token': this.accessToken.value
+  uploadHotelImage(formdata: any) {
+    return this.http.post(
+      environment.URL + `partner/hotel/upload/image`,
+      formdata,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
       }
-    })
+    );
   }
-  getAllDeliveryBoys(query:string, pageNumber:any, pageSize:any, startDate:any, endDate:any, status:any){
-    return this.http.get(environment.URL + `admin/get/all-deliveryBoy?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1`, {
-      headers:{
-        'x-access-token': this.accessToken.value
+  uploadDishImage(formdata: any) {
+    return this.http.post(
+      environment.URL + `partner/hotel/dish/upload-image`,
+      formdata,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
       }
-    })
-  }
-  
-  getAllHotels(query:string, pageNumber:any, pageSize:any, startDate:any, endDate:any, status:any){
-    return this.http.get(environment.URL + `admin/get/all-hotels?page=${pageNumber}&pageSize=1&q=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1`, {
-      headers:{
-        'x-access-token': this.accessToken.value
-      }
-    })
-  }
-
-  getAllOrders(query:string, pageNumber:any, pageSize:any,status:any, hotelId:any){
-    return this.http.get(environment.URL + `admin/order/get-all?populate=1&pageSize=${pageSize}&page=${pageNumber}&hotelId=${hotelId}&q=${query}&status=${status}`, {
-      headers:{
-        'x-access-token': this.accessToken.value
-      }
-    })
+    );
   }
 
-  getAllPromos(isActive:string, codeType:any){
-    return this.http.get(environment.URL + `admin/promoCode/get-all?codeType=${codeType}&isActive=${isActive}`, {
-      headers:{
-        'x-access-token': this.accessToken.value
+  uploadCategoryImage(formdata: any) {
+    return this.http.post(
+      environment.URL + `admin/category/upload/image`,
+      formdata,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
       }
-    })
+    );
+  }
+  setHotelLiveStatus(isOnline: number, hotelId: any) {
+    return this.http.put(
+      environment.URL + `partner/hotel/update`,
+      {
+        hotelId: hotelId,
+        isOnline: isOnline,
+      },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+  getDashboardData(sort: any) {
+    return this.http.get(
+      environment.URL + `admin/get/dashboard-data?sort=${sort}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+  getRevenueChartData(sort: any) {
+    return this.http.get(
+      environment.URL + `admin/get/revenueChartData?sort=${sort}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
   }
 
-  getCharges(){
+  getOrderChartData(sort: any) {
+    return this.http.get(
+      environment.URL + `admin/get/orderChartData?sort=${sort}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+  getAllPartners(
+    query: string,
+    pageNumber: any,
+    pageSize: any,
+    startDate: any,
+    endDate: any,
+    status: any
+  ) {
+    return this.http.get(
+      environment.URL +
+        `admin/get/all-partners?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=0&status=${status}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  getAllCustomers(
+    query: string,
+    pageNumber: any,
+    pageSize: any,
+    startDate: any,
+    endDate: any,
+    status: any
+  ) {
+    return this.http.get(
+      environment.URL +
+        `admin/get/all-users?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1&status=${status}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  getAllCategories(query: string) {
+    return this.http.get(
+      environment.URL + `admin/category/get/all?search=${query}&pageSize=100`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+  getAllDeliveryBoys(
+    query: string,
+    pageNumber: any,
+    pageSize: any,
+    startDate: any,
+    endDate: any,
+    status: any
+  ) {
+    return this.http.get(
+      environment.URL +
+        `admin/get/all-deliveryBoy?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  getAllHotels(
+    query: string,
+    pageNumber: any,
+    pageSize: any,
+    startDate: any,
+    endDate: any,
+    status: any
+  ) {
+    return this.http.get(
+      environment.URL +
+        `admin/get/all-hotels?page=${pageNumber}&pageSize=1&q=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  getAllOrders(
+    query: string,
+    pageNumber: any,
+    pageSize: any,
+    status: any,
+    hotelId: any
+  ) {
+    return this.http.get(
+      environment.URL +
+        `admin/order/get-all?populate=1&pageSize=${pageSize}&page=${pageNumber}&hotelId=${hotelId}&q=${query}&status=${status}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  getAllPromos(isActive: string, codeType: any) {
+    return this.http.get(
+      environment.URL +
+        `admin/promoCode/get-all?codeType=${codeType}&isActive=${isActive}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  getCharges() {
     return this.http.get(environment.URL + `admin/get/data`, {
-      headers:{
-        'x-access-token': this.accessToken.value
-      }
-    })
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
   }
 
-  getAllChats(){
-    return this.http.get(environment.URL + `admin/get/chat-list/666979f2983fa6cd5cf79d08`, {
-      headers:{
-        'x-access-token': this.accessToken.value
+  getAllChats() {
+    return this.http.get(
+      environment.URL + `admin/get/chat-list/666979f2983fa6cd5cf79d08`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
       }
-    })
+    );
   }
- 
 
-  getMessagesByChatId(chatId:any){
+  getMessagesByChatId(chatId: any) {
     return this.http.get(environment.URL + `admin/get/chat/${chatId}`, {
-      headers:{
-        'x-access-token': this.accessToken.value
-      }
-    })
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
   }
-  updateCharges(handling:string, delivery:any,gst:any, id:any){
-    return this.http.put(environment.URL + `admin/update/data/${id}`,{
-      gstPercentage:gst,
+
+  getDeliveryCharges() {
+    return this.http.get(environment.URL + `admin/get/deliveryCharges/data`, {
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
+  }
+
+  updateCharges(handling: string, gst: any, id: any) {
+    return this.http.put(
+      environment.URL + `admin/update/data/${id}`,
+      {
+        gstPercentage: gst,
+        platformFee: handling,
+      },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  updateGstToggleStatus(value: boolean) {
+    return this.http.put(
+      environment.URL + `admin/update/data/66785354755cf19b149aa305`,
+      {
+        gstIsActive: value,
+      },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  updateDeliveryCharges(body: any, id: any) {
+    return this.http.put(
+      environment.URL + `admin/update/deliveryCharges/data/${id}`,
+      body,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+  setDeliveryCharges(body: {}) {
+    return this.http.post(
+      environment.URL + `admin/add/deliveryCharges/data`,
+      body,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+  setCharges(handling: string, delivery: any) {
+    return this.http.post(
+      environment.URL + `admin/add/data`,
+      {
+        gstPercentage: '5',
         deliveryCharges: delivery,
-        platformFee:handling,
-    }, {
-      headers:{
-        'x-access-token': this.accessToken.value
+        platformFee: handling,
+      },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
       }
-    })
-  }
-  setCharges(handling:string, delivery:any){
-    return this.http.post(environment.URL + `admin/add/data`,{
-      gstPercentage:"5",
-        deliveryCharges: delivery,
-        platformFee:handling,
-    }, {
-      headers:{
-        'x-access-token': this.accessToken.value
-      }
-    })
+    );
   }
 
-  sendMessage(chatId:any, senderId:any, receiverId:any, orderId:any, message:any){
-    return this.http.post(environment.URL + `admin/send`,{
-       chatId, senderId, receiverId, message, orderId 
-    }, {
-      headers:{
-        'x-access-token': this.accessToken.value
+  sendMessage(
+    chatId: any,
+    senderId: any,
+    receiverId: any,
+    orderId: any,
+    message: any
+  ) {
+    return this.http.post(
+      environment.URL + `admin/send`,
+      {
+        chatId,
+        senderId,
+        receiverId,
+        message,
+        orderId,
+      },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
       }
-    })
+    );
   }
 
-  addPromo(body:{}){
-    return this.http.post(environment.URL + `admin/promoCode/add`,body, {
-      headers:{
-        'x-access-token': this.accessToken.value
-      }
-    })
+  addPromo(body: {}) {
+    return this.http.post(environment.URL + `admin/promoCode/add`, body, {
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
   }
 
-  addCategory(body:{}){
-    return this.http.post(environment.URL + `admin/category/add`,body, {
-      headers:{
-        'x-access-token': this.accessToken.value
-      }
-    })
+  addCategory(body: {}) {
+    return this.http.post(environment.URL + `admin/category/add`, body, {
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
   }
-  AcceptRejectOrder(orderId:any, status:any){
-    return this.http.put(environment.URL + `order/accept-reject`,{
-      orderId,
-      status
-    },{
-      headers:{
-        'x-access-token': this.accessToken.value.toString()
+  AcceptRejectOrder(orderId: any, status: any) {
+    return this.http.put(
+      environment.URL + `order/accept-reject`,
+      {
+        orderId,
+        status,
+      },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
       }
-    })
-  }
-
-  assignDeliveryBoy(orderId:any, deliveryBoyId:any){
-    return this.http.put(environment.URL + `admin/order/update`,{
-      orderId,
-      status:"2",
-      deliveryBoyId
-    },{
-      headers:{
-        'x-access-token': this.accessToken.value.toString()
-      }
-    })
+    );
   }
 
-  deleteCategory(categoryId:any,){
-    return this.http.delete(environment.URL + `admin/category/delete/${categoryId}`,{
-      headers:{
-        'x-access-token': this.accessToken.value.toString()
+  assignDeliveryBoy(orderId: any, deliveryBoyId: any) {
+    return this.http.put(
+      environment.URL + `admin/order/update`,
+      {
+        orderId,
+        status: '2',
+        deliveryBoyId,
+      },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
       }
-    })
+    );
+  }
+
+  deleteCategory(categoryId: any) {
+    return this.http.delete(
+      environment.URL + `admin/category/delete/${categoryId}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
+      }
+    );
   }
 }
