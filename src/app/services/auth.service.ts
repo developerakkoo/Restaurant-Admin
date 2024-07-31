@@ -64,7 +64,7 @@ export class AuthService {
       }
     );
   }
-  hotelRegister(name: any, address: any, category: any[]) {
+  hotelRegister(name: any, address: any, category: any[], lng: any, lat: any) {
     return this.http.post(
       environment.URL + `partner/hotel/register`,
       {
@@ -72,6 +72,8 @@ export class AuthService {
         userId: this.userId.value,
         address: address,
         category,
+        lat,
+        lng,
       },
       {
         headers: {
@@ -91,6 +93,21 @@ export class AuthService {
         },
       }
     );
+  }
+  addProduct(body:any){
+    return this.http.post(environment.URL + `partner/hotel/add-dish`, {
+     hotelId: body.hotelId,
+     categoryId:body.categoryId,
+     name:body.name,
+     dishType: body.dishType,
+     timeToPrepare:body.timeToPrepare,
+     partnerPrice: body.partnerPrice,
+     spicLevel: body.spicLevel,
+     stock: body.stock
+    },{
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },})
   }
   uploadDishImage(formdata: any) {
     return this.http.post(
@@ -149,6 +166,15 @@ export class AuthService {
       }
     );
   }
+
+  getAllHotelsPartner(){
+    return this.http.get(environment.URL + `partner/get/hotels/${this.userId.value.toString()}`,{
+      headers:{
+        'x-access-token': this.accessToken.value.toString()
+      }
+    })
+  }
+
 
   getOrderChartData(sort: any) {
     return this.http.get(
@@ -457,5 +483,12 @@ export class AuthService {
         },
       }
     );
+  }
+  getAllCategory() {
+    return this.http.get(environment.URL + `admin/category/get/all`, {
+      headers: {
+        'x-access-token': this.accessToken.value.toString(),
+      },
+    });
   }
 }

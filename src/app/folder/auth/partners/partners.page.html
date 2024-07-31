@@ -7,9 +7,7 @@
     <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
       <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
     </ion-button>
-    <ion-button color="primary" (click)="openLocationPage()" slot="end" fill="clear">
-      <ion-icon slot="icon-only" name="location-outline"></ion-icon>
-    </ion-button>
+    
   </ion-toolbar>
   <ion-searchbar mode="ios" placeholder="Search here" inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
 </ion-header>
@@ -53,6 +51,8 @@
           <th>{{item.email}}</th>
           <th>
             <ion-badge class="ion-padding" color="danger" mode="ios">View</ion-badge>
+            <ion-badge class="ion-padding ion-margin-start" color="primary" mode="ios" (click)="openLocationPage(item._id)">Add Hotel</ion-badge>
+            <ion-badge class="ion-padding ion-margin-start" color="warning" mode="ios" (click)="openAddDishPage(item._id)">Add Dish</ion-badge>
           </th>
         </tr>
       </tbody>

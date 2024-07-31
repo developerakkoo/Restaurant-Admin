@@ -13,12 +13,16 @@ const routes: Routes = [
     loadChildren: () => import('./add/add.module').then( m => m.AddPageModule)
   },
   {
-    path: 'map',
+    path: 'map/:id',
     loadChildren: () => import('./map/map.module').then( m => m.MapPageModule)
   },
   {
-    path: 'hotels',
+    path: 'hotels/:lat/:lng',
     loadChildren: () => import('./hotels/hotels.module').then( m => m.HotelsPageModule)
+  },
+  {
+    path: 'dish',
+    loadChildren: () => import('./dish/dish.module').then( m => m.DishPageModule)
   }
 ];
 

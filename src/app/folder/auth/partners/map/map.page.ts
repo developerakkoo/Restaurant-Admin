@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GoogleMap } from '@capacitor/google-maps';
 import { ModalController } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
@@ -29,6 +29,7 @@ export class MapPage implements OnInit {
 
   reverseGeocodeAddressList:any[] = [];
   constructor(private route: ActivatedRoute,
+    private router: Router,
               private http: HttpClient,
               private modalController: ModalController,
               private geolocation: Geolocation,
@@ -89,6 +90,8 @@ await this.newMap.setOnMarkerClickListener((event) => {
 // Handle marker click
 await this.newMap.setOnMarkerDragEndListener((event) => {
   console.log(event);
+  this.lng = event['latitude'];
+  this.lon = event['longitude'];
   this.reverseGeocoding(event['latitude'], event['longitude']);
   
 });
@@ -146,6 +149,10 @@ await this.newMap.enableCurrentLocation(true);
     
       const data = await modal.onDidDismiss();
       console.log(data);
+  }
+
+  setAddress(){
+    this.router.navigate(['folder','partners','hotels', this.lng, this.lon])
   }
 
 }

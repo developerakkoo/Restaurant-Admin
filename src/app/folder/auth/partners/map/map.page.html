@@ -1,9 +1,15 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Select Partners Business Location</ion-title>
+    <ion-button (click)="setAddress()" expand="block" slot="end">
+      Set Location
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <capacitor-google-map id="map"></capacitor-google-map>
+  <div>
+    <p>Address:-  {{formattedAddress | uppercase}} </p>
+  </div>
 </ion-content>

@@ -57,7 +57,7 @@ export class AddPage implements OnInit {
           this.presentToast("Registered Successfully.",2000, 'success','bottom');
        
 
-          this.router.navigate(['']);
+          this.router.navigate(['folder', 'partners','map']);
         },
         error:async(error:HttpErrorResponse) =>{
           console.log(error.error);

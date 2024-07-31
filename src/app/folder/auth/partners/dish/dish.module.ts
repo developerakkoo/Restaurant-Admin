@@ -4,9 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { HotelsPageRoutingModule } from './hotels-routing.module';
+import { DishPageRoutingModule } from './dish-routing.module';
 
-import { HotelsPage } from './hotels.page';
+import { DishPage } from './dish.page';
 
 @NgModule({
   imports: [
@@ -14,8 +14,8 @@ import { HotelsPage } from './hotels.page';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    HotelsPageRoutingModule
+    DishPageRoutingModule
   ],
-  declarations: [HotelsPage]
+  declarations: [DishPage]
 })
-export class HotelsPageModule {}
+export class DishPageModule {}
