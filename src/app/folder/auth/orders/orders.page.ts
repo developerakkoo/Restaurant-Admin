@@ -46,6 +46,7 @@ export class OrdersPage implements OnInit {
       next:async(value:any) =>{
         console.log(value);
         this.drivers = value['data']['content'];
+        //filter The Array For only unblocked Drivers
         
       },
       error:async(error:HttpErrorResponse) =>{
@@ -154,18 +155,39 @@ viewNotifications(){}
 assignDriverEvent(ev:any, orderId:any){
   console.log(ev.detail.value);
   console.log(orderId);
+
+  let value = ev.detail.value;
+  console.log(value.length);
+
+  if(value.length == 1){
+    this.auth.assignDeliveryBoy(orderId, ev.detail.value)
+    .subscribe({
+      next:async(value:any) =>{
+        console.log(value);
+        this.getAllOrders();
+        this.getAllDeliveryBoys();
+      },
+      error:async(error:HttpErrorResponse) =>{
+        console.log(error.error);
+        
+      }
+    })
+  }
+  else{
+    this.auth.assignMultipleDeliveryBoy(orderId, ev.detail.value)
+    .subscribe({
+      next:async(value:any) =>{
+        console.log(value);
+        this.getAllOrders();
+        this.getAllDeliveryBoys();
+      },
+      error:async(error:HttpErrorResponse) =>{
+        console.log(error.error);
+        
+      }
+    })
+  }
   
-  this.auth.assignDeliveryBoy(orderId, ev.detail.value)
-  .subscribe({
-    next:async(value:any) =>{
-      console.log(value);
-      this.getAllOrders();
-      this.getAllDeliveryBoys();
-    },
-    error:async(error:HttpErrorResponse) =>{
-      console.log(error.error);
-      
-    }
-  })
+
 }
 }

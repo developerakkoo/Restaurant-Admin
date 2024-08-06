@@ -12,58 +12,79 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <ion-item>
-      <ion-label>Select Hotel</ion-label>
-      <ion-select formControlName="hotelId"  multiple="false" placeholder="Select here" interface="popover">
-        <ion-select-option *ngFor="let hotel of hotels" [value]="hotel._id">{{hotel.hotelName}}</ion-select-option>
-      </ion-select>
-    </ion-item>
-    <br>
-    <ion-item>
-      <ion-label>Category</ion-label>
-      <ion-select formControlName="categoryId"  multiple="false" placeholder="Select here" interface="popover">
-        <ion-select-option *ngFor="let cat of categories" [value]="cat._id">{{cat.name}}</ion-select-option>
-      </ion-select>
-    </ion-item>
+ <ion-grid fixed>
+  <ion-row>
+    <ion-col size="6">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div formArrayName="dishes">
+          <div *ngFor="let dish of dishes.controls; let i = index" [formGroupName]="i">
+        <ion-item>
+          <ion-label>Choose Hotel</ion-label>
+          <ion-select formControlName="hotelId" interface="action-sheet" placeholder="Select Hotel">
+            <ion-select-option *ngFor="let item of hotels" [value]="item._id">{{item.hotelName}}</ion-select-option>
 
-    <br>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label>Choose Category</ion-label>
+          <ion-select formControlName="categoryId"  interface="action-sheet" placeholder="Select Category">
+            <ion-select-option *ngFor="let item of categories" [value]="item._id">{{item.name}}</ion-select-option>
 
-    <ion-input formControlName="name" type="text" fill="outline" label="Menu Name" labelPlacement="stacked" placeholder="Menu Name"></ion-input>
-<br>
-<ion-item>
-  <ion-label>Dish Type</ion-label>
-  <ion-select formControlName="dishType" value="veg" multiple="false" placeholder="Veg/Non-Veg">
-    <ion-select-option value="veg">Veg</ion-select-option>
-    <ion-select-option value="non-veg">Non-veg</ion-select-option>
-  </ion-select>
-</ion-item>
-<br>
-      <ion-input formControlName="partnerPrice" type="text" fill="outline" label="Menu Price" labelPlacement="stacked" placeholder="Menu Price"></ion-input>
-<br>
+          </ion-select>
+        </ion-item>
+           <ion-input type="text" placeholder="" label="Menu name" labelPlacement="stacked" formControlName="name" fill="outline"></ion-input>
+           <ion-item>
+            <ion-label>Dish Type</ion-label>
+            <ion-select formControlName="dishType" value="veg" multiple="false" placeholder="Select Type">
+              <ion-select-option value="veg">Veg</ion-select-option>
+              <ion-select-option value="non-veg">Non-veg</ion-select-option>
+            </ion-select>
+           </ion-item>
+           <ion-input type="text" placeholder="" label="Partner price" labelPlacement="stacked" formControlName="partnerPrice" fill="outline"></ion-input>
 
-<ion-item>
-  <ion-label>In Stock</ion-label>
-  <ion-select formControlName="stock" value="1" multiple="false" placeholder="In Stock/ Out of Stock">
-    <ion-select-option value="1">Yes</ion-select-option>
-    <ion-select-option value="0">No</ion-select-option>
-  </ion-select>
-</ion-item>
-<br>
-<ion-item>
-  <ion-label>Spice Level</ion-label>
-  <ion-select formControlName="spicLevel" value="0" multiple="false" placeholder="Veg/Non-Veg">
-    <ion-select-option value="0">Mild</ion-select-option>
-    <ion-select-option value="1">Little Spicy</ion-select-option>
-    <ion-select-option value="2">Medium Spicy</ion-select-option>
-    <ion-select-option value="3">Very Spicy</ion-select-option>
-  </ion-select>
-</ion-item>
-    <ion-button expand="block" color="primary" type="submit" [disabled]="form.invalid">
-      Add Product
-    </ion-button>
-  </form>
+           <ion-input type="text" placeholder="" label="User price" labelPlacement="stacked" formControlName="userPrice" fill="outline"></ion-input>
 
+            <ion-item>
+              <ion-label>Spice Level</ion-label>
+              <ion-select value="0" multiple="false" placeholder="Select Spice Level" formControlName="spicLevel">
+                <ion-select-option value="0">No Spicy</ion-select-option>
+                <ion-select-option value="1">Medium Spicy</ion-select-option>
+                <ion-select-option value="2">Extra Spicy</ion-select-option>
+                <ion-select-option value="3">Very Spicy</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label>Stock</ion-label>
+              <ion-select value="1" multiple="false" placeholder="Select Stock" formControlName="stock">
+                <ion-select-option value="1">Yes</ion-select-option>
+                <ion-select-option value="0">No</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <!-- <div>
+              <label>Status</label>
+              <input formControlName="status">
+            </div>
+            <div>
+              <label>Time to Prepare</label>
+              <input formControlName="timeToPrepare">
+            </div> -->
+            <div>
+              <label>Image</label>
+              <input type="file" (change)="onFileChange($event, i)">
+              <img crossorigin="anonymous" style="height: 200px; width:auto;" *ngIf="dish.get('image_url')?.value" [src]="dish.get('image_url')?.value" alt="Image Preview" width="100">
+            </div>
+            <button type="button" (click)="removeDish(i)">Remove</button>
+          </div>
+        </div>
+        <ion-button type="button" fill="solid" (click)="addDish()">Add Dish</ion-button>
+        <ion-button type="submit" fill="solid">Submit</ion-button>
+      </form>
+      
+    
+    </ion-col>
+    <ion-col size="6"></ion-col>
+  </ion-row>
+ </ion-grid>
 
   <ion-modal [isOpen]="isDishImageUploadModalOpen" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
     <ng-template>

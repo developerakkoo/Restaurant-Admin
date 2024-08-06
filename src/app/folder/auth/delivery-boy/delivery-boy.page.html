@@ -57,6 +57,8 @@
           <th>{{item?.city || "No Address Added"}}</th>
           <th>
             <ion-badge class="ion-padding" color="danger" mode="ios">View</ion-badge>
+            <ion-badge *ngIf="item.status == 0" class="ion-padding ion-margin-start" (click)="block(item._id)" color="success" mode="ios">Block</ion-badge>
+            <ion-badge *ngIf="item.status == 1" class="ion-padding ion-margin-start" (click)="unblock(item._id)" color="tertiary" mode="ios">Unblock</ion-badge>
           </th>
          
         </tr>

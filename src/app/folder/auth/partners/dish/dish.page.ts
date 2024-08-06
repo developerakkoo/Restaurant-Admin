@@ -1,9 +1,10 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-dish',
@@ -21,17 +22,11 @@ export class DishPage implements OnInit {
     private router: Router,
     private toastController: ToastController,
     private fb: FormBuilder,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private http:HttpClient
   ) {
     this.form = this.fb.group({
-      hotelId: [, [Validators.required]],
-      categoryId: [, [Validators.required]],
-      name: [, [Validators.required]],
-      dishType: [, [Validators.required]],
-      partnerPrice: [, [Validators.required]],
-      spicLevel: [, [Validators.required]],
-      stock: [, [Validators.required]],
-      timeToPrepare: [30],
+      dishes: this.fb.array([this.createDishFormGroup()])
     });
   }
 
@@ -41,7 +36,34 @@ export class DishPage implements OnInit {
     this.loadCategory();
     this.getAllHotels();
   }
+  createDishFormGroup(): FormGroup {
+    return this.fb.group({
+      hotelId: ['', [Validators.required]],
+      categoryId: ['', [Validators.required]],
+      name: ['', [Validators.required]],
+      dishType: ['', [Validators.required]],
+      partnerPrice: ['', [Validators.required]],
+      userPrice: ['', [Validators.required]],
+      spicLevel: ['', [Validators.required]],
+      stock: ['', [Validators.required]],
+      image_url: ['', [Validators.required]],
+      status: [2],
+      timeToPrepare: [30]
+    });
+  }
+  
+  get dishes(): FormArray {
+    return this.form.get('dishes') as FormArray;
+  }
 
+  addDish() {
+    this.dishes.push(this.createDishFormGroup());
+  }
+  
+  removeDish(index: number) {
+    this.dishes.removeAt(index);
+  }
+  
   loadCategory() {
     this.auth.getAllCategory().subscribe({
       next: async (value: any) => {
@@ -75,15 +97,7 @@ export class DishPage implements OnInit {
       next: async (value: any) => {
         console.log(value);
         this.setOpen(false);
-        this.presentToast(
-          'Dish Addedd Successfully',
-          2000,
-          'success',
-          'bottom'
-        );
-        setTimeout(() => {
-          this.router.navigate(['folder', 'partners']);
-        }, 2000);
+      
       },
       error: async (error: HttpErrorResponse) => {
         console.log(error);
@@ -103,12 +117,18 @@ export class DishPage implements OnInit {
       this.auth.addProduct(this.form.value).subscribe({
         next: (value: any) => {
           console.log(value);
-          this.dishId = value['data']['_id'];
-          this.setOpen(true);
+          this.presentToast(
+            'Dish Addedd Successfully',
+            2000,
+            'success',
+            'bottom'
+          );
+          setTimeout(() => {
+            this.router.navigate(['folder', 'partners']);
+          }, 2000);
         },
         error: (error: HttpErrorResponse) => {
           console.log(error.error);
-          this.setOpen(false);
         },
       });
     }
@@ -134,4 +154,22 @@ export class DishPage implements OnInit {
     });
   }
   viewNotifications() {}
+  onFileChange(event: any, index: number) {
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('image', file);
+  
+      this.http.post<{ imageUrl: string }>(environment.URL + `admin/upload/image`, formData).subscribe((response:any) => {
+        const dishes = this.form.get('dishes') as FormArray;
+        const dish = dishes.at(index) as FormGroup;
+        dish.patchValue({
+          image_url: response.data
+        });
+      }, (error:any) => {
+        console.error('Error uploading file:', error);
+      });
+    }
+  }
+  
 }

@@ -55,4 +55,33 @@ viewNotifications(){}
 openDriverRegisterPage(){
   this.router.navigate(['folder','delivery-boy','add'])
     }
+
+
+    block(id:any){
+      this.auth.blockDeliveryBoy(id,1)
+      .subscribe({
+        next:async(value:any) =>{
+          console.log(value);
+          this.getAllDeliveryBoys();
+        },
+        error:async(error:HttpErrorResponse) =>{
+          console.log(error);
+          
+        }
+      })
+    }
+
+    unblock(id:any){
+      this.auth.blockDeliveryBoy(id,0)
+      .subscribe({
+        next:async(value:any) =>{
+          console.log(value);
+          this.getAllDeliveryBoys();
+        },
+        error:async(error:HttpErrorResponse) =>{
+          console.log(error);
+          
+        }
+      })
+    }
 }

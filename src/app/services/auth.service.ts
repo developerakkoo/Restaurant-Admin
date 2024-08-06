@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { DataService } from './data.service';
+import { Form } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -95,15 +96,12 @@ export class AuthService {
     );
   }
   addProduct(body:any){
-    return this.http.post(environment.URL + `partner/hotel/add-dish`, {
-     hotelId: body.hotelId,
-     categoryId:body.categoryId,
-     name:body.name,
-     dishType: body.dishType,
-     timeToPrepare:body.timeToPrepare,
-     partnerPrice: body.partnerPrice,
-     spicLevel: body.spicLevel,
-     stock: body.stock
+    console.log("Body in logic");
+    
+    console.log(body);
+    
+    return this.http.post(environment.URL + `hotel/dish/bulk/add`, {
+    dishes:body['dishes']
     },{
       headers: {
         'x-access-token': this.accessToken.value,
@@ -178,7 +176,7 @@ export class AuthService {
 
   getOrderChartData(sort: any) {
     return this.http.get(
-      environment.URL + `admin/get/orderChartData?sort=${sort}`,
+      environment.URL + `admin/get/orderChartData?sort=${sort}`, 
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -474,6 +472,23 @@ export class AuthService {
     );
   }
 
+  assignMultipleDeliveryBoy(orderId: any, deliveryBoyIds: any) {
+    return this.http.post(
+      environment.URL + `admin/send/order/pickup/request`,
+      {
+        orderId,
+        deliveryBoyIds,
+      },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
+      }
+    );
+  }
+ 
+
+
   deleteCategory(categoryId: any) {
     return this.http.delete(
       environment.URL + `admin/category/delete/${categoryId}`,
@@ -490,5 +505,23 @@ export class AuthService {
         'x-access-token': this.accessToken.value.toString(),
       },
     });
+  }
+
+  uploadImageForMultipleDish(formdata:FormData){
+    return this.http.post(environment.URL + `admin/upload/image`,formdata,{
+      headers: {
+        'x-access-token': this.accessToken.value.toString(),
+      },
+    })
+  }
+
+  blockDeliveryBoy(deliveryBoyId:any, status:any ){
+    return this.http.put(environment.URL + `admin/update/delivery-boy/status`,{
+      deliveryBoyId, status 
+    },{
+      headers: {
+        'x-access-token': this.accessToken.value.toString(),
+      },
+    })
   }
 }
