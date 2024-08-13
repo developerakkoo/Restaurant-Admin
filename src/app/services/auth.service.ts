@@ -275,11 +275,13 @@ export class AuthService {
     pageNumber: any,
     pageSize: any,
     status: any,
-    hotelId: any
+    hotelId: any,
+    startDate: any,
+    endDate: any,
   ) {
     return this.http.get(
       environment.URL +
-        `admin/order/get-all?populate=1&pageSize=${pageSize}&page=${pageNumber}&hotelId=${hotelId}&q=${query}&status=${status}`,
+        `admin/order/get-all?populate=1&pageSize=${pageSize}&page=${pageNumber}&hotelId=${hotelId}&q=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}`,
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -288,6 +290,17 @@ export class AuthService {
     );
   }
 
+  getOrderById(orderId: any) {
+    return this.http.get(
+      environment.URL +
+        `order/get/order-by-id/${orderId}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
   getAllPromos(isActive: string, codeType: any) {
     return this.http.get(
       environment.URL +

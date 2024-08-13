@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
     <ion-title>Orders</ion-title>
     <ion-button  color="primary" (click)="viewNotifications()" slot="end" fill="clear">
@@ -17,34 +17,24 @@
       No Orders Found!
     </h1>
   </ion-text>
-  <ion-grid >
-    <ion-row>
-      <ion-col size="6">
-        <ion-item lines="none">
-          <ion-label>Orders
-            <p>Your orders here</p>
-          </ion-label>
-        </ion-item>
-      </ion-col>
+ <ion-list class="ion-padding">
+  <ion-list-header>
+    <ion-label>Orders Below</ion-label>
+    <ion-select style="width: 200px; --height:40px;" value="All" fill="outline"  interface="popover" placeholder="Select Status" (ionChange)="filterEvent($event)">
+      <ion-select-option value="">All</ion-select-option>
+      <ion-select-option value="0">New Order</ion-select-option>
+      <ion-select-option value="5">Rejected</ion-select-option>
+      <ion-select-option value="2">Delivery Boy Assigned</ion-select-option>
+      <ion-select-option value="4">On the Way</ion-select-option>
+      <ion-select-option value="3">Delivered</ion-select-option>
+    </ion-select>
+ 
 
-    
-      <ion-col size="6" >
-        <div class="container">
-          <ion-item lines="none">
-            <ion-select value="All" fill="outline"  interface="popover" placeholder="Select Status" (ionChange)="filterEvent($event)">
-              <ion-select-option value="">All</ion-select-option>
-              <ion-select-option value="0">New Order</ion-select-option>
-              <ion-select-option value="5">Rejected</ion-select-option>
-              <ion-select-option value="2">Delivery Boy Assigned</ion-select-option>
-              <ion-select-option value="4">On the Way</ion-select-option>
-              <ion-select-option value="3">Delivered</ion-select-option>
-            </ion-select>
-          </ion-item>
-         
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <ion-input  style="width: 200px;  --height:40px;" type="date" label="Start Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 's')" placeholder="Awesome Input"></ion-input>
+  <ion-input style="width: 200px;  --height:40px;" type="date" label="End Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 'e')" placeholder="Awesome Input"></ion-input>
+  </ion-list-header>
+ </ion-list>
+
 
 
   <div class="table-responsive" *ngIf="orders.length > 0">
@@ -68,8 +58,8 @@
           <th>{{item?.userAddress?.address}}</th>
           <th>{{item?.priceDetails?.totalAmountToPay | currency:"INR"}}</th>
           <th>
-            <ion-badge class="ion-padding" color="danger" mode="ios" (click)="presentActionSheet(item._id)">View</ion-badge>
-            <!-- <ion-badge *ngIf="item?.orderStatus === 4" class="ion-padding" color="tertiary" mode="ios" (click)="presentActionSheet(item._id)">Assign Driver</ion-badge> -->
+            <ion-badge class="ion-padding" color="danger" mode="ios" (click)="openDetailsPage(item._id)">View</ion-badge>
+            <ion-badge *ngIf="item?.orderStatus === 4" class="ion-padding" color="success" mode="ios" (click)="presentActionSheet(item._id)">Accept Order</ion-badge>
            
               <ion-select (ionChange)="assignDriverEvent($event, item._id)" *ngIf="item?.orderStatus === 4" fill="outline"  multiple="true" placeholder="Select Driver">
                 <ion-select-option *ngFor="let d of drivers" [value]="d._id">{{d.firstName}} {{d.lastName}}</ion-select-option>

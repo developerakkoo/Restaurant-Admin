@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ActionSheetController, LoadingController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -13,7 +14,13 @@ export class OrdersPage implements OnInit {
   drivers:any[] = [];
   query:string = "";
   status:string = "";
+
+  startDate:any;
+  endDate:any;
+
+
   constructor(private auth:AuthService,
+    private router:Router,
     private actionSheetController: ActionSheetController,
     private loadingController: LoadingController
   ) {}
@@ -40,6 +47,31 @@ export class OrdersPage implements OnInit {
     this.getAllDeliveryBoys();
 
   }
+
+  setDateEvent(event:any, type:any){
+    console.log(event.detail.value);
+console.log(type);
+
+    let date = event.detail.value;
+    if(type === "s"){
+      console.log("Set Start Date");
+      this.startDate = date;
+      
+    }else if(type === "e"){
+      console.log("Set End Date");
+      this.endDate = date;
+      
+      
+    }
+    
+    this.getAllOrders();
+    console.log(this.startDate);
+    console.log(this.endDate);
+    
+    
+
+    
+  }
   async getAllDeliveryBoys(){
     this.auth.getAllDeliveryBoys(this.query, 1, 50,"","", "")
     .subscribe({
@@ -56,7 +88,7 @@ export class OrdersPage implements OnInit {
     })
   }
   async getAllOrders(){
-    this.auth.getAllOrders(this.query, 1, 50, this.status,"")
+    this.auth.getAllOrders(this.query, 1, 50, this.status,"",this.startDate,this.endDate)
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
@@ -190,4 +222,11 @@ assignDriverEvent(ev:any, orderId:any){
   
 
 }
-}
+
+
+openDetailsPage(orderId:any)
+{
+  console.log(orderId);
+  this.router.navigate(['folder','orders','view', orderId]);
+  
+}}

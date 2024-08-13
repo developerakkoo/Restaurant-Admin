@@ -49,7 +49,7 @@ export class DashPage implements OnInit {
       }]
       },
       options: {
-        aspectRatio:1/1,
+        aspectRatio:1/2,
         responsive: true,
 maintainAspectRatio: true
       }
@@ -71,7 +71,7 @@ maintainAspectRatio: true
       }]
       },
       options: {
-        aspectRatio:1/1,
+        aspectRatio:1/2,
         responsive: true,
 maintainAspectRatio: true
       }
@@ -92,7 +92,7 @@ maintainAspectRatio: true
       }]
       },
       options: {
-        aspectRatio:1/1,
+        aspectRatio:1/2,
         responsive: true,
 maintainAspectRatio: true
       }
