@@ -43,9 +43,9 @@ export class AuthService {
     return this.http.post(environment.URL + 'auth/delivery-boy/register', body);
   }
 
-  getPartnerById() {
+  getPartnerById(partnerId:any) {
     return this.http.get(
-      environment.URL + `partner/get/byId/${this.userId.value}`,
+      environment.URL + `partner/get/byId/${partnerId}`,
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -54,9 +54,41 @@ export class AuthService {
     );
   }
 
+  getPartnerCompensationTable(hotelId:any, startDate:any, endDate:any, page:any) {
+    return this.http.get(
+      environment.URL + `admin/order/get-all?hotelId=${hotelId}&startDate=${startDate}&endDate=${endDate}&populate=1&pageSize=50&page=${page}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+  getDeliveryBoyCompensationTable(boyId:any, startDate:any, endDate:any, page:any) {
+    return this.http.get(
+      environment.URL + `admin/order/get-all?deliveryBoyId=${boyId}&startDate=${startDate}&endDate=${endDate}&populate=1&pageSize=50&page=${page}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
   updatePartnerById(body: {}) {
     return this.http.put(
       environment.URL + `partner/update/${this.userId.value}`,
+      body,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  updateSettlements(body: {}) {
+    return this.http.put(
+      environment.URL + `admin/order/settlement`,
       body,
       {
         headers: {
@@ -132,7 +164,7 @@ export class AuthService {
   }
   setHotelLiveStatus(isOnline: number, hotelId: any) {
     return this.http.put(
-      environment.URL + `partner/hotel/update`,
+      environment.URL + `admin/hotel/update`,
       {
         hotelId: hotelId,
         isOnline: isOnline,
@@ -165,8 +197,8 @@ export class AuthService {
     );
   }
 
-  getAllHotelsPartner(){
-    return this.http.get(environment.URL + `partner/get/hotels/${this.userId.value.toString()}`,{
+  getAllHotelsPartner(partnerId:any){
+    return this.http.get(environment.URL + `partner/get/hotels/${partnerId}`,{
       headers:{
         'x-access-token': this.accessToken.value.toString()
       }
@@ -194,7 +226,7 @@ export class AuthService {
   ) {
     return this.http.get(
       environment.URL +
-        `admin/get/all-partners?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=0&status=${status}`,
+        `admin/get/all-partners?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1&status=${status}`,
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -209,11 +241,12 @@ export class AuthService {
     pageSize: any,
     startDate: any,
     endDate: any,
-    status: any
+    status: any,
+    isBlocked:any
   ) {
     return this.http.get(
       environment.URL +
-        `admin/get/all-users?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1&status=${status}`,
+        `admin/get/all-users?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1&status=${status}&isBlocked=${isBlocked}`,
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -222,6 +255,17 @@ export class AuthService {
     );
   }
 
+  blockUnblockCustomer(body: {}) {
+    return this.http.put(
+      environment.URL + `admin/update/user/status`,
+      body,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
   getAllCategories(query: string) {
     return this.http.get(
       environment.URL + `admin/category/get/all?search=${query}&pageSize=100`,
@@ -291,6 +335,31 @@ export class AuthService {
   }
 
   getOrderById(orderId: any) {
+    return this.http.get(
+      environment.URL +
+        `order/get/order-by-id/${orderId}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  getCustomerById(userId: any) {
+    return this.http.get(
+      environment.URL +
+        `user/get/user/${userId}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+
+  getDeliveryBoyById(orderId: any) {
     return this.http.get(
       environment.URL +
         `order/get/order-by-id/${orderId}`,

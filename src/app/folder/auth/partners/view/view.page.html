@@ -1,0 +1,78 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Partner Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+ <ion-grid>
+  <ion-row>
+    <ion-col size="6">
+      <ion-card>
+        <ion-list>
+          <ion-list-header>
+            <ion-label>Recent Partner Orders</ion-label>
+            <ion-button>See All</ion-button>
+          </ion-list-header>
+        </ion-list>
+      </ion-card>
+    </ion-col>
+    <ion-col size="6">
+      <ion-card>
+        <ion-list>
+          <ion-list-header>
+            <ion-label>Recent Partner Reviews</ion-label>
+            <ion-button>See All</ion-button>
+          </ion-list-header>
+        </ion-list>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col size="12" *ngIf="compensationTable.length <= 0">
+      <ion-text color="primary" class="ion-text-center">
+        <h1>No Data to Load!</h1>
+      </ion-text>
+    </ion-col>
+    <ion-col size="12">
+      <ion-list-header>
+        <ion-label>Settlement Table</ion-label>
+        <ion-input  style="width: 200px;  --height:40px;" type="date" label="Start Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 's')" placeholder="Awesome Input"></ion-input>
+        <ion-input style="width: 200px;  --height:40px;" type="date" label="End Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 'e')" placeholder="Awesome Input"></ion-input>
+      </ion-list-header>
+      <div class="table-responsive" *ngIf="compensationTable.length > 0">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Date & Time</th>
+              <th scope="col">OrderId</th>
+              <th scope="col">Hotel Amount</th>
+              <th scope="col">Settelment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of compensationTable">
+              <th> {{item.createdAt}} </th>
+              <th> {{item.orderId}} </th>
+              <th> {{item.productDetails?.[0].partnerPrice}} </th>
+              <th> 
+                <ion-checkbox *ngIf="item.compensationPaidToHotelPartner === false" (ionChange)="onCheckboxChange($event.detail.checked, item._id)" [checked]="item.compensationPaidToHotelPartner === true"></ion-checkbox>
+                <ion-badge *ngIf="item.compensationPaidToHotelPartner === true" color="primary" mode="ios">PAID</ion-badge>
+              </th>
+            </tr>
+          </tbody>
+          </table>
+          </div>
+        </ion-col>
+  </ion-row>
+ </ion-grid>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-title>{{totalPartnerPrice}}</ion-title>
+    <ion-button (click)="updateSettelment()" expand="block" fill="clear" shape="round">
+      Mark Settelments as Completed
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

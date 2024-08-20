@@ -13,6 +13,7 @@ export class PartnersPage implements OnInit {
 
   partner:any[] = [];
   query:string ="";
+  status:number =0;
 
   constructor(private auth: AuthService,
     private router: Router,
@@ -26,8 +27,14 @@ export class PartnersPage implements OnInit {
     this.getAllPartners();
   }
 
+  segmentChanged(ev:any){
+    console.log(ev.detail.value);
+    this.status = ev.detail.value;
+    this.getAllPartners()
+  }
+
   async getAllPartners(){
-    this.auth.getAllPartners(this.query, 1, 50, "","", "")
+    this.auth.getAllPartners(this.query, 1, 50, "","", this.status)
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
@@ -51,6 +58,41 @@ export class PartnersPage implements OnInit {
 this.router.navigate(['folder','partners','add'])
   }
   viewNotifications(){}
+
+  openhotel(hotel:any){
+    console.log(hotel);
+
+    if(hotel.isOnline === true){
+      this.auth.setHotelLiveStatus(0,hotel._id)
+      .subscribe({
+        next:async(value:any) =>{
+          console.log(value);
+          this.getAllPartners();
+        },
+        error:async(error:HttpErrorResponse) =>{
+          console.log(error);
+          
+        }
+      })
+    }else if(hotel.isOnline === false){
+      this.auth.setHotelLiveStatus(1,hotel._id)
+    .subscribe({
+      next:async(value:any) =>{
+        console.log(value);
+        this.getAllPartners();
+      },
+      error:async(error:HttpErrorResponse) =>{
+        console.log(error);
+        
+      }
+    })
+    }
+    
+   
+  }
+  closehotel(id:any){
+    
+  }
   openLocationPage(id:any){
     console.log(id);
     
@@ -60,5 +102,11 @@ this.router.navigate(['folder','partners','add'])
     console.log(id);
     
     this.router.navigate(['folder','partners','dish']);
+  }
+
+  openViewPage(id:any){
+    console.log(id);
+    
+    this.router.navigate(['folder','partners','view',id]);
   }
 }

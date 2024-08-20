@@ -135,23 +135,23 @@ export class DishPage implements OnInit {
   }
 
   async getAllHotels() {
-    let loading = await this.loadingController.create({
-      message: 'loading...',
-    });
+    // let loading = await this.loadingController.create({
+    //   message: 'loading...',
+    // });
 
-    await loading.present();
+    // await loading.present();
 
-    this.auth.getAllHotelsPartner().subscribe({
-      next: async (value: any) => {
-        console.log(value);
-        this.hotels = value['data'];
-        await loading.dismiss();
-      },
-      error: async (error: HttpErrorResponse) => {
-        console.log(error);
-        await loading.dismiss();
-      },
-    });
+    // this.auth.getAllHotelsPartner().subscribe({
+    //   next: async (value: any) => {
+    //     console.log(value);
+    //     this.hotels = value['data'];
+    //     await loading.dismiss();
+    //   },
+    //   error: async (error: HttpErrorResponse) => {
+    //     console.log(error);
+    //     await loading.dismiss();
+    //   },
+    // });
   }
   viewNotifications() {}
   onFileChange(event: any, index: number) {

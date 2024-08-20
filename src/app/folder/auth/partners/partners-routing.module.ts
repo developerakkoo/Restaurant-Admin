@@ -23,6 +23,10 @@ const routes: Routes = [
   {
     path: 'dish',
     loadChildren: () => import('./dish/dish.module').then( m => m.DishPageModule)
+  },
+  {
+    path: 'view/:id',
+    loadChildren: () => import('./view/view.module').then( m => m.ViewPageModule)
   }
 ];
 

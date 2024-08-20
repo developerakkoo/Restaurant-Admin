@@ -32,12 +32,21 @@
   </ion-grid>
 
 
+  <ion-segment value="0" (ionChange)="segmentChanged($event)">
+    <ion-segment-button value="0">
+      <ion-label>Active</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="1">
+      <ion-label>Blocked</ion-label>
+    </ion-segment-button>
+  </ion-segment>
   <div class="table-responsive">
     <table class="table">
       <thead>
         <tr>
           <th scope="col">Date</th>
           <th scope="col">Partner name</th>
+          <th scope="col">Restaurant name</th>
           <th scope="col">Phone No</th>
           <th scope="col">Email</th>
           <th scope="col">Action</th>
@@ -47,12 +56,13 @@
         <tr *ngFor="let item of partner">
           <th>{{item.createdAt | date:"fullDate"}}</th>
           <th>{{item.name}}</th>
+          <th>{{item?.hotels[0]?.hotelName}}</th>
           <th>{{item.phoneNumber}}</th>
           <th>{{item.email}}</th>
-          <th>
-            <ion-badge class="ion-padding" color="danger" mode="ios">View</ion-badge>
+          <th *ngFor="let hotel of item.hotels" >
+            <ion-badge class="ion-padding" color="danger" mode="ios" (click)="openViewPage(item._id)">View</ion-badge>
             <ion-badge class="ion-padding ion-margin-start" color="primary" mode="ios" (click)="openLocationPage(item._id)">Add Hotel</ion-badge>
-            <ion-badge class="ion-padding ion-margin-start" color="warning" mode="ios" (click)="openAddDishPage(item._id)">Add Dish</ion-badge>
+      <ion-toggle slot="end" [enableOnOffLabels]="true"  class="ion-margin-start" (ionChange)="openhotel(hotel)" [checked]="hotel.isOnline === true"></ion-toggle>
           </th>
         </tr>
       </tbody>

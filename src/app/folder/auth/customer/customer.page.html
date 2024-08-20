@@ -43,14 +43,23 @@
     </ion-row>
   </ion-grid>
 
+  <ion-segment value="0" (ionChange)="segmentChanged($event)">
+    <ion-segment-button value="0">
+      <ion-label>Active</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="1">
+      <ion-label>Blocked</ion-label>
+    </ion-segment-button>
+  </ion-segment>
 
   <div class="table-responsive" *ngIf="users.length > 0">
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">Date</th>
+          <!-- <th scope="col">Date</th> -->
           <th scope="col">Customer name</th>
           <th scope="col">Phone no</th>
+          <th scope="col">Orders</th>
           <th scope="col">Address</th>
           <th scope="col">Action</th>
           <th scope="col">Status</th>
@@ -58,17 +67,20 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of users">
-          <th>{{item.createdAt | date:"fullDate"}}</th>
+          <!-- <th>{{item.createdAt | date:"fullDate"}}</th> -->
           <th>{{item?.name}}</th>
           <th>{{item?.phoneNumber}}</th>
+          <th>{{item?.orderCount}}</th>
           <th>{{item?.userAddresses?.[0]?.address || "No Address Added"}}</th>
           <th>
-            <ion-badge class="ion-padding" color="danger" mode="ios">View</ion-badge>
+            <ion-badge style="cursor: pointer;" (click)="openDetailsPage(item._id)" class="ion-padding" color="danger" mode="ios">View</ion-badge>
+            <ion-badge style="cursor: pointer;" *ngIf="item.status == 0" class="ion-padding ion-margin-start" (click)="block(item._id)" color="success" mode="ios">Block</ion-badge>
+          <ion-badge style="cursor: pointer;" *ngIf="item.status == 1" class="ion-padding ion-margin-start" (click)="unblock(item._id)" color="tertiary" mode="ios">Unblock</ion-badge>
           </th>
           <th>
           <ion-badge *ngIf="item?.isOnline === true" class="ion-padding" color="danger" mode="ios">Online</ion-badge>
           <ion-badge *ngIf="item?.isOnline === false" class="ion-padding" color="danger" mode="ios">Offline</ion-badge>
-
+          
 
           </th>
         </tr>
