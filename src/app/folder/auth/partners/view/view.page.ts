@@ -19,6 +19,7 @@ export class ViewPage implements OnInit {
   partnerDetails:any = {};
   compensationTable:any[] = [];
 
+  paidStatus:number = 1;
   selectedItems = new Set<string>();
   totalPartnerPrice = 0;
   constructor(private auth:AuthService,
@@ -144,7 +145,7 @@ this.getTable();
 
 
   getTable(){
-    this.auth.getPartnerCompensationTable(this.hotelId,this.startDate, this.endDate,this.page)
+    this.auth.getPartnerCompensationTable(this.hotelId,this.startDate, this.endDate,this.page,this.paidStatus)
     .subscribe({
       next:async(value:any) =>{
         console.log(value);

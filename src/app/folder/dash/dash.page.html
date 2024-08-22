@@ -13,6 +13,12 @@
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
+
+  <ion-list-header>
+    <ion-label>Analytics</ion-label>
+    <ion-input  style="width: 200px;  --height:40px;" type="date" label="Start Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 's')" placeholder="Awesome Input"></ion-input>
+    <ion-input style="width: 200px;  --height:40px;" type="date" label="End Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 'e')" placeholder="Awesome Input"></ion-input>
+  </ion-list-header>
   <ion-grid>
 
     <ion-row>

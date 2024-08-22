@@ -25,6 +25,11 @@ export class DashPage implements OnInit {
   totalPartners:any;
   totalDeliveryBoys:any;
   totalRevenue:any;
+  totalOnlineUsers:any;
+
+
+  startDate:any = "";
+  endDate:any = "";
   constructor(private auth:AuthService) { }
 
   ngOnInit() {
@@ -103,7 +108,7 @@ maintainAspectRatio: true
 
   getDashboardData(){
     // dayOfMonth,week,year,month
-    this.auth.getDashboardData("year")
+    this.auth.getDashboardData("month",this.startDate, this.endDate)
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
@@ -117,6 +122,17 @@ maintainAspectRatio: true
       //     "totalRevenue": 11169.26
       // }
 
+
+    //   {
+    //     "totalOrders": 14,
+    //     "totalDeliveredOrders": 3,
+    //     "totalCanceledOrders": 0,
+    //     "totalUsers": 28,
+    //     "totalOnlineUsers": 1,
+    //     "totalPartners": 22,
+    //     "totalDeliveryBoys": 5,
+    //     "totalRevenue": 160077.52
+    // }
       this.totalOrders = value['data']['totalOrders'];
       this.totalDeliveredOrders = value['data']['totalDeliveredOrders'];
       this.totalUsers = value['data']['totalUsers'];
@@ -124,6 +140,7 @@ maintainAspectRatio: true
       this.totalRevenue = value['data']['totalRevenue'];
       this.totalDeliveryBoys = value['data']['totalDeliveryBoys'];
       this.totalCanceledOrders = value['data']['totalCanceledOrders'];
+      this.totalOnlineUsers = value['data']['totalOnlineUsers'];
     this.createChart();
 
       },
@@ -168,7 +185,31 @@ maintainAspectRatio: true
       }
     })
   }
+  setDateEvent(event:any, type:any){
+    console.log(event.detail.value);
+console.log(type);
 
+    let date = event.detail.value;
+    if(type === "s"){
+      console.log("Set Start Date");
+      this.startDate = date;
+      
+    }else if(type === "e"){
+      console.log("Set End Date");
+      this.endDate = date;
+      
+      
+    }
+    
+    
+    console.log(this.startDate);
+    console.log(this.endDate);
+    this.getDashboardData()
+    
+    this.getRevenueChartData();
+    this.getOrderChartData();
+    
+  }
   viewNotifications(){
 
   }

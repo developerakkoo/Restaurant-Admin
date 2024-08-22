@@ -54,9 +54,10 @@ export class AuthService {
     );
   }
 
-  getPartnerCompensationTable(hotelId:any, startDate:any, endDate:any, page:any) {
+  getPartnerCompensationTable(hotelId:any, startDate:any, endDate:any, page:any, paidStatus:number) {
+    //paid = 1, 0 = unpaid
     return this.http.get(
-      environment.URL + `admin/order/get-all?hotelId=${hotelId}&startDate=${startDate}&endDate=${endDate}&populate=1&pageSize=50&page=${page}`,
+      environment.URL + `admin/order/get-all?hotelId=${hotelId}&startDate=${startDate}&endDate=${endDate}&populate=1&pageSize=50&page=${page}&ps=${paidStatus}`,
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -64,9 +65,9 @@ export class AuthService {
       }
     );
   }
-  getDeliveryBoyCompensationTable(boyId:any, startDate:any, endDate:any, page:any) {
+  getDeliveryBoyCompensationTable(boyId:any, startDate:any, endDate:any, page:any,paidStatus:number) {
     return this.http.get(
-      environment.URL + `admin/order/get-all?deliveryBoyId=${boyId}&startDate=${startDate}&endDate=${endDate}&populate=1&pageSize=50&page=${page}`,
+      environment.URL + `admin/order/get-all?deliveryBoyId=${boyId}&startDate=${startDate}&endDate=${endDate}&populate=1&pageSize=50&page=${page}&ds=${paidStatus}`,
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -176,7 +177,7 @@ export class AuthService {
       }
     );
   }
-  getDashboardData(sort: any) {
+  getDashboardData(sort: any,startDate:any,endDate:any) {
     return this.http.get(
       environment.URL + `admin/get/dashboard-data?sort=${sort}`,
       {
