@@ -70,6 +70,11 @@
           <ion-badge *ngIf="item?.orderStatus === 0" class="ion-padding" color="primary" mode="ios">New</ion-badge>
           <ion-badge *ngIf="item?.orderStatus === 3" class="ion-padding" color="success" mode="ios">Delivered</ion-badge>
           <ion-badge *ngIf="item?.orderStatus === 2" class="ion-padding" color="tertiary" mode="ios">Delivery Assigned</ion-badge>
+          <div *ngIf="item?.deliveryboyDetails.length > 0">
+            <p style="font-size: 14px; text-align: center; text-decoration: underline;" *ngIf="item?.orderStatus === 2"> {{item?.
+              deliveryboyDetails[0]?.firstName}} {{item?.
+                deliveryboyDetails[0]?.lastName}}</p>
+          </div>
           <ion-badge *ngIf="item?.orderStatus === 5" class="ion-padding" color="danger" mode="ios">Rejected</ion-badge>
           <ion-badge *ngIf="item?.orderStatus === 4" class="ion-padding" color="warning" mode="ios">On the way</ion-badge>
 

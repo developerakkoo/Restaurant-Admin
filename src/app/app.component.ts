@@ -16,6 +16,7 @@ export class AppComponent {
     { title: 'Categories', url: '/folder/category', icon: 'card' },
     { title: 'Chat', url: '/folder/chat', icon: 'warning' },
     { title: 'Promo code', url: '/folder/promo-code', icon: 'warning' },
+    { title: 'Banners', url: '/folder/banner', icon: 'warning' },
     { title: 'Delivery/handling Charges', url: '/folder/settings', icon: 'warning' },
   ];
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];

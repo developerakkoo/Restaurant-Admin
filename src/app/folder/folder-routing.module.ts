@@ -57,6 +57,10 @@ const routes: Routes = [
     path: 'category',
     loadChildren: () => import('./category/category.module').then( m => m.CategoryPageModule)
   },
+  {
+    path: 'banner',
+    loadChildren: () => import('./banner/banner.module').then( m => m.BannerPageModule)
+  },
 
 
  

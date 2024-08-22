@@ -15,8 +15,8 @@ export class OrdersPage implements OnInit {
   query:string = "";
   status:string = "";
 
-  startDate:any;
-  endDate:any;
+  startDate:any = "";
+  endDate:any = "";
 
 
   constructor(private auth:AuthService,
