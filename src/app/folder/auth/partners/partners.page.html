@@ -15,15 +15,15 @@
 <ion-content [fullscreen]="true">
   <ion-grid >
     <ion-row>
-      <ion-col size="6">
+      <ion-col size="9">
         <ion-item lines="none">
           <ion-label>Partners
             <p>Your partenrs here</p>
           </ion-label>
         </ion-item>
       </ion-col>
-      <ion-col size="6">
-        <ion-button (click)="openPartnerRegisterPage()" expand="block" fill="clear" shape="round">
+      <ion-col size="3">
+        <ion-button (click)="openPartnerRegisterPage()" expand="block" >
          Add new Partner
         </ion-button>
       </ion-col>
@@ -59,10 +59,11 @@
           <th>{{item?.hotels[0]?.hotelName}}</th>
           <th>{{item.phoneNumber}}</th>
           <th>{{item.email}}</th>
-          <th *ngFor="let hotel of item.hotels" >
-            <ion-badge class="ion-padding" color="danger" mode="ios" (click)="openViewPage(item._id)">View</ion-badge>
+          <th  >
+            <ion-badge class="ion-padding" color="secondary" mode="ios" (click)="openViewPage(item._id)">View</ion-badge>
+            <ion-badge class="ion-padding ion-margin-start" color="danger" mode="ios" (click)="presentAlertConfirmForDelete(item._id, item.hotels._id)">Delete</ion-badge>
             <ion-badge class="ion-padding ion-margin-start" color="primary" mode="ios" (click)="openLocationPage(item._id)">Add Hotel</ion-badge>
-      <ion-toggle slot="end" [enableOnOffLabels]="true"  class="ion-margin-start" (ionChange)="openhotel(hotel)" [checked]="hotel.isOnline === true"></ion-toggle>
+      <ion-toggle slot="end" [enableOnOffLabels]="true"  class="ion-margin-start" (ionChange)="openhotel(item?.hotelId)" [checked]="item?.hotelId?.isOnline === true"></ion-toggle>
           </th>
         </tr>
       </tbody>

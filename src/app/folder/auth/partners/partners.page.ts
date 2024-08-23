@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -17,6 +17,7 @@ export class PartnersPage implements OnInit {
 
   constructor(private auth: AuthService,
     private router: Router,
+    private alertController: AlertController,
               private loadingController: LoadingController
   ) { }
 
@@ -108,5 +109,44 @@ this.router.navigate(['folder','partners','add'])
     console.log(id);
     
     this.router.navigate(['folder','partners','view',id]);
+  }
+
+
+  async presentAlertConfirmForDelete(partnerId:any, hotelId:any) {
+    const alert = await this.alertController.create({
+      header: 'Confirm!',
+      message: 'Are you sure you want to delete the partner?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Okay',
+          handler: () => {
+            console.log('Confirm Okay');
+            this.deletePartner(partnerId,hotelId);
+          }
+        }
+      ]
+    });
+  
+    await alert.present();
+  }
+  deletePartner(partnerId:any, hotelId:any){
+    this.auth.deletePartnerComplete(partnerId,hotelId)
+    .subscribe({
+      next:async(value:any) =>{
+        console.log(value);
+        
+      },
+      error:async(error:HttpErrorResponse) =>{
+        console.log(error);
+        
+      }
+    })
   }
 }

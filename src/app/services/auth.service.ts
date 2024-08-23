@@ -582,6 +582,17 @@ export class AuthService {
       }
     );
   }
+
+  deletePartnerComplete(hotelId: any, partnerId:any) {
+    return this.http.delete(
+      environment.URL + `partner/remove/delete/${hotelId}/${partnerId}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
+      }
+    );
+  }
   getAllCategory() {
     return this.http.get(environment.URL + `admin/category/get/all`, {
       headers: {
