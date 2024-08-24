@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastController, LoadingController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { environment } from 'src/environments/environment';
@@ -13,18 +13,25 @@ import { environment } from 'src/environments/environment';
 })
 export class DishPage implements OnInit {
   dishId: any;
+  hotelId: any;
   hotels: any[] = [];
   categories: any[] = [];
   isDishImageUploadModalOpen: boolean = false;
-  form: FormGroup;
+  form!: FormGroup;
   constructor(
     private auth: AuthService,
     private router: Router,
+    private route:ActivatedRoute,
     private toastController: ToastController,
     private fb: FormBuilder,
     private loadingController: LoadingController,
     private http:HttpClient
   ) {
+    this.hotelId = this.route.snapshot.paramMap.get("id");
+    console.log(this.hotelId);
+    
+    this.loadCategory();
+    this.getAllHotels();
     this.form = this.fb.group({
       dishes: this.fb.array([this.createDishFormGroup()])
     });
@@ -33,12 +40,13 @@ export class DishPage implements OnInit {
   ngOnInit() {}
 
   ionViewDidEnter() {
-    this.loadCategory();
-    this.getAllHotels();
+   
   }
   createDishFormGroup(): FormGroup {
+    console.log(this.hotelId);
+    
     return this.fb.group({
-      hotelId: ['', [Validators.required]],
+      hotelId: [this.hotelId,[Validators.required]],
       categoryId: ['', [Validators.required]],
       name: ['', [Validators.required]],
       dishType: ['', [Validators.required]],
@@ -112,6 +120,13 @@ export class DishPage implements OnInit {
   }
 
   async onSubmit() {
+
+    if(this.form.invalid){
+      console.log(this.form.value);
+      console.log("Foerm Invalid");
+      
+      
+    }
     if (this.form.valid) {
       console.log(this.form.value);
       this.auth.addProduct(this.form.value).subscribe({

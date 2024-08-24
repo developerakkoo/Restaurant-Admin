@@ -18,6 +18,7 @@ export class HotelsPage implements OnInit {
   categories:any[] = [];
   lat:any;
   lng:any;
+  partnerId:any;
   constructor(private formBuilder: FormBuilder,
     private auth:AuthService,
     private data: DataService,
@@ -27,6 +28,7 @@ export class HotelsPage implements OnInit {
               private toastController: ToastController) {
                 this.lat = this.route.snapshot.paramMap.get('lat');
                 this.lng = this.route.snapshot.paramMap.get('lng');
+                this.partnerId = this.route.snapshot.paramMap.get('id');
                 this.form = this.formBuilder.group({
                   hotelName:[,[Validators.required]],
                   address:[,[Validators.required]],
@@ -91,7 +93,7 @@ export class HotelsPage implements OnInit {
     await loading.present();
     if(this.form.valid){
       console.log(this.form.value);
-      this.auth.hotelRegister(this.form.value.hotelName,this.form.value.address, this.form.value.categoryId, this.lat, this.lng)
+      this.auth.hotelRegister(this.form.value.hotelName,this.form.value.address, this.form.value.categoryId, this.lat, this.lng,this.partnerId)
       .subscribe({
         next:async(value:any) =>{
           console.log(value);

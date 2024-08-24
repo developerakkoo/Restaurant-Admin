@@ -16,6 +16,8 @@ import { Geolocation } from '@capacitor/geolocation';
 export class MapPage implements OnInit {
 
   @ViewChild('map')
+
+  partnerId:any;
   mapRef!: ElementRef<HTMLElement>;
   newMap!: GoogleMap;
   lng:any;
@@ -36,6 +38,8 @@ export class MapPage implements OnInit {
   ) { 
   
 
+  
+    
     this.location = {lat: this.lng, lng: this.lon}
     this.reverseGeocoding(this.lng, this.lon);
   }
@@ -43,6 +47,8 @@ export class MapPage implements OnInit {
   ngOnInit() {
   }
   ionViewDidEnter(){
+    this.partnerId = this.route.snapshot.paramMap.get("id");
+    console.log(this.partnerId);
     this.loadCurrentPosition()
   }
   async loadCurrentPosition() {
@@ -152,7 +158,9 @@ await this.newMap.enableCurrentLocation(true);
   }
 
   setAddress(){
-    this.router.navigate(['folder','partners','hotels', this.lng, this.lon])
+    console.log(this.partnerId);
+    
+    this.router.navigate(['folder','partners','hotels', this.lng, this.lon, this.partnerId])
   }
 
 }

@@ -35,7 +35,7 @@
         <h1>No Data to Load!</h1>
       </ion-text>
     </ion-col>
-    <ion-col size="12">
+    <ion-col size="12" *ngIf="compensationTable.length > 0">
       <ion-list-header>
         <ion-label>Settlement Table</ion-label>
         <ion-input  style="width: 200px;  --height:40px;" type="date" label="Start Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 's')" placeholder="Awesome Input"></ion-input>

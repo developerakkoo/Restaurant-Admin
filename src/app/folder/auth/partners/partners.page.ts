@@ -35,7 +35,7 @@ export class PartnersPage implements OnInit {
   }
 
   async getAllPartners(){
-    this.auth.getAllPartners(this.query, 1, 50, "","", this.status)
+    this.auth.getAllPartners(this.query, 1, 100, "","", this.status)
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
@@ -102,7 +102,7 @@ this.router.navigate(['folder','partners','add'])
   openAddDishPage(id:any){
     console.log(id);
     
-    this.router.navigate(['folder','partners','dish']);
+   this.router.navigate(['folder','partners','dish', id]);
   }
 
   openViewPage(id:any){
@@ -128,7 +128,7 @@ this.router.navigate(['folder','partners','add'])
           text: 'Okay',
           handler: () => {
             console.log('Confirm Okay');
-            this.deletePartner(partnerId,hotelId);
+            this.deletePartner(partnerId);
           }
         }
       ]
@@ -136,16 +136,16 @@ this.router.navigate(['folder','partners','add'])
   
     await alert.present();
   }
-  deletePartner(partnerId:any, hotelId:any){
-    this.auth.deletePartnerComplete(partnerId,hotelId)
+  deletePartner(partnerId:any){
+    this.auth.deletePartnerComplete(partnerId)
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
-        
+        this.getAllPartners();
       },
       error:async(error:HttpErrorResponse) =>{
         console.log(error);
-        
+        this.getAllPartners();
       }
     })
   }

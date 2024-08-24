@@ -17,11 +17,11 @@ const routes: Routes = [
     loadChildren: () => import('./map/map.module').then( m => m.MapPageModule)
   },
   {
-    path: 'hotels/:lat/:lng',
+    path: 'hotels/:lat/:lng/:id',
     loadChildren: () => import('./hotels/hotels.module').then( m => m.HotelsPageModule)
   },
   {
-    path: 'dish',
+    path: 'dish/:id',
     loadChildren: () => import('./dish/dish.module').then( m => m.DishPageModule)
   },
   {

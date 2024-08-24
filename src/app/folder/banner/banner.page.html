@@ -1,13 +1,59 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>banner</ion-title>
+    <ion-title>Banner</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">banner</ion-title>
-    </ion-toolbar>
-  </ion-header>
+ <ion-grid fixed>
+  <ion-row>
+    <ion-col size="6">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Home Banner</ion-card-subtitle>
+          <ion-card-title>Awesome Title</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <input type="file" (change)="homeImageEvent($event)">
+          <ion-button (click)="uploadBanner(0)" expand="block">
+            Upload
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Cart Banner</ion-card-subtitle>
+          <ion-card-title>Awesome Title</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <input type="file" (change)="cartImageEvent($event)">
+          <ion-button (click)="uploadBanner(1)" expand="block">
+            Upload
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Profile Banner</ion-card-subtitle>
+          <ion-card-title>Awesome Title</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <input type="file" (change)="profileImageEvent($event)">
+          <ion-button (click)="uploadBanner(3)" expand="block">
+            Upload
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+    <ion-col size="6">
+
+      <ion-list>
+        <ion-list-header>
+          <ion-label>All Banners</ion-label>
+          <ion-button>See All</ion-button>
+        </ion-list-header>
+      </ion-list>
+    </ion-col>
+  </ion-row>
+ </ion-grid>
 </ion-content>

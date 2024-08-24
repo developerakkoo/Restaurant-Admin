@@ -98,12 +98,12 @@ export class AuthService {
       }
     );
   }
-  hotelRegister(name: any, address: any, category: any[], lng: any, lat: any) {
+  hotelRegister(name: any, address: any, category: any[], lng: any, lat: any,partnerId:any) {
     return this.http.post(
-      environment.URL + `partner/hotel/register`,
+      environment.URL + `admin/hotel/register`,
       {
         hotelName: name,
-        userId: this.userId.value,
+        userId: partnerId,
         address: address,
         category,
         lat,
@@ -583,9 +583,9 @@ export class AuthService {
     );
   }
 
-  deletePartnerComplete(hotelId: any, partnerId:any) {
+  deletePartnerComplete(partnerId:any) {
     return this.http.delete(
-      environment.URL + `partner/remove/delete/${hotelId}/${partnerId}`,
+      environment.URL + `partner/delete-all/${partnerId}`,
       {
         headers: {
           'x-access-token': this.accessToken.value.toString(),
@@ -607,6 +607,23 @@ export class AuthService {
         'x-access-token': this.accessToken.value.toString(),
       },
     })
+  }
+
+  uploadBannerImage(formdata:FormData){
+    return this.http.post(environment.URL + `admin/banner/add`,formdata,{
+      headers: {
+        'x-access-token': this.accessToken.value.toString(),
+      },
+    })
+  }
+  getAllBannerImageByType() {
+    // enum: [0, 1, 2, 3], // home, cart, fav, profile
+
+    return this.http.get(environment.URL + `admin/banner/get`, {
+      headers: {
+        'x-access-token': this.accessToken.value.toString(),
+      },
+    });
   }
 
   blockDeliveryBoy(deliveryBoyId:any, status:any ){

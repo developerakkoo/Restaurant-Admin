@@ -62,7 +62,8 @@
           <th  >
             <ion-badge class="ion-padding" color="secondary" mode="ios" (click)="openViewPage(item._id)">View</ion-badge>
             <ion-badge class="ion-padding ion-margin-start" color="danger" mode="ios" (click)="presentAlertConfirmForDelete(item._id, item.hotels._id)">Delete</ion-badge>
-            <ion-badge class="ion-padding ion-margin-start" color="primary" mode="ios" (click)="openLocationPage(item._id)">Add Hotel</ion-badge>
+            <ion-badge *ngIf="item?.hotels.length == 0" class="ion-padding ion-margin-start" color="primary" mode="ios" (click)="openLocationPage(item._id)">Add Hotel</ion-badge>
+            <ion-badge *ngIf="item?.hotels.length != 0" class="ion-padding ion-margin-start" color="warning" mode="ios" (click)="openAddDishPage(item?.hotels[0]?._id)">Add Dish</ion-badge>
       <ion-toggle slot="end" [enableOnOffLabels]="true"  class="ion-margin-start" (ionChange)="openhotel(item?.hotelId)" [checked]="item?.hotelId?.isOnline === true"></ion-toggle>
           </th>
         </tr>
