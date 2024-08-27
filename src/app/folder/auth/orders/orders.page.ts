@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActionSheetController, LoadingController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
-
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-orders',
   templateUrl: './orders.page.html',
@@ -19,6 +19,7 @@ export class OrdersPage implements OnInit {
   endDate:any = "";
 
 
+  filename:any= "new-sheet.xlsx";
   constructor(private auth:AuthService,
     private router:Router,
     private actionSheetController: ActionSheetController,
@@ -223,8 +224,17 @@ assignDriverEvent(ev:any, orderId:any){
 
 }
 
-downloadExcelSheet(){
+ downloadExcelSheet(){
+  let data = document.getElementById("table-data");
 
+  const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(data);
+  // Generate Workbook
+  const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Sheet1");
+
+  // Save To file
+
+   XLSX.writeFile(wb,this.filename);
 }
 openDetailsPage(orderId:any)
 {
