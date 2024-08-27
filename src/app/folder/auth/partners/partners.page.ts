@@ -105,6 +105,11 @@ this.router.navigate(['folder','partners','add'])
    this.router.navigate(['folder','partners','dish', id]);
   }
 
+
+  openDishViewPage(id:any){
+   this.router.navigate(['folder','partners','dish',id,'view',id]);
+
+  }
   openViewPage(id:any){
     console.log(id);
     

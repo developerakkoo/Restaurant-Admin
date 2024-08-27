@@ -177,6 +177,17 @@ export class AuthService {
       }
     );
   }
+
+  getDishByHotelId(hotelId:any) {
+    return this.http.get(
+      environment.URL + `hotel/dish/get/${hotelId}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
   getDashboardData(sort: any,startDate:any,endDate:any) {
     return this.http.get(
       environment.URL + `admin/get/dashboard-data?sort=${sort}`,
@@ -633,6 +644,13 @@ export class AuthService {
       headers: {
         'x-access-token': this.accessToken.value.toString(),
       },
+    })
+  }
+
+  
+  deleteDishById(dishId:any ){
+    return this.http.delete(environment.URL + `admin/hotel/dish/delete?dishId=${dishId}`,{
+      
     })
   }
 }

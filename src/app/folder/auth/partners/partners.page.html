@@ -63,8 +63,22 @@
             <ion-badge class="ion-padding" color="secondary" mode="ios" (click)="openViewPage(item._id)">View</ion-badge>
             <ion-badge class="ion-padding ion-margin-start" color="danger" mode="ios" (click)="presentAlertConfirmForDelete(item._id, item.hotels._id)">Delete</ion-badge>
             <ion-badge *ngIf="item?.hotels.length == 0" class="ion-padding ion-margin-start" color="primary" mode="ios" (click)="openLocationPage(item._id)">Add Hotel</ion-badge>
-            <ion-badge *ngIf="item?.hotels.length != 0" class="ion-padding ion-margin-start" color="warning" mode="ios" (click)="openAddDishPage(item?.hotels[0]?._id)">Add Dish</ion-badge>
-      <ion-toggle slot="end" [enableOnOffLabels]="true"  class="ion-margin-start" (ionChange)="openhotel(item?.hotelId)" [checked]="item?.hotelId?.isOnline === true"></ion-toggle>
+            <ion-badge *ngIf="item?.hotels.length != 0" class="ion-padding ion-margin-start" color="warning" mode="ios"  id="hover-trigger">Dish</ion-badge>
+            <ion-popover trigger="hover-trigger" triggerAction="hover">
+              <ng-template>
+                <ion-content class="ion-padding">
+                  <ion-list>
+                    <ion-item lines="full" (click)="openDishViewPage(item?.hotels[0]?._id)">
+                      <ion-label>View</ion-label>
+                    </ion-item>
+                    <ion-item lines="full" (click)="openAddDishPage(item?.hotels[0]?._id)">
+                      <ion-label>Add</ion-label>
+                    </ion-item>
+                  </ion-list>
+                </ion-content>
+              </ng-template>
+            </ion-popover>
+      <ion-toggle slot="end" [enableOnOffLabels]="true"  class="ion-margin-start" (ionChange)="openhotel(item?.hotels[0])" [checked]="item?.hotels[0]?.isOnline === true"></ion-toggle>
           </th>
         </tr>
       </tbody>

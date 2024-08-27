@@ -1,0 +1,27 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Dish</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+ <ion-list>
+  <ion-list-header>
+    <ion-label>All Dishes</ion-label>
+  </ion-list-header>
+  <ion-item *ngFor="let item of dishes">
+    <ion-avatar slot="start">
+      <img crossorigin="anonymous" [src]="item?.image_url" />
+    </ion-avatar>
+    <ion-label>
+      {{item?.name}}
+      <p> <strong>Partner price:- </strong> {{item?.partnerPrice}} </p>
+      <p> <strong>User price:- </strong> {{item?.userPrice}} </p>
+    </ion-label>
+    <ion-button color="danger" (click)="delete(item)" slot="end">
+      <ion-icon slot="icon-only" name="remove"></ion-icon>
+    </ion-button>
+  </ion-item>
+
+</ion-list>
+</ion-content>
