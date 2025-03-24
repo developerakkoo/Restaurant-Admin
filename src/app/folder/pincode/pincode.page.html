@@ -1,0 +1,12 @@
+<ion-header [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Pincode Setup</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="createDraggableMarker()">Add Pincode</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div #map id="map" style="height: 70vh"></div>
+</ion-content>

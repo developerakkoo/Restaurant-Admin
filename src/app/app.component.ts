@@ -17,27 +17,30 @@ export class AppComponent {
     { title: 'Chat', url: '/folder/chat', icon: 'warning' },
     { title: 'Promo code', url: '/folder/promo-code', icon: 'warning' },
     { title: 'Banners', url: '/folder/banner', icon: 'warning' },
-    { title: 'Delivery/handling Charges', url: '/folder/settings', icon: 'warning' },
+    {
+      title: 'Delivery/handling Charges',
+      url: '/folder/settings',
+      icon: 'warning',
+    },
+    {
+      title: 'Pincode Setup',
+      url: '/folder/pincode',
+      icon: 'warning',
+    },
   ];
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
-  constructor(private data:DataService,
-              private router:Router
-  ) {
+  constructor(private data: DataService, private router: Router) {
     this.checkForLoginStatus();
   }
 
-
-  async checkForLoginStatus(){
-    let userId = await this.data.get("userId");
+  async checkForLoginStatus() {
+    let userId = await this.data.get('userId');
     console.log(userId);
-    if(userId != null || userId != undefined){
-      console.log("userid not null");
+    if (userId != null || userId != undefined) {
+      console.log('userid not null');
       this.router.navigate(['folder', 'dash']);
-      
+    } else {
+      this.router.navigate(['folder', 'login']);
     }
-    else{
-      this.router.navigate(['folder','login']);
-    }
-    
   }
 }

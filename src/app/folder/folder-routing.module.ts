@@ -61,6 +61,10 @@ const routes: Routes = [
     path: 'banner',
     loadChildren: () => import('./banner/banner.module').then( m => m.BannerPageModule)
   },
+  {
+    path: 'pincode',
+    loadChildren: () => import('./pincode/pincode.module').then( m => m.PincodePageModule)
+  },
 
 
  
