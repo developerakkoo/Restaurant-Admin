@@ -653,4 +653,50 @@ export class AuthService {
       
     })
   }
+
+  //#TODO All Pincode Routes
+  
+  addPincode(body: any) {
+    return this.http.post(
+      environment.URL + `admin/pincode/add`,
+      body,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
+      }
+    );
+  }
+
+  updatePincode(pincodeId: any, body: any) {
+    return this.http.put(
+      environment.URL + `admin/pincode/update/${pincodeId}`,
+      body,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
+      }
+    );
+  }
+
+  deletePincode(pincodeId: any) {
+    return this.http.delete(
+      environment.URL + `admin/pincode/delete/${pincodeId}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
+      }
+    );
+  }
+
+  getAllPincode() {
+    return this.http.get(environment.URL + `admin/pincode/get/all`, {
+      headers: {
+        'x-access-token': this.accessToken.value.toString(),
+      },
+    });
+  }
+
 }

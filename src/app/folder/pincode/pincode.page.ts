@@ -145,6 +145,8 @@ export class PincodePage implements OnInit, AfterViewInit {
     // When the marker is dragged, update its address.
     google.maps.event.addListener(this.draggableMarker, 'dragend', () => {
       const pos = this.draggableMarker.getPosition();
+      console.log(pos + "DragEnd");
+      
       this.getAddressFromLatLng(pos.lat(), pos.lng());
     });
 
@@ -231,6 +233,8 @@ export class PincodePage implements OnInit, AfterViewInit {
   // Dummy method to save the pincode data to the database.
   // Replace this with your actual API call.
   savePincodeToDB(data: any) {
+    console.log(data);
+    
     // For demonstration, simulate a successful save and add a non-draggable marker.
     this.addSavedMarker(data);
     // Remove the draggable marker.
