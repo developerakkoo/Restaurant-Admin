@@ -4,187 +4,120 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Dashboard</ion-title>
-    <ion-button  color="primary" (click)="viewNotifications()" slot="end" fill="clear">
-      <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
-    </ion-button>
-    <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
-      <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
-    </ion-button>
+    <ion-buttons slot="end">
+      <ion-button color="primary" (click)="viewNotifications()" fill="clear">
+        <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
+      </ion-button>
+      <ion-button color="primary" (click)="viewMessages()" fill="clear">
+        <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content [fullscreen]="true">
-
-  <ion-list-header>
-    <ion-label>Analytics</ion-label>
-    <ion-input  style="width: 200px;  --height:40px;" type="date" label="Start Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 's')" placeholder="Awesome Input"></ion-input>
-    <ion-input style="width: 200px;  --height:40px;" type="date" label="End Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 'e')" placeholder="Awesome Input"></ion-input>
-  </ion-list-header>
   <ion-grid>
-
     <ion-row>
-      
-      <ion-col size="3">
-        <ion-card>
-          <ion-card-header>
-            <ion-grid fixed>
-              <ion-row>
-                <ion-col size="6">
-                  <img src="assets/Icon_Order.svg" alt="" srcset="">
-                </ion-col>
-                <ion-col size="6">
-                  <ion-card-subtitle>Total Orders</ion-card-subtitle>
-                  <ion-card-title>{{totalOrders }}</ion-card-title></ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-card-header>
-        
-        </ion-card>
+      <ion-col size="12" class="dropdown-container">
+        <ion-select fill="outline" placeholder="Sort" (ionChange)="onFilterChange($event)">
+          <ion-select-option value="daily">Daily</ion-select-option>
+          <ion-select-option value="weekly">Weekly</ion-select-option>
+          <ion-select-option value="quarterly">Quarterly</ion-select-option>
+          <ion-select-option value="yearly">Yearly</ion-select-option>
+        </ion-select>
       </ion-col>
-      <ion-col size="3">
-        <ion-card>
-          <ion-card-header>
-            <ion-grid fixed>
-              <ion-row>
-                <ion-col size="6">
-                  <img src="assets/icon Delivered.svg" alt="" srcset="">
-                </ion-col>
-                <ion-col size="6">
-                  <ion-card-subtitle>Total Delivered</ion-card-subtitle>
-                  <ion-card-title>{{totalDeliveredOrders}}</ion-card-title></ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-card-header>
-        
-        </ion-card>
-      </ion-col>
-      <ion-col size="3">
-        <ion-card>
-          <ion-card-header>
-            <ion-grid fixed>
-              <ion-row>
-                <ion-col size="6">
-                  <img src="assets/total_cancelled.svg" alt="" srcset="">
-                </ion-col>
-                <ion-col size="6">
-                  <ion-card-subtitle>Total Canceled</ion-card-subtitle>
-                  <ion-card-title>{{totalCanceledOrders}}</ion-card-title></ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-card-header>
-        
-        </ion-card>
-      </ion-col>
-      <ion-col size="3">
-        <ion-card>
-          <ion-card-header>
-            <ion-grid fixed>
-              <ion-row>
-                <ion-col size="6">
-                  <img src="assets/total_revenue.svg" alt="" srcset="">
-                </ion-col>
-                <ion-col size="6">
-                  <ion-card-subtitle>Total Revenue</ion-card-subtitle>
-                  <ion-card-title>{{totalRevenue}}</ion-card-title></ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-card-header>
-        
-        </ion-card>
-      </ion-col>
-
-
-      
     </ion-row>
-   </ion-grid>
-
-   <ion-grid fixed>
     <ion-row>
-      <ion-col size="3">
+      <ion-col size="12">
         <ion-card>
           <ion-card-header>
-            <ion-card-subtitle>Total Users</ion-card-subtitle>
-            <ion-card-title> {{totalUsers}} </ion-card-title>
+            <ion-card-title>Overview</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-      <ion-col size="3">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-subtitle>Total Online Users</ion-card-subtitle>
-            <ion-card-title> {{totalOnlineUsers}} </ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-      <ion-col size="3">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-subtitle>Total Partners</ion-card-subtitle>
-            <ion-card-title> {{totalPartners}} </ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-      <ion-col size="3">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-subtitle>Total Delivery Boys</ion-card-subtitle>
-            <ion-card-title> {{totalDeliveryBoys}} </ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
+            <ion-grid>
+              <ion-row>
+                <ion-col size="3">
+                  <ion-card>
+                    <ion-card-header>
+                      <ion-card-subtitle>Total Orders</ion-card-subtitle>
+                      <ion-card-title>{{ totalOrders }}</ion-card-title>
+                    </ion-card-header>
+                  </ion-card>
+                </ion-col>
+                <ion-col size="3">
+                  <ion-card>
+                    <ion-card-header>
+                      <ion-card-subtitle>Total Revenue</ion-card-subtitle>
+                      <ion-card-title>{{ totalRevenue }}</ion-card-title>
+                    </ion-card-header>
+                  </ion-card>
+                </ion-col>
+                <ion-col size="3">
+                  <ion-card>
+                    <ion-card-header>
+                      <ion-card-subtitle>Active Users</ion-card-subtitle>
+                      <ion-card-title>{{ totalOnlineUsers }}</ion-card-title>
+                    </ion-card-header>
+                  </ion-card>
+                </ion-col>
+                <ion-col size="3">
+                  <ion-card>
+                    <ion-card-header>
+                      <ion-card-subtitle>Partners</ion-card-subtitle>
+                      <ion-card-title>{{ totalPartners }}</ion-card-title>
+                    </ion-card-header>
+                  </ion-card>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
           </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
-   </ion-grid>
-   <ion-grid >
+
     <ion-row>
       <ion-col size="6">
         <ion-card>
-          
-          <div class="chart-container-orders">
-            <canvas  id="MyChartOrder" >{{ chartOrder }}</canvas>
-  
-          </div>
+          <ion-card-header>
+            <ion-card-title>Order Statistics</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="chart-container-orders">
+              <canvas id="MyChartOrder">{{ chartOrder }}</canvas>
+            </div>
+          </ion-card-content>
         </ion-card>
       </ion-col>
       <ion-col size="6">
         <ion-card>
-          <div style="display: flex; flex-direction: row;">
-            
-           
-           <div class="chart-container-revenue">
-            <canvas  id="MyRevenueChart" >{{ revenueChart }}</canvas>
-
-           </div>
-          </div>
-          
-        </ion-card>
-      </ion-col>
-      <ion-col size="4">
-        <ion-card>
-          <div style="display: flex; flex-direction: row;">
-           
-           
-           
-          </div>
-          
+          <ion-card-header>
+            <ion-card-title>Revenue Statistics</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="chart-container-revenue">
+              <canvas id="MyRevenueChart">{{ revenueChart }}</canvas>
+            </div>
+          </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
-   </ion-grid>
 
-   <ion-grid >
     <ion-row>
-      <ion-col size="6">
-
-        
+      <ion-col size="12">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Recent Activities</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let activity of recentActivities">
+                <ion-label>{{ activity.description }}</ion-label>
+                <ion-note slot="end">{{ activity.timestamp }}</ion-note>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
       </ion-col>
-      <ion-col size="6"></ion-col>
     </ion-row>
-   </ion-grid>
+  </ion-grid>
 </ion-content>

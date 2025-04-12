@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { LoadingController, ModalController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -17,7 +17,8 @@ export class AddPage implements OnInit {
   isCategoryAdded:boolean = false;
   constructor(private modalController: ModalController,
               private auth: AuthService,
-              private formBuilder: FormBuilder
+              private formBuilder: FormBuilder,
+              private loadingController: LoadingController
   ) { 
     this.fb = this.formBuilder.group({
       categoryName: [,[Validators.required]]
@@ -31,7 +32,13 @@ export class AddPage implements OnInit {
     this.modalController.dismiss();
   }
 
-  fileEvent(ev:any){
+ async fileEvent(ev:any){
+    let loading = await  this.loadingController.create({
+      message: 'Uploading...',
+      // spinner: 'bubbles',
+      // cssClass: 'custom-loading'
+    });
+    await loading.present();
     console.log(ev.target.files[0]);
     this.file = ev.target.files[0];
     let formdata = new FormData();
@@ -41,10 +48,15 @@ export class AddPage implements OnInit {
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
+        await loading.dismiss();
         this.modalController.dismiss();
       },
       error:async(error:HttpErrorResponse) =>{
         console.log(error);
+        this.modalController.dismiss();
+
+        await loading.dismiss();
+
         
       }
     })

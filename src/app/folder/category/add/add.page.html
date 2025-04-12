@@ -9,16 +9,18 @@
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <form [formGroup]="fb" (ngSubmit)="add()" *ngIf="!isCategoryAdded">
-   
-      <ion-input required formControlName="categoryName" mode="md" fill="outline" label="Category Name" labelPlacement="stacked" type="text"></ion-input>
-  
-  
+    <ion-input required formControlName="categoryName" mode="md" fill="outline" label="Category Name" labelPlacement="stacked" type="text"></ion-input>
     <ion-button block color="primary" type="submit" [disabled]="fb.invalid">
       Add 
     </ion-button>
   </form>
 
-  <div *ngIf="isCategoryAdded">
-    <input type="file"  (change)="fileEvent($event)" id="file">
+  <div *ngIf="isCategoryAdded" class="file-picker-container">
+    <label for="file" class="file-picker-label">
+      <ion-icon name="cloud-upload-outline"></ion-icon>
+      <span>Choose a file</span>
+    </label>
+    <input type="file" (change)="fileEvent($event)" id="file" class="file-picker-input">
   </div>
 </ion-content>
+
