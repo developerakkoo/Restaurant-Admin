@@ -19,7 +19,9 @@ export class DeliveryBoyPage implements OnInit {
     private loadingController: LoadingController
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log('DeliveryBoyPage initialized');
+  }
 
   onSearchChange(ev: any) {
     console.log(ev.detail.value);
@@ -73,6 +75,20 @@ openDriverRegisterPage(){
 
     unblock(id:any){
       this.auth.blockDeliveryBoy(id,0)
+      .subscribe({
+        next:async(value:any) =>{
+          console.log(value);
+          this.getAllDeliveryBoys();
+        },
+        error:async(error:HttpErrorResponse) =>{
+          console.log(error);
+          
+        }
+      })
+    }
+
+    deleteBoy(id:any){
+      this.auth.deleteDeliveryBoy(id)
       .subscribe({
         next:async(value:any) =>{
           console.log(value);

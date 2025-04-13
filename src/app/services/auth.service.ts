@@ -307,6 +307,19 @@ export class AuthService {
     );
   }
 
+
+  deleteDeliveryBoy(deliveryBoyId:any){
+    return this.http.delete(
+      environment.URL + `admin/delete/delivery-boy/${deliveryBoyId}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+
   getAllHotels(
     query: string,
     pageNumber: any,

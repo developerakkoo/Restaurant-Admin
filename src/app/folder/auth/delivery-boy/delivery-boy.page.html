@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
     <ion-title>Delivery Boys</ion-title>
     <ion-button  color="primary" (click)="viewNotifications()" slot="end" fill="clear">
@@ -12,14 +12,10 @@
 </ion-header>
 
 <ion-content [fullscreen]="false">
-  <ion-text *ngIf="boys.length == 0" color="primary" class="ion-text-center">
-    <h1>
-      No Delivery Boys Found!
-    </h1>
-  </ion-text>
+ 
   <ion-grid >
     <ion-row>
-      <ion-col size="6">
+      <ion-col size="9">
         <ion-item lines="none">
           <ion-label>Delivery Boy
             <p>Your delivery boys here</p>
@@ -27,9 +23,9 @@
         </ion-item>
       </ion-col>
 
-      <ion-col size="6">
-        <ion-button (click)="openDriverRegisterPage()" expand="block" fill="clear" shape="round">
-         Add new Delivery Partner
+      <ion-col size="3">
+        <ion-button (click)="openDriverRegisterPage()" expand="block" fill="solid">
+         Add Boy
         </ion-button>
       </ion-col>
     
@@ -37,34 +33,42 @@
     </ion-row>
   </ion-grid>
 
-
-  <div class="table-responsive" *ngIf="boys.length > 0">
-    <table class="table">
+  <ion-text *ngIf="boys.length === 0" color="primary" class="ion-text-center">
+    <h1>
+      No Delivery Boys Found!
+    </h1>
+  </ion-text>
+  <div class="table-container" *ngIf="boys.length > 0">
+    <table class="modern-table">
       <thead>
         <tr>
-          <th scope="col">Date</th>
-          <th scope="col">Full name</th>
-          <th scope="col">Phone no</th>
-          <th scope="col">Address</th>
-          <th scope="col">Action</th>
+          <th>Date</th>
+          <th>Full Name</th>
+          <th>Phone No</th>
+          <th>Address</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let item of boys">
-          <th>{{item.createdAt | date:"fullDate"}}</th>
-          <th>{{item?.firstName || "No Name Addedd"}} {{item?.lastName}}</th>
-          <th>{{item?.phoneNumber}}</th>
-          <th>{{item?.city || "No Address Added"}}</th>
-          <th>
-            <ion-badge class="ion-padding" color="danger" mode="ios">View</ion-badge>
-            <ion-badge *ngIf="item.status == 0" class="ion-padding ion-margin-start" (click)="block(item._id)" color="success" mode="ios">Block</ion-badge>
-            <ion-badge *ngIf="item.status == 1" class="ion-padding ion-margin-start" (click)="unblock(item._id)" color="tertiary" mode="ios">Unblock</ion-badge>
-          </th>
-         
+          <td>{{item.createdAt | date:"fullDate"}}</td>
+          <td>{{item?.firstName || "No Name Added"}} {{item?.lastName}}</td>
+          <td>{{item?.phoneNumber}}</td>
+          <td>{{item?.address || "No Address Added"}}</td>
+          <td class="action-buttons">
+            <ion-badge color="secondary" mode="ios" class="action-badge">View</ion-badge>
+            <ion-badge *ngIf="item.status === 0" (click)="block(item._id)" color="success" mode="ios" class="action-badge">Block</ion-badge>
+            <ion-badge *ngIf="item.status === 1" (click)="unblock(item._id)" color="tertiary" mode="ios" class="action-badge">Unblock</ion-badge>
+            <ion-badge (click)="deleteBoy(item._id)" color="danger" mode="ios" class="action-badge">Delete</ion-badge>
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <style>
+  
+  </style>
   
   
 </ion-content>

@@ -28,7 +28,6 @@ export class AppComponent {
       icon: 'location',
     },
   ];
-  public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   constructor(private data: DataService, private router: Router) {
     this.checkForLoginStatus();
   }
@@ -38,7 +37,7 @@ export class AppComponent {
     console.log(userId);
     if (userId != null || userId != undefined) {
       console.log('userid not null');
-      this.router.navigate(['folder', 'dash']);
+      this.router.navigate(['folder', 'delivery-boy']);
     } else {
       this.router.navigate(['folder', 'login']);
     }

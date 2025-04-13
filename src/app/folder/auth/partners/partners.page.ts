@@ -22,6 +22,8 @@ export class PartnersPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log('PartnersPage initialized');
+  
   }
 
   ionViewDidEnter(){

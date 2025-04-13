@@ -1,6 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { LoadingController, ModalController } from '@ionic/angular';
 import Chart from 'chart.js/auto';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 @Component({
   selector: 'app-dash',
@@ -35,7 +37,12 @@ export class DashPage implements OnInit {
 
   startDate: any = "";
   endDate: any = "";
-  constructor(private auth: AuthService) { }
+
+  subscriptions: Subscription = new Subscription();
+  constructor(private auth: AuthService,
+              private loadingController: LoadingController,
+              private modalController: ModalController
+  ) { }
 
   ngOnInit() {
     // Initialization logic can be added here if needed

@@ -27,9 +27,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 
-ion-menu{
-  width:200px;
-}
+// ion-menu{
+//   width:200px;
+// }
 
 .barlow-thin {
     font-family: "Barlow", sans-serif;
@@ -139,3 +139,48 @@ ion-menu{
     font-style: italic;
   }
   
+
+  .table-container {
+    overflow-x: auto;
+    margin-top: 1rem;
+  }
+
+  .modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .modern-table thead {
+    background-color: #f4f4f4;
+  }
+
+  .modern-table th, .modern-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #eaeaea;
+  }
+
+  .modern-table th {
+    font-weight: bold;
+    color: #333;
+  }
+
+  .modern-table tbody tr:hover {
+    background-color: #f9f9f9;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .action-badge {
+    cursor: pointer;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border-radius: 4px;
+  }
