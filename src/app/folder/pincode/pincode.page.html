@@ -17,7 +17,7 @@
             <h2>{{ pincode.pincode }}</h2>
             <p>{{ pincode.address }}</p>
           </ion-label>
-          <ion-button color="danger" slot="end" (click)="deletePincode(pincode)">Delete</ion-button>
+          <ion-button color="danger" slot="end" (click)="deletePincodeWithToast(pincode._id)">Delete</ion-button>
         </ion-item>
       </ion-list>
     </div>

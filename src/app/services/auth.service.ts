@@ -667,7 +667,7 @@ export class AuthService {
   
   addPincode(body: any) {
     return this.http.post(
-      environment.URL + `admin/pincode/add`,
+      environment.URL + `admin/add/pinCode`,
       body,
       {
         headers: {
@@ -689,9 +689,9 @@ export class AuthService {
     );
   }
 
-  deletePincode(pincodeId: any) {
+  deletePincode(pincode: any) {
     return this.http.delete(
-      environment.URL + `admin/pincode/delete/${pincodeId}`,
+      environment.URL + `admin/delete/pinCode/${pincode}`,
       {
         headers: {
           'x-access-token': this.accessToken.value.toString(),
@@ -701,7 +701,7 @@ export class AuthService {
   }
 
   getAllPincode() {
-    return this.http.get(environment.URL + `admin/pincode/get/all`, {
+    return this.http.get(environment.URL + `admin/pinCode/get`, {
       headers: {
         'x-access-token': this.accessToken.value.toString(),
       },

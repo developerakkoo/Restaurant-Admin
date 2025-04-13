@@ -15,7 +15,7 @@ export class DataService {
    }
 
 
-   set(key:string, value:string){
+   set(key:string, value:any){
     return this.storage.set(key,value);
    }
 

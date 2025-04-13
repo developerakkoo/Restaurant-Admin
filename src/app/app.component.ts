@@ -8,24 +8,24 @@ import { Router } from '@angular/router';
 })
 export class AppComponent {
   public appPages = [
-    { title: 'Dashboard', url: '/folder/dash', icon: 'mail' },
-    { title: 'Orders', url: '/folder/orders', icon: 'paper-plane' },
-    { title: 'Partners', url: '/folder/partners', icon: 'heart' },
-    { title: 'Customers', url: '/folder/customer', icon: 'archive' },
-    { title: 'Delivery Boy', url: '/folder/delivery-boy', icon: 'trash' },
-    { title: 'Categories', url: '/folder/category', icon: 'card' },
-    { title: 'Chat', url: '/folder/chat', icon: 'warning' },
-    { title: 'Promo code', url: '/folder/promo-code', icon: 'warning' },
-    { title: 'Banners', url: '/folder/banner', icon: 'warning' },
+    { title: 'Dashboard', url: '/folder/dash', icon: 'speedometer' },
+    { title: 'Orders', url: '/folder/orders', icon: 'cart' },
+    { title: 'Partners', url: '/folder/partners', icon: 'people' },
+    { title: 'Customers', url: '/folder/customer', icon: 'person' },
+    { title: 'Delivery Boy', url: '/folder/delivery-boy', icon: 'bicycle' },
+    { title: 'Categories', url: '/folder/category', icon: 'pricetags' },
+    { title: 'Chat', url: '/folder/chat', icon: 'chatbubbles' },
+    { title: 'Promo code', url: '/folder/promo-code', icon: 'pricetag' },
+    { title: 'Banners', url: '/folder/banner', icon: 'images' },
     {
       title: 'Delivery/handling Charges',
       url: '/folder/settings',
-      icon: 'warning',
+      icon: 'settings',
     },
     {
       title: 'Pincode Setup',
       url: '/folder/pincode',
-      icon: 'warning',
+      icon: 'location',
     },
   ];
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
