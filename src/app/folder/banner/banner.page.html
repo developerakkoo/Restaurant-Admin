@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
     <ion-title>Banner</ion-title>
   </ion-toolbar>
@@ -10,36 +10,45 @@
     <ion-col size="6">
       <ion-card>
         <ion-card-header>
-          <ion-card-subtitle>Home Banner</ion-card-subtitle>
-          <ion-card-title>Awesome Title</ion-card-title>
+          <ion-card-subtitle>This image is visible in Home Page.</ion-card-subtitle>
+          <ion-card-title>Home Banner</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <input type="file" (change)="homeImageEvent($event)">
-          <ion-button (click)="uploadBanner(0)" expand="block">
+          <ion-button 
+            (click)="uploadBanner(0)" 
+            expand="block" 
+            [disabled]="isBannerTypeExists(0)">
             Upload
           </ion-button>
         </ion-card-content>
       </ion-card>
       <ion-card>
         <ion-card-header>
-          <ion-card-subtitle>Cart Banner</ion-card-subtitle>
-          <ion-card-title>Awesome Title</ion-card-title>
+          <ion-card-subtitle>This image is visible in the user cart page</ion-card-subtitle>
+          <ion-card-title>Cart Banner</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <input type="file" (change)="cartImageEvent($event)">
-          <ion-button (click)="uploadBanner(1)" expand="block">
+          <ion-button 
+            (click)="uploadBanner(1)" 
+            expand="block" 
+            [disabled]="isBannerTypeExists(1)">
             Upload
           </ion-button>
         </ion-card-content>
       </ion-card>
       <ion-card>
         <ion-card-header>
-          <ion-card-subtitle>Profile Banner</ion-card-subtitle>
-          <ion-card-title>Awesome Title</ion-card-title>
+          <ion-card-subtitle>This image is visible in user profile section.</ion-card-subtitle>
+          <ion-card-title>Profile Banner</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <input type="file" (change)="profileImageEvent($event)">
-          <ion-button (click)="uploadBanner(3)" expand="block">
+          <ion-button 
+            (click)="uploadBanner(3)" 
+            expand="block" 
+            [disabled]="isBannerTypeExists(3)">
             Upload
           </ion-button>
         </ion-card-content>
@@ -50,8 +59,31 @@
       <ion-list>
         <ion-list-header>
           <ion-label>All Banners</ion-label>
-          <ion-button>See All</ion-button>
         </ion-list-header>
+
+        <div *ngFor="let item of bannnerImages" style="position: relative; display: inline-block; margin: 10px;">
+          <img 
+            crossorigin="anonymous" 
+            [appRemoveport]="item.image_url" 
+            alt="" 
+            style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;" 
+            (click)="openImageModal(item.image_url)">
+          <span *ngIf="item.type === 0" style="position: absolute; top: 5px; left: 12px; background: #3880ff; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">
+            Home
+          </span>
+
+          <span *ngIf="item.type === 1" style="position: absolute; top: 5px; left: 12px; background: #3880ff; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">
+           Cart
+          </span>
+
+          <span *ngIf="item.type === 3" style="position: absolute; top: 5px; left: 12px; background: #3880ff; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">
+            Profile
+          </span>
+            <span (click)="deleteBanner(item._id)" style="position: absolute; top: 5px; right: 5px; background: #ff4d4d; color: white; width: 24px; height: 24px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+            ✕
+            </span>
+           
+        </div>
       </ion-list>
     </ion-col>
   </ion-row>

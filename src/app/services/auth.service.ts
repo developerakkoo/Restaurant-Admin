@@ -637,6 +637,15 @@ export class AuthService {
     });
   }
 
+  deleteBannerImage(bannerId:any){
+    return this.http.delete(environment.URL + `admin/banner/delete/${bannerId}`, {
+      headers: {
+        'x-access-token': this.accessToken.value.toString(),  
+      },
+    });
+  }
+   
+  
   blockDeliveryBoy(deliveryBoyId:any, status:any ){
     return this.http.put(environment.URL + `admin/update/delivery-boy/status`,{
       deliveryBoyId, status 

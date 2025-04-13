@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { BannerPageRoutingModule } from './banner-routing.module';
 
 import { BannerPage } from './banner.page';
+import { RemoveportDirective } from 'src/app/shared/directives/removeport.directive';
+import { ImageModalComponent } from './image-modal.component';
 
 @NgModule({
   imports: [
@@ -15,6 +17,6 @@ import { BannerPage } from './banner.page';
     IonicModule,
     BannerPageRoutingModule
   ],
-  declarations: [BannerPage]
+  declarations: [BannerPage,RemoveportDirective,ImageModalComponent]
 })
 export class BannerPageModule {}
