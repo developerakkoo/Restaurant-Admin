@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -11,14 +11,18 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class PartnersPage implements OnInit {
 
-  partner:any[] = [];
+  partner: any[] = [];
+  currentPage: number = 1;
+  totalPages: number = 1;
+  pageSize: number = 10; // or whatever your backend supports
   query:string ="";
   status:number =0;
 
   constructor(private auth: AuthService,
     private router: Router,
     private alertController: AlertController,
-              private loadingController: LoadingController
+              private loadingController: LoadingController,
+              private toastController: ToastController
   ) { }
 
   ngOnInit() {
@@ -36,13 +40,22 @@ export class PartnersPage implements OnInit {
     this.getAllPartners()
   }
 
+
+  async presentToast(msg:string) {
+    const toast = await this.toastController.create({
+      message: msg,
+      duration: 3000,
+      animated:true,
+    });
+    toast.present();
+  }
   async getAllPartners(){
     this.auth.getAllPartners(this.query, 1, 100, "","", this.status)
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
         this.partner = value['data']['content'];
-        
+        this.totalPages = value.data.totalPages;
       },
       error:async(error:HttpErrorResponse) =>{
         console.log(error.error);
@@ -65,6 +78,10 @@ this.router.navigate(['folder','partners','add'])
   openhotel(hotel:any){
     console.log(hotel);
 
+    if(hotel == undefined || hotel == null){
+      this.presentToast("You need to add hotel First.")
+      return;
+    }
     if(hotel.isOnline === true){
       this.auth.setHotelLiveStatus(0,hotel._id)
       .subscribe({
