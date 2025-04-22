@@ -65,6 +65,14 @@ const routes: Routes = [
     path: 'pincode',
     loadChildren: () => import('./pincode/pincode.module').then( m => m.PincodePageModule)
   },
+  {
+    path: 'notifications',
+    loadChildren: () => import('./auth/notifications/notifications.module').then( m => m.NotificationsPageModule)
+  },
+  {
+    path: 'messages',
+    loadChildren: () => import('./auth/messages/messages.module').then( m => m.MessagesPageModule)
+  },
 
 
  

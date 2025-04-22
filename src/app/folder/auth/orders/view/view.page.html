@@ -1,129 +1,206 @@
 <ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
     <ion-title>Order Id {{orderId}}</ion-title>
-    <ion-badge color="primary" mode="ios" slot="end">42</ion-badge>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="folder/orders"></ion-back-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
 
-  <ion-grid>
-    <ion-row>
-      <ion-col size="4"><ion-card>
-        <ion-card-header>
-          <ion-card-subtitle>Order Details</ion-card-subtitle>
-        </ion-card-header>
-        <ion-list>
-          <ion-list-header>
-            <ion-label>Items</ion-label>
-            <ion-label>
-              <strong>Total Amount:-{{priceDetails.totalAmountToPay}} </strong>
-            </ion-label>
-          </ion-list-header>
-          <ion-item *ngFor="let item of products">
-            <ion-avatar slot="start">
-              <img crossorigin="anonymous" [src]="item.dishId.image_url" />
-            </ion-avatar>
-            <ion-label
-              >{{item.dishId.name}}
-              <p>Partner Amount:-{{item.dishId.partnerPrice}}</p>
-              <p>User Amount:-{{item.dishId.userPrice}}</p>
-              <p>Quantity:- {{item.quantity}}</p>
-            </ion-label>
-          </ion-item>
-        </ion-list>
-      </ion-card>
+<div class="container-fluid">   
+    <div class="row">
+      <!-- Customer Info -->
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-danger h-100">
+          <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Customer Info</h5>
+            <button class="btn btn-light btn-sm" (click)="viewDetails('customer')">
+              <i class="bi bi-eye"></i> View
+            </button>
+          </div>
+          <div class="card-body">
+            <p><strong>Name:</strong> {{ user?.name }}</p>
+            <p><strong>Phone:</strong> {{ user?.phoneNumber }}</p>
+            <p><strong>Address:</strong> {{ address?.address }}</p>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Restaurant Info -->
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-danger h-100">
+          <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Restaurant Info</h5>
+            <button class="btn btn-light btn-sm" (click)="viewDetails('restaurant')">
+              <i class="bi bi-eye"></i> View
+            </button>
+          </div>
+          <div class="card-body">
+            <p><strong>Name:</strong> {{ hotel?.hotelName }}</p>
+            <p><strong>Address:</strong> {{ hotel?.address }}</p>
+            <p><strong>Payment Mode:</strong> {{ paymentMode }}</p>
+          </div>
+        </div>
+      </div>
+    
+      <!-- Delivery Agent Info -->
+      <div class="col-md-4 mb-3" *ngIf="assignedDeliveryBoy">
+        <div class="card shadow-sm border-danger h-100">
+          <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Delivery Agent</h5>
+            <button class="btn btn-light btn-sm" (click)="viewDetails('delivery')">
+              <i class="bi bi-eye"></i> View
+            </button>
+          </div>
+          <div class="card-body">
+            <p><strong>Name:</strong> {{ assignedDeliveryBoy?.firstName }} {{ assignedDeliveryBoy?.lastName }}</p>
+            <p><strong>Phone:</strong> {{ assignedDeliveryBoy?.phoneNumber }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
 
-      <ion-card>
-        <ion-card-header>
-          <ion-card-subtitle>Pricing Details</ion-card-subtitle>
-        </ion-card-header>
-        <ion-list>
-          <ion-item>
-            <ion-label> GST </ion-label>
-            <strong> {{priceDetails.gstAmount}} </strong>
-          </ion-item>
-          <ion-item>
-            <ion-label> Discount </ion-label>
-            <strong> {{priceDetails.discount}} </strong>
-          </ion-item>
-          <ion-item>
-            <ion-label> Delivery Boy Compensation:- </ion-label>
-            <ion-label slot="end">
-              <strong> {{priceDetails.deliveryBoyCompensation}} </strong>
-            </ion-label>
-          </ion-item>
-          <ion-item>
-            <ion-label> Delivery Charges </ion-label>
-            <strong> {{priceDetails.deliveryCharges}} </strong>
-          </ion-item>
-          <ion-item>
-            <ion-label> Platform Fee </ion-label>
-            <strong> {{priceDetails.platformFee}} </strong>
-          </ion-item>
-          <ion-item>
-            <ion-label> Sub Total</ion-label>
-            <strong> {{priceDetails.subtotal}} </strong>
-          </ion-item>
-          <ion-item>
-            <ion-label> Total Amount Paid </ion-label>
-            <strong> {{priceDetails.totalAmountToPay}} </strong>
-          </ion-item>
-        </ion-list>
-      </ion-card></ion-col>
-      <ion-col size="4">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-subtitle>Order Timeline</ion-card-subtitle>
-          </ion-card-header>
+    <hr />
 
-          <ion-list>
-            <ion-item *ngFor="let item of orderTimeline;  index as i">
-              <ion-badge slot="end"> {{item.status}} </ion-badge>
-              <ion-label>
-                <strong>{{i+1}}] </strong>{{item.title}}
-                <p>{{item.dateTime}}</p>
-              </ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-card>
-      </ion-col>
-      <ion-col size="4"> <ion-card>
-        <ion-card-header>
-          <ion-card-subtitle>Restaurant Details</ion-card-subtitle>
-          <ion-card-title>{{hotel.hotelName}}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content> 
-          Address:- {{hotel.address}}
-          <ion-button (click)="view(hotel._id)" expand="block" fill="clear" shape="round">
-         View
-        </ion-button> </ion-card-content>
-      </ion-card>
-      <ion-card>
-        <ion-card-header>
-          <ion-card-subtitle>Customer Details</ion-card-subtitle>
-          <ion-card-title> {{user.name}} </ion-card-title>
-        </ion-card-header>
-        <ion-card-content> 
-          Address:- {{address.address}}
-          <ion-button (click)="view(hotel._id)" expand="block" fill="clear" shape="round">
-            View
-           </ion-button>
-        </ion-card-content>
-      </ion-card>
-      <ion-card>
-        <ion-card-header>
-          <ion-card-subtitle>Delivery Boy Details</ion-card-subtitle>
-          <ion-card-title> {{assignedDeliveryBoy.firstName}} {{assignedDeliveryBoy.lastName}} </ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          Phone Number:- {{assignedDeliveryBoy.phoneNumber}}
-          <ion-button (click)="view(hotel._id)" expand="block" fill="clear" shape="round">
-            View
-           </ion-button>
-        </ion-card-content>
-      </ion-card></ion-col>
-    </ion-row>
-  </ion-grid>
+      <div class="row justify-content-center g-4">
+    
+        <!-- Partner Earnings Card -->
+        <div class="col-12 col-md-6">
+          <div class="card border-light shadow-sm h-100">
+            <div class="card-header bg-light text-dark d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Partner Earnings</h5>
+              <i class="bi bi-cash-stack fs-4"></i>
+            </div>
+            <div class="card-body">
+              <p class="card-text fs-6">
+                <strong>Total Partner Earnings:</strong>
+                <span class="text-dark ml-2">₹{{ partnerEarning }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+    
+        <!-- Admin Earnings Card -->
+        <div class="col-12 col-md-6">
+          <div class="card border-light shadow-sm h-100">
+            <div class="card-header bg-light text-dark d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Admin Earnings</h5>
+              <i class="bi bi-briefcase-fill fs-4"></i>
+            </div>
+            <div class="card-body">
+              <p class="card-text fs-6">
+                <strong>Total Admin Earnings:</strong>
+                <span class="text-dark ml-2">₹{{ adminEarning }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+    
+      </div>
+    
+      <hr>
+       <!-- Products Table -->
+   <div class="card shadow-sm mb-4">
+  <div class="card-header bg-light d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">🧾 Ordered Items</h5>
+    <i class="bi bi-basket2-fill fs-5 text-secondary"></i>
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-hover table-bordered mb-0">
+      <thead class="table-secondary">
+        <tr>
+          <th>Dish</th>
+          <th>Type</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of products">
+          <td>{{ p.dishId.name }}</td>
+          <td>
+            <span
+              class="badge"
+              [ngClass]="{
+                'bg-success': p.dishId.dishType === 'veg',
+                'bg-danger': p.dishId.dishType === 'non-veg'
+              }"
+            >
+              {{ p.dishId.dishType | titlecase }}
+            </span>
+          </td>
+          <td>{{ p.quantity }}</td>
+          <td>₹{{ p.dishId.userPrice }}</td>
+          <td>₹{{ p.dishId.userPrice * p.quantity }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+    <hr>
+
+    <!-- Price Details -->
+    <div class="row">
+      <!-- Price Summary -->
+      <div class="col-md-6 mb-3">
+        <div class="card shadow-sm border-light h-100">
+          <div class="card-header bg-light text-dark">
+            <h5 class="mb-0"><i class="bi bi-receipt-cutoff mr-2"></i>Price Summary</h5>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">💰 Subtotal: ₹{{ priceDetails?.subtotal }}</li>
+            <li class="list-group-item">📈 GST: ₹{{ priceDetails?.gstAmount }}</li>
+            <li class="list-group-item">🧾 Platform Fee: ₹{{ priceDetails?.platformFee }}</li>
+            <li class="list-group-item">🚚 Delivery Charges: ₹{{ priceDetails?.deliveryCharges }}</li>
+            <li class="list-group-item">🏷️ Discount: ₹{{ priceDetails?.discount }}</li>
+            <li class="list-group-item fw-bold text-success">
+              🧮 Total: ₹{{ priceDetails?.totalAmountToPay }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    
+      <!-- Timeline -->
+      <div class="col-md-6 mb-3">
+        <div class="card shadow-sm border-light h-100">
+          <div class="card-header bg-light text-dark">
+            <h5 class="mb-0"><i class="bi bi-clock-history mr-2"></i>Order Timeline</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item d-flex align-items-start" *ngFor="let t of orderTimeline">
+                <span class="me-3 fs-4 mr-2">
+                  <i
+                    [ngClass]="{
+                      'bi-check-circle text-success': t.status === 'DELIVERED',
+                      'bi-person-check text-primary': t.status === 'ACCEPTED',
+                      'bi-box-seam text-warning': t.status === 'PICKUP_CONFIRMED',
+                      'bi-truck text-info': t.status === 'ASSIGNED',
+                      'bi-hourglass-split text-muted': t.status === 'PENDING'
+                    }"
+                    class="bi"
+                  ></i>
+                </span>
+                <div>
+                  <strong class="d-block">{{ t.title }}</strong>
+                  <div class="text-muted small">{{ t.dateTime }}</div>
+                </div>
+              </li>
+            </ul>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-content>

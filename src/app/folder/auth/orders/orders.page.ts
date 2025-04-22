@@ -10,7 +10,18 @@ import * as XLSX from 'xlsx';
   styleUrls: ['./orders.page.scss'],
 })
 export class OrdersPage implements OnInit {
-  orders:any[] = [];
+  
+  orderId:any;
+  orders: any[] = [];
+filteredOrders: any[] = [];
+paginatedOrders: any[] = [];
+
+searchTerm: string = '';
+pageSize: number = 10;
+currentPage: number = 1;
+totalPages: number = 1;
+
+
   drivers:any[] = [];
   query:string = "";
   status:string = "";
@@ -94,7 +105,8 @@ console.log(type);
       next:async(value:any) =>{
         console.log(value);
         this.orders = value['data']['content'];
-        
+        this.filteredOrders = [...this.orders];
+        this.updatePagination();
       },
       error:async(error:HttpErrorResponse) =>{
         console.log(error.error);
@@ -223,7 +235,38 @@ assignDriverEvent(ev:any, orderId:any){
   
 
 }
+filterOrders() {
+  const term = this.searchTerm.toLowerCase();
+  this.filteredOrders = this.orders.filter(order =>
+    order.orderId.toLowerCase().includes(term) ||
+    order.user?.name.toLowerCase().includes(term) ||
+    order.userAddress?.address.toLowerCase().includes(term)
+  );
+  this.currentPage = 1;
+  this.updatePagination();
+}
 
+updatePagination() {
+  this.totalPages = Math.ceil(this.filteredOrders.length / this.pageSize);
+  const startIndex = (this.currentPage - 1) * this.pageSize;
+  this.paginatedOrders = this.filteredOrders.slice(startIndex, startIndex + this.pageSize);
+}
+
+changePage(page: number) {
+  if (page > 0 && page <= this.totalPages) {
+    this.currentPage = page;
+    this.updatePagination();
+  }
+}
+
+totalPagesArray(): number[] {
+  return Array(this.totalPages).fill(0).map((_, i) => i + 1);
+}
+
+getStatusText(status: number): string {
+  const statuses = ['Received', 'Being Prepared', 'Delivery Assigned', 'Delivered', 'Accepted', 'Cancelled', 'Pickup Confirmed'];
+  return statuses[status] || 'Unknown';
+}
  downloadExcelSheet(){
   let data = document.getElementById("table-data");
 
@@ -242,3 +285,4 @@ openDetailsPage(orderId:any)
   this.router.navigate(['folder','orders','view', orderId]);
   
 }}
+

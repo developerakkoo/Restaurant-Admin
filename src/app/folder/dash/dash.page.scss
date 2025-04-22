@@ -1,4 +1,26 @@
 .chart-container-orders{
-    height: 300px;
+    height: 400px;
     width: auto;
 }
+.chart-container-revenue{
+    height: 400px;
+    width: auto;
+}
+
+
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+  
+    ion-card-title {
+      font-size: 1.2rem;
+    }
+  
+    .sort-select {
+      width: 150px;
+    }
+  }
+  

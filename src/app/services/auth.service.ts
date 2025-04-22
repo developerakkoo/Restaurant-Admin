@@ -224,15 +224,6 @@ export class AuthService {
       }
     );
   }
-
-  getAllHotelsPartner(partnerId: any) {
-    return this.http.get(environment.URL + `partner/get/hotels/${partnerId}`, {
-      headers: {
-        'x-access-token': this.accessToken.value.toString(),
-      },
-    });
-  }
-
   getOrderChartData(sort: any) {
     return this.http.get(
       environment.URL + `admin/get/orderChartData?sort=${sort}`,
@@ -243,6 +234,26 @@ export class AuthService {
       }
     );
   }
+
+  getUserClusterPlottngData(){
+    return this.http.get(
+      environment.URL + `admin/get/user-location-cluster`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+  getAllHotelsPartner(partnerId: any) {
+    return this.http.get(environment.URL + `partner/get/hotels/${partnerId}`, {
+      headers: {
+        'x-access-token': this.accessToken.value.toString(),
+      },
+    });
+  }
+
+  
   getAllPartners(
     query: string,
     pageNumber: any,
@@ -348,6 +359,16 @@ export class AuthService {
     );
   }
 
+  getPopulatedOrder(){
+    return this.http.get(
+      environment.URL + `admin/get/populated-order`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
   getAllOrders(
     query: string,
     pageNumber: any,

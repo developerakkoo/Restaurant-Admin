@@ -10,7 +10,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { RemoveportDirective } from './shared/directives/removeport.directive';
 
-
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, IonicModule.forRoot(), IonicStorageModule.forRoot({name:'dropeat'}), AppRoutingModule, HttpClientModule],

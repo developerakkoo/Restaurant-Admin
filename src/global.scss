@@ -31,6 +31,28 @@
 //   width:200px;
 // }
 
+#table-data th {
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+#table-data td {
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+ion-badge {
+  font-size: 11px;
+  padding: 5px 10px;
+}
+
+// ion-select {
+//   font-size: 12px;
+//   width: 100%;
+//   margin-top: 6px;
+// }
+
+
 .barlow-thin {
     font-family: "Barlow", sans-serif;
     font-weight: 100;

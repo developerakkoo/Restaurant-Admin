@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Dashboard</ion-title>
+    <ion-title>🚀 Dashboard - Your Admin Hub 🌟</ion-title>
     <ion-buttons slot="end">
       <ion-button color="primary" (click)="viewNotifications()" fill="clear">
         <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
@@ -18,12 +18,17 @@
 <ion-content [fullscreen]="true">
   <ion-grid>
     <ion-row>
-      <ion-col size="12" class="dropdown-container">
-        <ion-select fill="outline" placeholder="Sort" (ionChange)="onFilterChange($event)">
-          <ion-select-option value="daily">Daily</ion-select-option>
-          <ion-select-option value="weekly">Weekly</ion-select-option>
-          <ion-select-option value="quarterly">Quarterly</ion-select-option>
-          <ion-select-option value="yearly">Yearly</ion-select-option>
+      <ion-col size="4">
+        <ion-input (ionChange)="setDateEvent($event,'s')" type="date" fill="outline" label="Start Date" labelPlacement="stacked" placeholder=""></ion-input>
+      </ion-col>
+      <ion-col size="4">
+        <ion-input  (ionChange)="setDateEvent($event,'e')" type="date" fill="outline" label="End Date" labelPlacement="stacked" placeholder=""></ion-input>
+      </ion-col>
+      <ion-col size="4" class="dropdown-container">
+        <ion-select fill="outline" value="month" placeholder="Sort" (ionChange)="onFilterChange($event)">
+          <ion-select-option value="dayOfWeek">Daily</ion-select-option>
+          <ion-select-option value="month">Monthly</ion-select-option>
+          <ion-select-option value="year">Yearly</ion-select-option>
         </ion-select>
       </ion-col>
     </ion-row>
@@ -31,7 +36,7 @@
       <ion-col size="12">
         <ion-card>
           <ion-card-header>
-            <ion-card-title>Overview</ion-card-title>
+            <ion-card-title>🌟 Overview - Your Performance at a Glance 🚀</ion-card-title>
           </ion-card-header>
           <ion-card-content>
             <ion-grid>
@@ -39,23 +44,23 @@
                 <ion-col size="3">
                   <ion-card>
                     <ion-card-header>
-                      <ion-card-subtitle>Total Orders</ion-card-subtitle>
-                      <ion-card-title>{{ totalOrders }}</ion-card-title>
+                        <ion-card-subtitle>📦 Total Orders</ion-card-subtitle>
+                        <ion-card-title>{{ totalOrders }}</ion-card-title>
                     </ion-card-header>
                   </ion-card>
                 </ion-col>
                 <ion-col size="3">
                   <ion-card>
                     <ion-card-header>
-                      <ion-card-subtitle>Total Revenue</ion-card-subtitle>
-                      <ion-card-title>{{ totalRevenue }}</ion-card-title>
+                        <ion-card-subtitle>💰 Total Revenue</ion-card-subtitle>
+                      <ion-card-title>{{ totalRevenue |currency:"INR" }}</ion-card-title>
                     </ion-card-header>
                   </ion-card>
                 </ion-col>
                 <ion-col size="3">
                   <ion-card>
                     <ion-card-header>
-                      <ion-card-subtitle>Active Users</ion-card-subtitle>
+                        <ion-card-subtitle>👥 Active Users</ion-card-subtitle>
                       <ion-card-title>{{ totalOnlineUsers }}</ion-card-title>
                     </ion-card-header>
                   </ion-card>
@@ -63,7 +68,7 @@
                 <ion-col size="3">
                   <ion-card>
                     <ion-card-header>
-                      <ion-card-subtitle>Partners</ion-card-subtitle>
+                        <ion-card-subtitle>🤝 Partners</ion-card-subtitle>
                       <ion-card-title>{{ totalPartners }}</ion-card-title>
                     </ion-card-header>
                   </ion-card>
@@ -78,8 +83,20 @@
     <ion-row>
       <ion-col size="6">
         <ion-card>
-          <ion-card-header>
-            <ion-card-title>Order Statistics</ion-card-title>
+          <ion-card-header class="chart-header">
+            <ion-card-title>📊 Order Statistics</ion-card-title>
+            <ion-select
+              interface="popover"
+              placeholder="Sort by"
+              [(ngModel)]="selectedOrderSort"
+              (ionChange)="onOrderSortChange($event)"
+              class="sort-select"
+              fill="outline"
+            >
+              <ion-select-option value="day">Daily</ion-select-option>
+              <ion-select-option value="month">Monthly</ion-select-option>
+              <ion-select-option value="year">Yearly</ion-select-option>
+            </ion-select>
           </ion-card-header>
           <ion-card-content>
             <div class="chart-container-orders">
@@ -90,15 +107,29 @@
       </ion-col>
       <ion-col size="6">
         <ion-card>
-          <ion-card-header>
-            <ion-card-title>Revenue Statistics</ion-card-title>
+          <ion-card-header class="chart-header">
+            <ion-card-title>💰 Revenue Statistics</ion-card-title>
+            <ion-select
+              interface="popover"
+              placeholder="Sort by"
+              [(ngModel)]="selectedRevenueSort"
+              (ionChange)="onSortChange($event)"
+              class="sort-select"
+              fill="outline"
+            >
+              <ion-select-option value="dayOfMonth">Daily</ion-select-option>
+              <ion-select-option value="month">Monthly</ion-select-option>
+              <ion-select-option value="year">Yearly</ion-select-option>
+            </ion-select>
           </ion-card-header>
+        
           <ion-card-content>
             <div class="chart-container-revenue">
-              <canvas id="MyRevenueChart">{{ revenueChart }}</canvas>
+              <canvas id="MyRevenueChart">{{ chart }}</canvas>
             </div>
           </ion-card-content>
         </ion-card>
+        
       </ion-col>
     </ion-row>
 
@@ -106,14 +137,33 @@
       <ion-col size="12">
         <ion-card>
           <ion-card-header>
-            <ion-card-title>Recent Activities</ion-card-title>
+            <ion-card-title>🔥 Recent Activities - Stay Updated! 🕒</ion-card-title>
           </ion-card-header>
           <ion-card-content>
             <ion-list>
               <ion-item *ngFor="let activity of recentActivities">
-                <ion-label>{{ activity.description }}</ion-label>
-                <ion-note slot="end">{{ activity.timestamp }}</ion-note>
+                <ion-label>
+                  <p>
+                    🧾 Order <strong>#{{ activity.orderId }}</strong> from 
+                    <strong>{{ activity.user?.phoneNumber }}</strong> 
+                    to <strong>{{ activity.hotel?.hotelName }}</strong>
+                  </p>
+                  <p>{{ activity.userAddress?.address }}</p>
+                  <p>
+                    Total: ₹{{ activity.priceDetails?.totalAmountToPay }}
+                    <span>
+                      <ng-container [ngSwitch]="activity.paymentMode">
+                        <span *ngSwitchCase="'UPI'">💸 UPI</span>
+                        <span *ngSwitchCase="'COD'">💰 COD</span>
+                        <span *ngSwitchCase="'CASH'">🏦 Cash</span>
+                        <span *ngSwitchDefault>💳 {{ activity.paymentMode }}</span>
+                      </ng-container>
+                    </span>
+                  </p>
+                </ion-label>
+                <ion-note slot="end">{{ activity.updatedAt | date: 'MMM d, h:mm a' }}</ion-note>
               </ion-item>
+              
             </ion-list>
           </ion-card-content>
         </ion-card>

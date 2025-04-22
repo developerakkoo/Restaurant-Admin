@@ -8,87 +8,102 @@
       <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
     </ion-button>
   </ion-toolbar>
-  <ion-searchbar mode="ios" placeholder="Search here" inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
+  <!-- <ion-searchbar mode="ios" placeholder="Search here" inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar> -->
 </ion-header>
 
-<ion-content [fullscreen]="false">
-  <ion-text *ngIf="orders.length == 0" color="primary" class="ion-text-center">
+<ion-content [fullscreen]="false" class="ion-padding">
+  <ion-text *ngIf="orders.length === 0" color="primary" class="ion-text-center">
     <h1>
       No Orders Found!
     </h1>
   </ion-text>
- <ion-list class="ion-padding">
-  <ion-list-header>
-    <ion-label>Orders Below</ion-label>
-    <ion-select style="width: 200px; --height:40px;" value="All" fill="outline"  interface="popover" placeholder="Select Status" (ionChange)="filterEvent($event)">
-      <ion-select-option value="">All</ion-select-option>
-      <ion-select-option value="0">New Order</ion-select-option>
-      <ion-select-option value="5">Rejected</ion-select-option>
-      <ion-select-option value="2">Delivery Boy Assigned</ion-select-option>
-      <ion-select-option value="4">On the Way</ion-select-option>
-      <ion-select-option value="3">Delivered</ion-select-option>
-    </ion-select>
- 
+<ion-grid *ngIf="orders.length > 0">
+  <ion-row>
+    <ion-col size="5" size-md="5">
+      <ion-select style="width: 100%; --height:40px;" value="" fill="outline" interface="popover" label="Status" labelPlacement="stacked" (ionChange)="filterEvent($event)">
+        <ion-select-option value="">All</ion-select-option>
+        <ion-select-option value="0">New Order</ion-select-option>
+        <ion-select-option value="5">Rejected</ion-select-option>
+        <ion-select-option value="2">Delivery Boy Assigned</ion-select-option>
+        <ion-select-option value="4">On the Way</ion-select-option>
+        <ion-select-option value="3">Delivered</ion-select-option>
+      </ion-select>
+    </ion-col>
+    <ion-col size="3" size-md="3">
+      <ion-input style="width: 100%; --height:40px;" type="date" label="Start Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 's')" placeholder="Start Date"></ion-input>
+    </ion-col>
+    <ion-col size="3" size-md="3">
+      <ion-input style="width: 100%; --height:40px;" type="date" label="End Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 'e')" placeholder="End Date"></ion-input>
+    </ion-col>
+    <ion-col size="1" size-md="1">
+      <ion-button fill="clear" (click)="downloadExcelSheet()">
+        <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+      </ion-button>
+     
+    </ion-col>
+  </ion-row>
+</ion-grid>
 
-  <ion-input  style="width: 200px;  --height:40px;" class="ion-margin-start" type="date" label="Start Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 's')" placeholder="Awesome Input"></ion-input>
-  <ion-input style="width: 200px;  --height:40px;" class="ion-margin-start" type="date" label="End Date" labelPlacement="stacked" fill="outline" (ionChange)="setDateEvent($event, 'e')" placeholder="Awesome Input"></ion-input>
-    <ion-button class="ion-margin-start" (click)="downloadExcelSheet()" expand="block" >
-      Export
-    </ion-button>
-</ion-list-header>
- </ion-list>
 
 
+<input type="text" class="form-control mb-3" placeholder="Search orders..." [(ngModel)]="searchTerm" (input)="filterOrders()" />
 
-  <div class="table-responsive" *ngIf="orders.length > 0">
-    <table class="table" id="table-data">
-      <thead>
-        <tr>
-          <th scope="col">#ID</th>
-          <th scope="col">Date</th>
-          <th scope="col">Customer name</th>
-          <th scope="col">Address</th>
-          <th scope="col">Amount</th>
-          <th scope="col">Action</th>
-          <th scope="col">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of orders">
-          <th>{{item.orderId}}</th>
-          <th>{{item.createdAt | date:"fullDate"}}</th>
-          <th>{{item?.user?.name}}</th>
-          <th>{{item?.userAddress?.address}}</th>
-          <th>{{item?.priceDetails?.totalAmountToPay | currency:"INR"}}</th>
-          <th>
-            <ion-badge class="ion-padding" color="danger" mode="ios" (click)="openDetailsPage(item._id)">View</ion-badge>
-            <ion-badge *ngIf="item?.orderStatus === 0" class="ion-padding" color="success" mode="ios" (click)="presentActionSheet(item._id)">Accept Order</ion-badge>
-           
-              <ion-select (ionChange)="assignDriverEvent($event, item._id)" *ngIf="item?.orderStatus === 4" fill="outline"  multiple="true" placeholder="Select Driver">
-                <ion-select-option *ngFor="let d of drivers" [value]="d._id">{{d.firstName}} {{d.lastName}}</ion-select-option>
-              </ion-select>
-          
-          </th>
-          <th>
-          <ion-badge *ngIf="item?.orderStatus === 1" class="ion-padding" color="primary" mode="ios">Being Prepared</ion-badge>
-          <ion-badge *ngIf="item?.orderStatus === 2" class="ion-padding" color="tertiary" mode="ios">Delivery Assigned</ion-badge>
-          <ion-badge *ngIf="item?.orderStatus === 3" class="ion-padding" color="danger" mode="ios">
-            Delivered
-          </ion-badge>
-          <ion-badge *ngIf="item?.orderStatus ===4" class="ion-padding" color="warning" mode="ios">Accepted</ion-badge>
-          <ion-badge *ngIf="item?.orderStatus === 5" class="ion-padding" color="warning" mode="ios">Cancelled</ion-badge>
-          <ion-badge *ngIf="item?.orderStatus === 6" class="ion-padding" color="success" mode="ios">Pickup Confirmed</ion-badge>
-          <div *ngIf="item?.deliveryboyDetails.length > 0">
-            <p style="font-size: 14px; text-align: center; text-decoration: underline;" *ngIf="item?.orderStatus === 6"> {{item?.
-              deliveryboyDetails[0]?.firstName}} {{item?.
-                deliveryboyDetails[0]?.lastName}}</p>
-          </div>
+<table class="table table-bordered table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th>#ID</th>
+      <th>Date</th>
+      <th>Customer</th>
+      <th>Address</th>
+      <th>Amount</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let order of paginatedOrders">
+      <td>{{ order.orderId }}</td>
+      <td>{{ order.createdAt | date:'short' }}</td>
+      <td>{{ order.user?.phoneNumber }}</td>
+      <td>{{ order.userAddress?.address }}</td>
+      <td>{{ order.priceDetails?.totalAmountToPay | currency: 'INR' }}</td>
+      <td ><p class="label label-primary">{{ getStatusText(order.orderStatus) }}</p>
 
-          </th>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+        <p *ngIf="order?.orderStatus === 2" class="text-primary">{{order?.
+          deliveryboyDetails[0]?.firstName}} {{order?.
+            deliveryboyDetails[0]?.lastName}}</p>
+      </td>
+      <td>
+      
+          <ion-badge class="ion-padding" color="danger" mode="ios" (click)="openDetailsPage(order._id)">View</ion-badge>
+          <ion-badge *ngIf="order?.orderStatus === 0" class="ion-padding" color="success" mode="ios" (click)="presentActionSheet(order._id)">Accept Order</ion-badge>
+         
+            <ion-select (ionChange)="assignDriverEvent($event, order._id)" *ngIf="order?.orderStatus === 4" fill="outline"  multiple="true" placeholder="Select Driver">
+              <ion-select-option *ngFor="let d of drivers" [value]="d._id">{{d.firstName}} {{d.lastName}}</ion-select-option>
+            </ion-select>
+        
+        
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Pagination Controls -->
+<nav *ngIf="filteredOrders.length > pageSize">
+  <ul class="pagination justify-content-end">
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
+    </li>
+    <li class="page-item" *ngFor="let page of totalPagesArray()" [class.active]="page === currentPage">
+      <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+    </li>
+    <li class="page-item" [class.disabled]="currentPage === totalPages">
+      <a class="page-link" (click)="changePage(currentPage + 1)">Next</a>
+    </li>
+  </ul>
+</nav>
+
+
   
   
 </ion-content>
