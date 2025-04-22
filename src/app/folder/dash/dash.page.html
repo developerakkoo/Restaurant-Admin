@@ -15,7 +15,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="animate__animated animate__fadeIn">
   <ion-grid>
     <ion-row>
       <ion-col size="4">
@@ -32,16 +32,17 @@
         </ion-select>
       </ion-col>
     </ion-row>
+
     <ion-row>
       <ion-col size="12">
-        <ion-card>
+        <ion-card class="animate__animated animate__fadeInDown animate__faster">
           <ion-card-header>
             <ion-card-title>🌟 Overview - Your Performance at a Glance 🚀</ion-card-title>
           </ion-card-header>
           <ion-card-content>
             <ion-grid>
               <ion-row>
-                <ion-col size="3">
+                <ion-col size="3" class="animate__animated animate__fadeInUp animate__delay-1s">
                   <ion-card>
                     <ion-card-header>
                         <ion-card-subtitle>📦 Total Orders</ion-card-subtitle>
@@ -49,7 +50,7 @@
                     </ion-card-header>
                   </ion-card>
                 </ion-col>
-                <ion-col size="3">
+                <ion-col size="3" class="animate__animated animate__fadeInUp animate__delay-2s">
                   <ion-card>
                     <ion-card-header>
                         <ion-card-subtitle>💰 Total Revenue</ion-card-subtitle>
@@ -57,7 +58,7 @@
                     </ion-card-header>
                   </ion-card>
                 </ion-col>
-                <ion-col size="3">
+                <ion-col size="3" class="animate__animated animate__fadeInUp animate__delay-3s">
                   <ion-card>
                     <ion-card-header>
                         <ion-card-subtitle>👥 Active Users</ion-card-subtitle>
@@ -65,7 +66,7 @@
                     </ion-card-header>
                   </ion-card>
                 </ion-col>
-                <ion-col size="3">
+                <ion-col size="3" class="animate__animated animate__fadeInUp animate__delay-4s">
                   <ion-card>
                     <ion-card-header>
                         <ion-card-subtitle>🤝 Partners</ion-card-subtitle>
@@ -82,17 +83,10 @@
 
     <ion-row>
       <ion-col size="6">
-        <ion-card>
+        <ion-card class="animate__animated animate__slideInLeft animate__faster">
           <ion-card-header class="chart-header">
             <ion-card-title>📊 Order Statistics</ion-card-title>
-            <ion-select
-              interface="popover"
-              placeholder="Sort by"
-              [(ngModel)]="selectedOrderSort"
-              (ionChange)="onOrderSortChange($event)"
-              class="sort-select"
-              fill="outline"
-            >
+            <ion-select interface="popover" placeholder="Sort by" [(ngModel)]="selectedOrderSort" (ionChange)="onOrderSortChange($event)" class="sort-select" fill="outline">
               <ion-select-option value="day">Daily</ion-select-option>
               <ion-select-option value="month">Monthly</ion-select-option>
               <ion-select-option value="year">Yearly</ion-select-option>
@@ -105,43 +99,35 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
+
       <ion-col size="6">
-        <ion-card>
+        <ion-card class="animate__animated animate__slideInRight animate__faster">
           <ion-card-header class="chart-header">
             <ion-card-title>💰 Revenue Statistics</ion-card-title>
-            <ion-select
-              interface="popover"
-              placeholder="Sort by"
-              [(ngModel)]="selectedRevenueSort"
-              (ionChange)="onSortChange($event)"
-              class="sort-select"
-              fill="outline"
-            >
+            <ion-select interface="popover" placeholder="Sort by" [(ngModel)]="selectedRevenueSort" (ionChange)="onSortChange($event)" class="sort-select" fill="outline">
               <ion-select-option value="dayOfMonth">Daily</ion-select-option>
               <ion-select-option value="month">Monthly</ion-select-option>
               <ion-select-option value="year">Yearly</ion-select-option>
             </ion-select>
           </ion-card-header>
-        
           <ion-card-content>
             <div class="chart-container-revenue">
               <canvas id="MyRevenueChart">{{ chart }}</canvas>
             </div>
           </ion-card-content>
         </ion-card>
-        
       </ion-col>
     </ion-row>
 
     <ion-row>
       <ion-col size="12">
-        <ion-card>
+        <ion-card class="animate__animated animate__fadeInUp animate__slower">
           <ion-card-header>
             <ion-card-title>🔥 Recent Activities - Stay Updated! 🕒</ion-card-title>
           </ion-card-header>
           <ion-card-content>
             <ion-list>
-              <ion-item *ngFor="let activity of recentActivities">
+              <ion-item *ngFor="let activity of recentActivities" class="animate__animated animate__fadeInUp">
                 <ion-label>
                   <p>
                     🧾 Order <strong>#{{ activity.orderId }}</strong> from 
@@ -163,7 +149,6 @@
                 </ion-label>
                 <ion-note slot="end">{{ activity.updatedAt | date: 'MMM d, h:mm a' }}</ion-note>
               </ion-item>
-              
             </ion-list>
           </ion-card-content>
         </ion-card>

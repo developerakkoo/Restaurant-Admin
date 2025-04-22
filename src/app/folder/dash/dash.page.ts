@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { LoadingController, MenuController, ModalController } from '@ionic/angular';
 import Chart from 'chart.js/auto';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
@@ -40,12 +40,14 @@ export class DashPage implements OnInit {
   constructor(private auth: AuthService,
               private loadingController: LoadingController,
               private modalController: ModalController,
-              private router:Router
+              private router:Router,
+              private menuController: MenuController
   ) { }
 
   ngOnInit() {
     // Initialization logic can be added here if needed
     console.log('DashPage initialized');
+    this.menuController.enable(true);
   }
 
   async ionViewDidEnter() {

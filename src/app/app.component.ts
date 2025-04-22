@@ -37,8 +37,8 @@ export class AppComponent {
     console.log(userId);
     if (userId != null || userId != undefined) {
       console.log('userid not null');
-      // this.router.navigate(['folder', 'dash']);
-      this.router.navigateByUrl("folder/orders/view/68075aa7b3b25603a1768ebd")
+      this.router.navigate(['folder', 'dash']);
+      // this.router.navigateByUrl("folder/orders/view/68075aa7b3b25603a1768ebd")
     } else {
       this.router.navigate(['folder', 'login']);
     }
