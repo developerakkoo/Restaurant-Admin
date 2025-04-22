@@ -43,21 +43,25 @@ export class AuthService {
     return this.http.post(environment.URL + 'auth/delivery-boy/register', body);
   }
 
-  getPartnerById(partnerId:any) {
-    return this.http.get(
-      environment.URL + `partner/get/byId/${partnerId}`,
-      {
-        headers: {
-          'x-access-token': this.accessToken.value,
-        },
-      }
-    );
+  getPartnerById(partnerId: any) {
+    return this.http.get(environment.URL + `partner/get/byId/${partnerId}`, {
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
   }
 
-  getPartnerCompensationTable(hotelId:any, startDate:any, endDate:any, page:any, paidStatus:number) {
+  getPartnerCompensationTable(
+    hotelId: any,
+    startDate: any,
+    endDate: any,
+    page: any,
+    paidStatus: number
+  ) {
     //paid = 1, 0 = unpaid
     return this.http.get(
-      environment.URL + `admin/order/get-all?hotelId=${hotelId}&startDate=${startDate}&endDate=${endDate}&populate=1&pageSize=50&page=${page}&ps=${paidStatus}`,
+      environment.URL +
+        `admin/order/get-all?hotelId=${hotelId}&startDate=${startDate}&endDate=${endDate}&populate=1&pageSize=50&page=${page}&ps=${paidStatus}`,
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -65,9 +69,16 @@ export class AuthService {
       }
     );
   }
-  getDeliveryBoyCompensationTable(boyId:any, startDate:any, endDate:any, page:any,paidStatus:number) {
+  getDeliveryBoyCompensationTable(
+    boyId: any,
+    startDate: any,
+    endDate: any,
+    page: any,
+    paidStatus: number
+  ) {
     return this.http.get(
-      environment.URL + `admin/order/get-all?deliveryBoyId=${boyId}&startDate=${startDate}&endDate=${endDate}&populate=1&pageSize=50&page=${page}&ds=${paidStatus}`,
+      environment.URL +
+        `admin/order/get-all?deliveryBoyId=${boyId}&startDate=${startDate}&endDate=${endDate}&populate=1&pageSize=50&page=${page}&ds=${paidStatus}`,
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -88,17 +99,20 @@ export class AuthService {
   }
 
   updateSettlements(body: {}) {
-    return this.http.put(
-      environment.URL + `admin/order/settlement`,
-      body,
-      {
-        headers: {
-          'x-access-token': this.accessToken.value,
-        },
-      }
-    );
+    return this.http.put(environment.URL + `admin/order/settlement`, body, {
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
   }
-  hotelRegister(name: any, address: any, category: any[], lng: any, lat: any,partnerId:any) {
+  hotelRegister(
+    name: any,
+    address: any,
+    category: any[],
+    lng: any,
+    lat: any,
+    partnerId: any
+  ) {
     return this.http.post(
       environment.URL + `admin/hotel/register`,
       {
@@ -128,17 +142,22 @@ export class AuthService {
       }
     );
   }
-  addProduct(body:any){
-    console.log("Body in logic");
-    
+  addProduct(body: any) {
+    console.log('Body in logic');
+
     console.log(body);
-    
-    return this.http.post(environment.URL + `hotel/dish/bulk/add`, {
-    dishes:body['dishes']
-    },{
-      headers: {
-        'x-access-token': this.accessToken.value,
-      },})
+
+    return this.http.post(
+      environment.URL + `hotel/dish/bulk/add`,
+      {
+        dishes: body['dishes'],
+      },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
   }
   uploadDishImage(formdata: any) {
     return this.http.post(
@@ -178,17 +197,14 @@ export class AuthService {
     );
   }
 
-  getDishByHotelId(hotelId:any) {
-    return this.http.get(
-      environment.URL + `hotel/dish/get/${hotelId}`,
-      {
-        headers: {
-          'x-access-token': this.accessToken.value,
-        },
-      }
-    );
+  getDishByHotelId(hotelId: any) {
+    return this.http.get(environment.URL + `hotel/dish/get/${hotelId}`, {
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
   }
-  getDashboardData(sort: any,startDate:any,endDate:any) {
+  getDashboardData(sort: any, startDate: any, endDate: any) {
     return this.http.get(
       environment.URL + `admin/get/dashboard-data?sort=${sort}`,
       {
@@ -209,18 +225,17 @@ export class AuthService {
     );
   }
 
-  getAllHotelsPartner(partnerId:any){
-    return this.http.get(environment.URL + `partner/get/hotels/${partnerId}`,{
-      headers:{
-        'x-access-token': this.accessToken.value.toString()
-      }
-    })
+  getAllHotelsPartner(partnerId: any) {
+    return this.http.get(environment.URL + `partner/get/hotels/${partnerId}`, {
+      headers: {
+        'x-access-token': this.accessToken.value.toString(),
+      },
+    });
   }
-
 
   getOrderChartData(sort: any) {
     return this.http.get(
-      environment.URL + `admin/get/orderChartData?sort=${sort}`, 
+      environment.URL + `admin/get/orderChartData?sort=${sort}`,
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -254,7 +269,7 @@ export class AuthService {
     startDate: any,
     endDate: any,
     status: any,
-    isBlocked:any
+    isBlocked: any
   ) {
     return this.http.get(
       environment.URL +
@@ -268,15 +283,11 @@ export class AuthService {
   }
 
   blockUnblockCustomer(body: {}) {
-    return this.http.put(
-      environment.URL + `admin/update/user/status`,
-      body,
-      {
-        headers: {
-          'x-access-token': this.accessToken.value,
-        },
-      }
-    );
+    return this.http.put(environment.URL + `admin/update/user/status`, body, {
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
   }
   getAllCategories(query: string) {
     return this.http.get(
@@ -307,8 +318,7 @@ export class AuthService {
     );
   }
 
-
-  deleteDeliveryBoy(deliveryBoyId:any){
+  deleteDeliveryBoy(deliveryBoyId: any) {
     return this.http.delete(
       environment.URL + `admin/delete/delivery-boy/${deliveryBoyId}`,
       {
@@ -318,7 +328,6 @@ export class AuthService {
       }
     );
   }
-
 
   getAllHotels(
     query: string,
@@ -346,7 +355,7 @@ export class AuthService {
     status: any,
     hotelId: any,
     startDate: any,
-    endDate: any,
+    endDate: any
   ) {
     return this.http.get(
       environment.URL +
@@ -360,40 +369,27 @@ export class AuthService {
   }
 
   getOrderById(orderId: any) {
-    return this.http.get(
-      environment.URL +
-        `order/get/order-by-id/${orderId}`,
-      {
-        headers: {
-          'x-access-token': this.accessToken.value,
-        },
-      }
-    );
+    return this.http.get(environment.URL + `order/get/order-by-id/${orderId}`, {
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
   }
 
   getCustomerById(userId: any) {
-    return this.http.get(
-      environment.URL +
-        `user/get/user/${userId}`,
-      {
-        headers: {
-          'x-access-token': this.accessToken.value,
-        },
-      }
-    );
+    return this.http.get(environment.URL + `user/get/user/${userId}`, {
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
   }
 
-
   getDeliveryBoyById(orderId: any) {
-    return this.http.get(
-      environment.URL +
-        `order/get/order-by-id/${orderId}`,
-      {
-        headers: {
-          'x-access-token': this.accessToken.value,
-        },
-      }
-    );
+    return this.http.get(environment.URL + `order/get/order-by-id/${orderId}`, {
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
   }
   getAllPromos(isActive: string, codeType: any) {
     return this.http.get(
@@ -593,8 +589,6 @@ export class AuthService {
       }
     );
   }
- 
-
 
   deleteCategory(categoryId: any) {
     return this.http.delete(
@@ -607,7 +601,7 @@ export class AuthService {
     );
   }
 
-  deletePartnerComplete(partnerId:any) {
+  deletePartnerComplete(partnerId: any) {
     return this.http.delete(
       environment.URL + `partner/delete-all/${partnerId}`,
       {
@@ -625,20 +619,20 @@ export class AuthService {
     });
   }
 
-  uploadImageForMultipleDish(formdata:FormData){
-    return this.http.post(environment.URL + `admin/upload/image`,formdata,{
+  uploadImageForMultipleDish(formdata: FormData) {
+    return this.http.post(environment.URL + `admin/upload/image`, formdata, {
       headers: {
         'x-access-token': this.accessToken.value.toString(),
       },
-    })
+    });
   }
 
-  uploadBannerImage(formdata:FormData){
-    return this.http.post(environment.URL + `admin/banner/add`,formdata,{
+  uploadBannerImage(formdata: FormData) {
+    return this.http.post(environment.URL + `admin/banner/add`, formdata, {
       headers: {
         'x-access-token': this.accessToken.value.toString(),
       },
-    })
+    });
   }
   getAllBannerImageByType() {
     // enum: [0, 1, 2, 3], // home, cart, fav, profile
@@ -650,44 +644,47 @@ export class AuthService {
     });
   }
 
-  deleteBannerImage(bannerId:any){
-    return this.http.delete(environment.URL + `admin/banner/delete/${bannerId}`, {
-      headers: {
-        'x-access-token': this.accessToken.value.toString(),  
-      },
-    });
-  }
-   
-  
-  blockDeliveryBoy(deliveryBoyId:any, status:any ){
-    return this.http.put(environment.URL + `admin/update/delivery-boy/status`,{
-      deliveryBoyId, status 
-    },{
-      headers: {
-        'x-access-token': this.accessToken.value.toString(),
-      },
-    })
-  }
-
-  
-  deleteDishById(dishId:any ){
-    return this.http.delete(environment.URL + `admin/hotel/dish/delete?dishId=${dishId}`,{
-      
-    })
-  }
-
-  //#TODO All Pincode Routes
-  
-  addPincode(body: any) {
-    return this.http.post(
-      environment.URL + `admin/add/pinCode`,
-      body,
+  deleteBannerImage(bannerId: any) {
+    return this.http.delete(
+      environment.URL + `admin/banner/delete/${bannerId}`,
       {
         headers: {
           'x-access-token': this.accessToken.value.toString(),
         },
       }
     );
+  }
+
+  blockDeliveryBoy(deliveryBoyId: any, status: any) {
+    return this.http.put(
+      environment.URL + `admin/update/delivery-boy/status`,
+      {
+        deliveryBoyId,
+        status,
+      },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
+      }
+    );
+  }
+
+  deleteDishById(dishId: any) {
+    return this.http.delete(
+      environment.URL + `admin/hotel/dish/delete?dishId=${dishId}`,
+      {}
+    );
+  }
+
+  //#TODO All Pincode Routes
+
+  addPincode(body: any) {
+    return this.http.post(environment.URL + `admin/add/pinCode`, body, {
+      headers: {
+        'x-access-token': this.accessToken.value.toString(),
+      },
+    });
   }
 
   updatePincode(pincodeId: any, body: any) {
@@ -721,4 +718,14 @@ export class AuthService {
     });
   }
 
+  checkLocationIsDeliverable(pincode: string) {
+    return this.http.get(
+      environment.URL + `/check/delivery-available/${pincode}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
+      }
+    );
+  }
 }
