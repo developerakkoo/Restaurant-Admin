@@ -28,6 +28,8 @@ export class AddPage implements OnInit {
   }
 
   ngOnInit() {
+    console.log("");
+    
   }
 
   async presentToast(msg:string, duration:any, color:any, position:any) {
@@ -57,7 +59,7 @@ export class AddPage implements OnInit {
           this.presentToast("Registered Successfully.",2000, 'success','bottom');
        
 
-          this.router.navigate(['folder', 'partners','map']);
+          this.router.navigate(['folder', 'partners','map',value['data']['_id']]);
         },
         error:async(error:HttpErrorResponse) =>{
           console.log(error.error);

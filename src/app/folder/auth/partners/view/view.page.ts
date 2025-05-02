@@ -1,9 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { LoadingController } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
-
+import { HttpService } from 'src/app/services/http.service';
 @Component({
   selector: 'app-view',
   templateUrl: './view.page.html',
@@ -17,14 +17,20 @@ export class ViewPage implements OnInit {
   endDate:any = "";
   page:any = 1;
   partnerDetails:any = {};
+  hotelDetails:any = {};
   compensationTable:any[] = [];
-
+  partnerSettlements:any[] = [];
+  partnerSettlementsAnalytics:any[] = [];
+ 
   paidStatus:number = 1;
   selectedItems = new Set<string>();
   totalPartnerPrice = 0;
   constructor(private auth:AuthService,
               private route: ActivatedRoute,
-              private loadingController: LoadingController
+              private loadingController: LoadingController,
+              private http:HttpService,
+              private router:Router,
+              private toastController: ToastController
   ) {
 
     this.partnerId = this.route.snapshot.paramMap.get("id");
@@ -63,9 +69,9 @@ console.log(type);
   }
 
   async getPartnerDetails(){
-    let loading = await this.loadingController.create({
+    const loading = await this.loadingController.create({
       message:"Loading...",
-      duration:5000
+      duration:3000
     
     })
 
@@ -74,26 +80,19 @@ console.log(type);
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
-      //   [
-      //     {
-      //         "_id": "666a81fa1fd2c47f2807b43e",
-      //         "name": "Samantha Yost",
-      //         "profile_image": "_",
-      //         "email": "Shanie75@hotmail.com",
-      //         "phoneNumber": "595-409-2750",
-      //         "status": 1,
-      //         "createdAt": "2024-06-13T05:22:02.372Z",
-      //         "updatedAt": "2024-07-01T07:40:11.356Z",
-      //         "__v": 0
-      //     }
-      // ]
-        await loading.dismiss();
-        this.getHotelByPartner();
-        
+        this.partnerDetails = value['data'];
+
+        if (value && value.data && value.data.length > 0) {
+          this.partnerDetails = value.data[0];
+          await this.getHotelByPartner();
+        } else {
+          this.showToast('Partner details not found', 'warning');
+        }
       },
       error:async(error:HttpErrorResponse) =>{
         console.log(error);
         await loading.dismiss();
+        this.showToast('Failed to load partner details', 'danger');
       }
     })
   }
@@ -104,45 +103,23 @@ console.log(type);
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
-        this.hotelId = value['data'][0]['_id'];
-//          [
-//     {
-//       "location": {
-//           "type": "Point",
-//           "coordinates": [
-//               73.73005619167388,
-//               18.596867766576516
-//           ]
-//       },
-//       "_id": "666a83ec1fd2c47f2807b46f",
-//       "userId": "666a81fa1fd2c47f2807b43e",
-//       "hotelName": "The Ritz-Carlton, Pune",
-//       "image_url": "https://api.dropeat.in/upload/1718257736431-476611290.jpg",
-//       "local_imagePath": "upload/1718257736431-476611290.jpg",
-//       "address": "Golf Course Square, Airport Road, Yerwada, Pune, Maharashtra 411006",
-//       "hotelStatus": 0,
-//       "createdAt": "2024-06-13T05:30:20.944Z",
-//       "updatedAt": "2024-07-01T04:04:43.154Z",
-//       "__v": 0,
-//       "isTop": 1,
-//       "category": [
-//           "666a8cf4fd48c92ea8979d9c",
-//           "666a8d341fd2c47f2807b4b0"
-//       ],
-//       "isOnline": false
-//   }
-// ]
-
-this.getTable();
-        
+        if (value && value.data && value.data.length > 0) {
+          this.hotelDetails = value.data[0];
+          this.hotelId = value.data[0]._id;
+        } else {
+          this.showToast('Hotel details not found', 'warning');
+        }
       },
       error:async(error:HttpErrorResponse) =>{
         console.log(error);
-        
+        this.showToast('Failed to load hotel details', 'danger');
       }
     })
   }
 
+  viewSettlements(){
+    this.router.navigate(['folder','partners','settle',this.hotelId]);  
+  }
 
   getTable(){
     this.auth.getPartnerCompensationTable(this.hotelId,this.startDate, this.endDate,this.page,this.paidStatus)
@@ -181,27 +158,14 @@ this.compensationTable = value['data']['content'];
       }
     });
   }
-  updateSettelment(){
-    const myArray = [...this.selectedItems];
-console.log(myArray); 
-   let body =  {
-      orderIds: myArray,
-      compensationPaidToHotelPartner: true
-  }
-
-  console.log(body);
   
-
-  this.auth.updateSettlements(body)
-  .subscribe({
-    next:async(value:any) =>{
-      console.log(value);
-      this.getPartnerDetails();
-    },
-    error:async(error:HttpErrorResponse) =>{
-      console.log(error);
-      
-    }
-  })
+  private async showToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      color,
+      position: 'top'
+    });
+    await toast.present();
   }
 }

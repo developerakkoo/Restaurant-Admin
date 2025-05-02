@@ -37,7 +37,9 @@ export class DishPage implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log("Dish Page");
+  }
 
   ionViewDidEnter() {
    

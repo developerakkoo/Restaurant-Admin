@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GoogleMap } from '@capacitor/google-maps';
 import { ModalController } from '@ionic/angular';
@@ -13,14 +13,14 @@ import { Geolocation } from '@capacitor/geolocation';
   templateUrl: './map.page.html',
   styleUrls: ['./map.page.scss'],
 })
-export class MapPage implements OnInit {
+export class MapPage implements OnInit, OnDestroy {
 
   @ViewChild('map')
 
   partnerId:any;
   mapRef!: ElementRef<HTMLElement>;
-  newMap!: GoogleMap;
-  lng:any;
+  newMap: GoogleMap | null = null;
+  lat:any;
   lon:any;
   coordinates!: Position;
   location:any;
@@ -40,17 +40,26 @@ export class MapPage implements OnInit {
 
   
     
-    this.location = {lat: this.lng, lng: this.lon}
-    this.reverseGeocoding(this.lng, this.lon);
+    this.location = {lat: this.lat, lng: this.lon}
+    this.reverseGeocoding(this.lat, this.lon);
   }
 
   ngOnInit() {
+    // Component initialization logic will be added here if needed
+    console.log("Map Page");
   }
   ionViewDidEnter(){
     this.partnerId = this.route.snapshot.paramMap.get("id");
     console.log(this.partnerId);
     this.loadCurrentPosition()
   }
+ ngOnDestroy() {
+    if (this.newMap) {
+      this.newMap.destroy();
+      this.newMap = null;
+    }
+  }
+  
   async loadCurrentPosition() {
     
 
@@ -63,7 +72,7 @@ export class MapPage implements OnInit {
     this.createMap();
 
     this.coordinates = coordinates;
-    this.lng = coordinates.coords.latitude;
+    this.lat = coordinates.coords.latitude;
     this.lon = coordinates.coords.longitude;
   }
 
@@ -78,10 +87,10 @@ export class MapPage implements OnInit {
 
         draggable:true,
         center: {
-          lat: parseFloat(this.lng),
+          lat: parseFloat(this.lat),
           lng:  parseFloat(this.lon)
         },
-        zoom: 25,
+        zoom: 15,
         
       },
     });
@@ -96,7 +105,7 @@ await this.newMap.setOnMarkerClickListener((event) => {
 // Handle marker click
 await this.newMap.setOnMarkerDragEndListener((event) => {
   console.log(event);
-  this.lng = event['latitude'];
+  this.lat = event['latitude'];
   this.lon = event['longitude'];
   this.reverseGeocoding(event['latitude'], event['longitude']);
   
@@ -116,7 +125,7 @@ await this.newMap.enableCurrentLocation(true);
       },
       isFlat: true,
       coordinate:{
-        lat: parseFloat(this.lng),
+        lat: parseFloat(this.lat),
         lng: parseFloat(this.lon)
       }
     })
@@ -160,7 +169,9 @@ await this.newMap.enableCurrentLocation(true);
   setAddress(){
     console.log(this.partnerId);
     
-    this.router.navigate(['folder','partners','hotels', this.lng, this.lon, this.partnerId])
+    this.router.navigate(['folder','partners','hotels', this.lon, this.lat, this.partnerId])
   }
+
+ 
 
 }

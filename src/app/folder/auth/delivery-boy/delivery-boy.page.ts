@@ -54,6 +54,9 @@ export class DeliveryBoyPage implements OnInit {
     })
   }
 viewNotifications(){}
+viewBoy(id:any){
+  this.router.navigate(['folder','delivery-boy','view',id])
+}
 openDriverRegisterPage(){
   this.router.navigate(['folder','delivery-boy','add'])
     }

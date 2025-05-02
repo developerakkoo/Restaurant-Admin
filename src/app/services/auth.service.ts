@@ -373,14 +373,14 @@ export class AuthService {
     query: string,
     pageNumber: any,
     pageSize: any,
-    status: any,
+    status: any = '',
     hotelId: any,
-    startDate: any,
-    endDate: any
+    startDate: any = '',
+    endDate: any = ''
   ) {
     return this.http.get(
       environment.URL +
-        `admin/order/get-all?populate=1&pageSize=${pageSize}&page=${pageNumber}&hotelId=${hotelId}&q=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}`,
+        `admin/get/populated-order`,
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -431,10 +431,11 @@ export class AuthService {
       },
     });
   }
+  // 666979f2983fa6cd5cf79d08
 
   getAllChats() {
     return this.http.get(
-      environment.URL + `admin/get/chat-list/666979f2983fa6cd5cf79d08`,
+      environment.URL + `chat/active`,
       {
         headers: {
           'x-access-token': this.accessToken.value,

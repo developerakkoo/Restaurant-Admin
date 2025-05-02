@@ -41,6 +41,7 @@
     "datatables.net-buttons": "^3.2.2",
     "datatables.net-buttons-dt": "^3.2.2",
     "datatables.net-dt": "^2.2.2",
+    "dayjs": "^1.11.13",
     "firebase": "^10.12.5",
     "ionicons": "^7.0.0",
     "jquery": "^3.7.1",

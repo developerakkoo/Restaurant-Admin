@@ -1,8 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
-
+import { HttpService } from 'src/app/services/http.service';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.page.html',
@@ -20,16 +21,28 @@ export class SettingsPage implements OnInit {
   id: string = '';
   gstToggle!:boolean;
   deliveryUpdateId: string = '66a09811fc461cb7a5617384';
+  bonusForm: FormGroup;
+
   constructor(
     private auth: AuthService,
-    private loadingController: LoadingController
-  ) {}
+    private loadingController: LoadingController,
+    private toastController: ToastController,
+    private fb: FormBuilder,
+    private http: HttpService
+  ) {
+    this.bonusForm = this.fb.group({
+      perDeliveryAmount: ['', [Validators.required, Validators.min(0)]],
+      bonus16thDelivery: ['', [Validators.required, Validators.min(0)]],
+      bonus21stDelivery: ['', [Validators.required, Validators.min(0)]]
+    });
+  }
 
   ngOnInit() {}
 
   ionViewDidEnter() {
     this.getAllCharges();
     this.getAllDeliveryCharges();
+    this.getBonusSettings();
   }
 
   getAllDeliveryCharges() {
@@ -177,5 +190,56 @@ export class SettingsPage implements OnInit {
         console.log(error.error);
       },
     });
+  }
+
+  getBonusSettings() {
+    this.http.getPerOrderEarnings().subscribe({
+      next: (res: any) => {
+        console.log(res);
+          this.bonusForm.patchValue({
+            perDeliveryAmount: res.perDeliveryAmount,
+            bonus16thDelivery: res.bonus16thDelivery,
+            bonus21stDelivery: res.bonus21stDelivery
+          });
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Error fetching bonus settings:', err);
+        this.showToast('Failed to load bonus settings', 'danger');
+      }
+    });
+  }
+
+  async updateBonusSettings() {
+    if (this.bonusForm.invalid) {
+      this.showToast('Please fill all fields correctly', 'warning');
+      return;
+    }
+
+    const loading = await this.loadingController.create({
+      message: 'Updating bonus settings...'
+    });
+    await loading.present();
+
+    this.http.updatePerOrderEarnings(this.bonusForm.value).subscribe({
+      next: async (res: any) => {
+        await loading.dismiss();
+        this.showToast('Bonus settings updated successfully', 'success');
+      },
+      error: async (err: HttpErrorResponse) => {
+        await loading.dismiss();
+        console.error('Error updating bonus settings:', err);
+        this.showToast('Failed to update bonus settings', 'danger');
+      }
+    });
+  }
+
+  private async showToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      color,
+      position: 'top'
+    });
+    await toast.present();
   }
 }

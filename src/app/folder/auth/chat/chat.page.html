@@ -20,12 +20,12 @@
           </ion-text>
           <ion-list style="height: 60vh; overflow: auto;" *ngIf="messages.length > 0">
             <ion-item *ngFor="let msg of messages" detail (click)="openChat(msg)">
-              <ion-avatar slot="start">
+              <!-- <ion-avatar slot="start">
                 <img [src]="msg.image" />
-              </ion-avatar>
+              </ion-avatar> -->
               <ion-label>
-                {{msg.members[0].name}}
-                <p> {{msg.lastMessage.message || "Image received"}} </p>
+                {{msg.user.phoneNumber}}
+                <p> {{msg.lastMessage.text || "Image received"}} </p>
               </ion-label>
               <ion-badge color="light" mode="ios"> {{msg.createdAt | date:"shortDate"}} </ion-badge>
             </ion-item>
@@ -47,10 +47,10 @@
 
         <ion-card-content>
           <ion-list>
-            <ion-item  class="chat-bubble" [color]="msg.senderId == senderId ? 'medium' : 'light'" lines="none" *ngFor="let msg of chatMessages">
+            <ion-item  class="chat-bubble" [color]="msg.lastMessage.isUser ? 'danger' : 'light'" lines="none" *ngFor="let msg of chatMessages">
           
-              <ion-label style="float: right;" *ngIf="msg.isImage == false"> {{msg.message}} </ion-label>
-              <img *ngIf="msg.isImage == true" src="assets/icon/favicon.png" alt="" srcset="">
+              <ion-label style="float: right;" > {{msg.lastMessage.text}} </ion-label>
+              <!-- <img *ngIf="msg.isImage == true" src="assets/icon/favicon.png" alt="" srcset=""> -->
             </ion-item>
          
           </ion-list>

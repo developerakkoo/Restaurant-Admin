@@ -1,13 +1,160 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>view</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/folder/auth/delivery-boy"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Delivery Boy Details</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">view</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h5 class="mb-0">Personal Information</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Name</label>
+            <p class="form-control-plaintext">{{deliveryBoy?.firstName || 'N/A'}} {{deliveryBoy?.lastName || 'N/A'}}</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Phone Number</label>
+            <p class="form-control-plaintext">{{deliveryBoy?.phoneNumber || 'N/A'}}</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Date of Birth</label>
+            <p class="form-control-plaintext">{{deliveryBoy?.dateOfBirth || 'N/A'}}</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Address</label>
+            <p class="form-control-plaintext">{{deliveryBoy?.address || 'N/A'}}</p>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h5 class="mb-0">Performance Metrics</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="text-center p-3 border rounded">
+            <h6 class="text-muted mb-2">Total Orders Delivered</h6>
+            <h3 class="mb-0">{{totalOrdersDelivered || 0}}</h3>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="text-center p-3 border rounded">
+            <h6 class="text-muted mb-2">Total Earnings</h6>
+            <h3 class="mb-0">₹{{totalEarnings || 0}}</h3>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="text-center p-3 border rounded">
+            <h6 class="text-muted mb-2">Orders Settled</h6>
+            <h3 class="mb-0">{{totalOrdersSettled || 0}}</h3>
+            <small class="text-success">₹{{totalEarningsSettled || 0}}</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="text-center p-3 border rounded">
+            <h6 class="text-muted mb-2">Orders Unsettled</h6>
+            <h3 class="mb-0">{{totalOrdersUnsettled || 0}}</h3>
+            <small class="text-warning">₹{{totalEarningsUnsettled || 0}}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Commission Details</h5>
+      <div class="d-flex align-items-center gap-3">
+        <ion-select 
+          [value]="sortStatus" 
+          (ionChange)="onSortStatusChange($event)"
+          interface="action-sheet"
+          placeholder="Filter by status">
+          <ion-select-option value="all">All</ion-select-option>
+          <ion-select-option value="paid">Paid</ion-select-option>
+          <ion-select-option value="unpaid">Unpaid</ion-select-option>
+        </ion-select>
+        <div class="d-flex align-items-center">
+          <ion-checkbox 
+            [checked]="selectAll" 
+            (ionChange)="onSelectAllChange($event)"
+            labelPlacement="end">
+            Select All
+          </ion-checkbox>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 50px">
+                <ion-checkbox 
+                  [checked]="selectAll" 
+                  (ionChange)="onSelectAllChange($event)">
+                </ion-checkbox>
+              </th>
+              <th>Order Number</th>
+              <th>Commission Amount</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let commission of getFilteredEarnings()">
+              <td>
+                <ion-checkbox 
+                  [checked]="isEarningSelected(commission)"
+                  (ionChange)="onEarningSelect($event, commission)">
+                </ion-checkbox>
+              </td>
+              <td>Order #{{commission.orderId}}</td>
+              <td>₹{{commission.amount}}</td>
+              <td>{{commission.date | date:'medium'}}</td>
+              <td>
+                <ion-badge [color]="commission.isSettled ? 'success' : 'warning'">
+                  {{commission.isSettled ? 'Paid' : 'Unpaid'}}
+                </ion-badge>
+              </td>
+            </tr>
+            <tr *ngIf="!getFilteredEarnings()?.length">
+              <td colspan="5" class="text-center">No commission records found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-end mt-3" *ngIf="selectedEarnings.length > 0">
+        <div class="d-flex align-items-center gap-3">
+          <div class="alert alert-info mb-0">
+            Selected Amount: ₹{{getSelectedAmount()}}
+          </div>
+          <ion-button 
+            color="primary" 
+            (click)="markSettlement()"
+            [disabled]="!selectedEarnings.length">
+            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+            Mark Settlement
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-content>

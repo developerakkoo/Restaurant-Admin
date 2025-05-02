@@ -1,116 +1,196 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Dish</ion-title>
-    <ion-button  color="primary" (click)="viewNotifications()" slot="end" fill="clear">
+    <ion-button
+      color="primary"
+      (click)="viewNotifications()"
+      slot="end"
+      fill="clear"
+    >
       <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
     </ion-button>
-    <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
+    <ion-button
+      color="primary"
+      (click)="viewNotifications()"
+      slot="end"
+      fill="clear"
+    >
       <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
     </ion-button>
-    
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
- <ion-grid>
-  <ion-row>
-    <ion-col size="12">
-     
-      <form [formGroup]="form">
-        <div class="table-responsive" formArrayName="dishes">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>HotelId</th>
-                <th scope="col">Category</th>
-                <th scope="col">Menu Name</th>
-                <th scope="col">Dish Type</th>
-                <th scope="col">Partner Price</th>
-                <th scope="col">User Price</th>
-                <th scope="col">Spice Level</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Image</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-  
-              </tbody>
-  <tr *ngFor="let dish of dishes.controls; let i = index" [formGroupName]="i">
-    <th> <input type="text" readonly="true" style="width: 30px;" formControlName="hotelId" [value]="hotelId"> <p>Don't change this value.</p> </th>
-  <th>    <ion-select formControlName="categoryId"  interface="action-sheet" placeholder="Select Category">
-    <ion-select-option *ngFor="let item of categories" [value]="item._id">{{item.name}}</ion-select-option>
-  
-  </ion-select></th>
-  
-  <th>
-    <ion-input type="text" placeholder="" label="Menu name" labelPlacement="stacked" formControlName="name" fill="outline"></ion-input>
-  
-  </th>
-  
-  <th>
-    <ion-select formControlName="dishType" value="veg" multiple="false" placeholder="Select Type">
-      <ion-select-option value="veg">Veg</ion-select-option>
-      <ion-select-option value="non-veg">Non-veg</ion-select-option>
-    </ion-select>
-  </th>
-  
-  <th>
-    <ion-input type="text" placeholder="" label="Partner price" labelPlacement="stacked" formControlName="partnerPrice" fill="outline"></ion-input>
-  
-  </th>
-  
-  <th>
-    <ion-input type="text" placeholder="" label="User price" labelPlacement="stacked" formControlName="userPrice" fill="outline"></ion-input>
-  
-  </th>
-  
-  <th>
-    <ion-select value="0" multiple="false" placeholder="Select Spice Level" formControlName="spicLevel">
-      <ion-select-option value="0">No Spicy</ion-select-option>
-      <ion-select-option value="1">Medium Spicy</ion-select-option>
-      <ion-select-option value="2">Extra Spicy</ion-select-option>
-      <ion-select-option value="3">Very Spicy</ion-select-option>
-    </ion-select>
-  </th>
-  
-  <th>
-    <ion-select value="1" multiple="false" placeholder="Select Stock" formControlName="stock">
-      <ion-select-option value="1">Yes</ion-select-option>
-      <ion-select-option value="0">No</ion-select-option>
-    </ion-select>
-  </th>
-  
-  <th>
-    <div>
-      <label>Image</label>
-      <input type="file" (change)="onFileChange($event, i)">
-      <img crossorigin="anonymous" style="height: 200px; width:auto;" *ngIf="dish.get('image_url')?.value" [src]="dish.get('image_url')?.value" alt="Image Preview" width="100">
-    </div>
-  </th>
-  
-  <th>
-  
-    <ion-button type="button" fill="solid" (click)="addDish()">Add Dish</ion-button>
-    <ion-button type="submit" fill="solid" (click)="onSubmit()">Submit</ion-button>
-  
-    <ion-button  (click)="removeDish(i)" expand="block" color="danger">
-    remove
-    </ion-button>
-  </th>
-  </tr>
-              </table>
-  
-              </div>
-      </form>
-      
-    
-    </ion-col>
-    <ion-col size="6"></ion-col>
-  </ion-row>
- </ion-grid>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12">
+        <form [formGroup]="form">
+          <div class="table-responsive" formArrayName="dishes">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>HotelId</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Menu Name</th>
+                  <th scope="col">Dish Type</th>
+                  <th scope="col">Partner Price</th>
+                  <th scope="col">User Price</th>
+                  <th scope="col">Spice Level</th>
+                  <th scope="col">Stock</th>
+                  <th scope="col">Image</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+              <tr
+                *ngFor="let dish of dishes.controls; let i = index"
+                [formGroupName]="i"
+              >
+                <th>
+                  <input
+                    type="text"
+                    readonly="true"
+                    style="width: 30px"
+                    formControlName="hotelId"
+                    [value]="hotelId"
+                  />
+                  <p>Don't change this value.</p>
+                </th>
+                <th>
+                  <ion-select
+                    formControlName="categoryId"
+                    interface="action-sheet"
+                    placeholder="Select Category"
+                    multiple="false"
+                  >
+                    <ion-select-option
+                      *ngFor="let item of categories"
+                      [value]="item._id"
+                      >{{item.name}}</ion-select-option
+                    >
+                  </ion-select>
+                </th>
 
-  <ion-modal [isOpen]="isDishImageUploadModalOpen" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+                <th>
+                  <ion-input
+                    type="text"
+                    placeholder=""
+                    label="Menu name"
+                    labelPlacement="stacked"
+                    formControlName="name"
+                    fill="outline"
+                  ></ion-input>
+                </th>
+
+                <th>
+                  <ion-select
+                    formControlName="dishType"
+                    value="veg"
+                    multiple="false"
+                    placeholder="Select Type"
+                  >
+                    <ion-select-option value="veg">Veg</ion-select-option>
+                    <ion-select-option value="non-veg"
+                      >Non-veg</ion-select-option
+                    >
+                  </ion-select>
+                </th>
+
+                <th>
+                  <ion-input
+                    type="text"
+                    placeholder=""
+                    label="Partner price"
+                    labelPlacement="stacked"
+                    formControlName="partnerPrice"
+                    fill="outline"
+                  ></ion-input>
+                </th>
+
+                <th>
+                  <ion-input
+                    type="text"
+                    placeholder=""
+                    label="User price"
+                    labelPlacement="stacked"
+                    formControlName="userPrice"
+                    fill="outline"
+                  ></ion-input>
+                </th>
+
+                <th>
+                  <ion-select
+                    value="0"
+                    multiple="false"
+                    placeholder="Select Spice Level"
+                    formControlName="spicLevel"
+                  >
+                    <ion-select-option value="0">No Spicy</ion-select-option>
+                    <ion-select-option value="1"
+                      >Medium Spicy</ion-select-option
+                    >
+                    <ion-select-option value="2">Extra Spicy</ion-select-option>
+                    <ion-select-option value="3">Very Spicy</ion-select-option>
+                  </ion-select>
+                </th>
+
+                <th>
+                  <ion-select
+                    value="1"
+                    multiple="false"
+                    placeholder="Select Stock"
+                    formControlName="stock"
+                  >
+                    <ion-select-option value="1">Yes</ion-select-option>
+                    <ion-select-option value="0">No</ion-select-option>
+                  </ion-select>
+                </th>
+
+                <th>
+                  <div>
+                    <label>Image</label>
+                    <input type="file" (change)="onFileChange($event, i)" />
+                    <img
+                      crossorigin="anonymous"
+                      style="height: 200px; width: auto"
+                      *ngIf="dish.get('image_url')?.value"
+                      [src]="dish.get('image_url')?.value"
+                      alt="Image Preview"
+                      width="100"
+                    />
+                  </div>
+                </th>
+
+                <th>
+                  <ion-button type="button" fill="solid" (click)="addDish()"
+                    >Add Dish</ion-button
+                  >
+                  <ion-button type="submit" fill="solid" (click)="onSubmit()"
+                    >Submit</ion-button
+                  >
+
+                  <ion-button
+                    (click)="removeDish(i)"
+                    expand="block"
+                    color="danger"
+                  >
+                    remove
+                  </ion-button>
+                </th>
+              </tr>
+            </table>
+          </div>
+        </form>
+      </ion-col>
+      <ion-col size="6"></ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-modal
+    [isOpen]="isDishImageUploadModalOpen"
+    [initialBreakpoint]="0.75"
+    [breakpoints]="[0, 0.25, 0.5, 0.75]"
+  >
     <ng-template>
       <ion-header class="ion-no-border">
         <ion-toolbar>
@@ -121,12 +201,24 @@
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
-      <div class="image-upload-container">
-        <input #f hidden type="file" name="" (change)="uploadImage($event)" id="">
-        <ion-button (click)="f.click()" expand="block" fill="outline" shape="round">
-          Select and Upload
-        </ion-button>
-      </div>
+        <div class="image-upload-container">
+          <input
+            #f
+            hidden
+            type="file"
+            name=""
+            (change)="uploadImage($event)"
+            id=""
+          />
+          <ion-button
+            (click)="f.click()"
+            expand="block"
+            fill="outline"
+            shape="round"
+          >
+            Select and Upload
+          </ion-button>
+        </div>
       </ion-content>
     </ng-template>
   </ion-modal>

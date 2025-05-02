@@ -17,7 +17,7 @@ filteredOrders: any[] = [];
 paginatedOrders: any[] = [];
 
 searchTerm: string = '';
-pageSize: number = 10;
+pageSize: number = 20;
 currentPage: number = 1;
 totalPages: number = 1;
 
@@ -104,7 +104,7 @@ console.log(type);
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
-        this.orders = value['data']['content'];
+        this.orders = value['data'];
         this.filteredOrders = [...this.orders];
         this.updatePagination();
       },
@@ -265,7 +265,7 @@ totalPagesArray(): number[] {
 
 getStatusText(status: number): string {
   const statuses = ['Received', 'Being Prepared', 'Delivery Assigned', 'Delivered', 'Accepted', 'Cancelled', 'Pickup Confirmed'];
-  return statuses[status] || 'Unknown';
+  return statuses[status] || 'Cancelled By User';
 }
  downloadExcelSheet(){
   let data = document.getElementById("table-data");

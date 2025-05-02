@@ -26,8 +26,8 @@ export class HotelsPage implements OnInit {
     private route:ActivatedRoute,
               private loadingController: LoadingController,
               private toastController: ToastController) {
-                this.lat = this.route.snapshot.paramMap.get('lat');
-                this.lng = this.route.snapshot.paramMap.get('lng');
+                this.lat = this.route.snapshot.paramMap.get('lng');
+                this.lng = this.route.snapshot.paramMap.get('lat');
                 this.partnerId = this.route.snapshot.paramMap.get('id');
                 this.form = this.formBuilder.group({
                   hotelName:[,[Validators.required]],
@@ -52,7 +52,13 @@ export class HotelsPage implements OnInit {
   }
 
 
-  uploadImage(ev:any){
+  async uploadImage(ev:any){
+    let loading = await this.loadingController.create({
+      message:"Uploading image...",
+      animated:true,
+    
+    })
+    await loading.present();
     let file = ev.target.files[0];
     
     console.log(file);
@@ -65,6 +71,7 @@ export class HotelsPage implements OnInit {
         console.log(value);
         this.isHotelImageUploadModalOpen = false;
         this.presentToast("Hotel Registered Successfully", 2000, 'success','bottom');
+        await loading.dismiss();
         setTimeout(() =>{
           this.router.navigate(['folder', 'partners']);
 
@@ -74,7 +81,7 @@ export class HotelsPage implements OnInit {
         console.log(error);
         this.isHotelImageUploadModalOpen = true;
         this.presentToast("Image Upload Failed", 2000, 'danger','bottom')
-
+        await loading.dismiss();
       }
     })
 
@@ -93,7 +100,7 @@ export class HotelsPage implements OnInit {
     await loading.present();
     if(this.form.valid){
       console.log(this.form.value);
-      this.auth.hotelRegister(this.form.value.hotelName,this.form.value.address, this.form.value.categoryId, this.lat, this.lng,this.partnerId)
+      this.auth.hotelRegister(this.form.value.hotelName,this.form.value.address, this.form.value.categoryId, this.lng, this.lat,this.partnerId)
       .subscribe({
         next:async(value:any) =>{
           console.log(value);

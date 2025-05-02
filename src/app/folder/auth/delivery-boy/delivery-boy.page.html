@@ -56,7 +56,7 @@
           <td>{{item?.phoneNumber}}</td>
           <td>{{item?.address || "No Address Added"}}</td>
           <td class="action-buttons">
-            <ion-badge color="secondary" mode="ios" class="action-badge">View</ion-badge>
+            <ion-badge color="secondary" mode="ios" class="action-badge" (click)="viewBoy(item._id)">View</ion-badge>
             <ion-badge *ngIf="item.status === 0" (click)="block(item._id)" color="success" mode="ios" class="action-badge">Block</ion-badge>
             <ion-badge *ngIf="item.status === 1" (click)="unblock(item._id)" color="tertiary" mode="ios" class="action-badge">Unblock</ion-badge>
             <ion-badge (click)="deleteBoy(item._id)" color="danger" mode="ios" class="action-badge">Delete</ion-badge>

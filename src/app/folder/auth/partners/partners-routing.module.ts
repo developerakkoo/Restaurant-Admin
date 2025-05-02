@@ -27,6 +27,10 @@ const routes: Routes = [
   {
     path: 'view/:id',
     loadChildren: () => import('./view/view.module').then( m => m.ViewPageModule)
+  },
+  {
+    path: 'settle/:id',
+    loadChildren: () => import('./settle/settle.module').then( m => m.SettlePageModule)
   }
 ];
 

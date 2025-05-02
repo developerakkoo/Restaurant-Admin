@@ -123,6 +123,33 @@
       <ion-label slot="end">30</ion-label>
     </ion-range>
   </ion-card>
-
   <ion-button (click)="onSubmit()" expand="block"> Update Charges </ion-button>
+
+
+  <ion-card class="ion-padding">
+    <ion-card-header>
+      <ion-card-title>Delivery Bonus Settings</ion-card-title>
+    </ion-card-header>
+    <form [formGroup]="bonusForm">
+      <ion-item>
+        <ion-label position="stacked">Per Delivery Amount (₹)</ion-label>
+        <ion-input type="number" formControlName="perDeliveryAmount" placeholder="Enter amount"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">16th Delivery Bonus (₹)</ion-label>
+        <ion-input type="number" formControlName="bonus16thDelivery" placeholder="Enter bonus amount"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">21st Delivery Bonus (₹)</ion-label>
+        <ion-input type="number" formControlName="bonus21stDelivery" placeholder="Enter bonus amount"></ion-input>
+      </ion-item>
+
+      <ion-button (click)="updateBonusSettings()" expand="block" class="mt-3">
+        Update Bonus Settings
+      </ion-button>
+    </form>
+  </ion-card>
+
 </ion-content>

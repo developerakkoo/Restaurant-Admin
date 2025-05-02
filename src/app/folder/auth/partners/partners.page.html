@@ -77,11 +77,11 @@
                     </ion-badge>
                   
                     <ng-container *ngIf="item?.hotels.length !== 0; else addHotel">
-                      <ion-badge class="btn btn-sm mx-2" color="warning" mode="ios" id="hover-trigger">
+                      <ion-badge class="btn btn-sm mx-2" color="warning" mode="ios" [id]="'hover-trigger-' + item._id">
                         Dish
                       </ion-badge>
                   
-                      <ion-popover trigger="hover-trigger" triggerAction="click">
+                      <ion-popover [trigger]="'hover-trigger-' + item._id" triggerAction="click">
                         <ng-template>
                           <ion-content class="ion-padding">
                             <ion-list>
