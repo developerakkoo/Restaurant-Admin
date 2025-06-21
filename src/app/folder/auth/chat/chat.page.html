@@ -4,66 +4,118 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
- <ion-grid >
-  <ion-row >
-    <ion-col size="4">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>Messages</ion-card-title>
-          <ion-searchbar placeholder="Search" inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-text color="primary" class="ion-text-center" *ngIf="messages.length == 0">
-            <h1>No chats
-            </h1>
-          </ion-text>
-          <ion-list style="height: 60vh; overflow: auto;" *ngIf="messages.length > 0">
-            <ion-item *ngFor="let msg of messages" detail (click)="openChat(msg)">
-              <!-- <ion-avatar slot="start">
-                <img [src]="msg.image" />
-              </ion-avatar> -->
+<ion-content [fullscreen]="true" class="chat-container">
+  <ion-grid class="chat-grid">
+    <ion-row class="chat-row">
+      <!-- Left Panel - User Profiles -->
+      <ion-col size="4" class="profiles-panel">
+        <ion-card class="profiles-card">
+          <ion-card-header>
+            <ion-card-title>Conversations</ion-card-title>
+            <ion-searchbar 
+              placeholder="Search conversations" 
+              (ionChange)="onSearchChange($event)" 
+              [debounce]="250" 
+              showCancelButton="always">
+            </ion-searchbar>
+          </ion-card-header>
+          <ion-card-content class="profiles-content">
+            <ion-text color="primary" class="ion-text-center" *ngIf="activeChats.length === 0">
+              <h1>No conversations</h1>
+            </ion-text>
+            <ion-list class="profiles-list" *ngIf="activeChats.length > 0">
+              <ion-item 
+                *ngFor="let chat of activeChats" 
+                class="profile-item"
+                [class.active]="chat._id === chatId"
+                (click)="openChat(chat)"
+                button>
+                <ion-avatar slot="start" class="profile-avatar">
+                  <img [src]="chat.user.profileImage || 'assets/icon/favicon.png'" alt="Profile" />
+                </ion-avatar>
+                <ion-label class="profile-info">
+                  <h3>{{chat.user.phoneNumber}}</h3>
+                  <p class="last-message">{{chat.lastMessage.text || "Image received"}}</p>
+                </ion-label>
+                <ion-badge color="light" mode="ios" class="time-badge">
+                  {{chat.lastMessage.time | date:"shortDate"}}
+                </ion-badge>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <!-- Right Panel - Chat Messages -->
+      <ion-col size="8" class="chat-panel" *ngIf="chatId">
+        <ion-card class="chat-card">
+          <ion-card-header class="chat-header">
+            <ion-item class="chat-user-info">
+              <ion-avatar slot="start" class="user-avatar">
+                <img [src]="selectedChatUserImage" alt="User Profile" />
+              </ion-avatar>
               <ion-label>
-                {{msg.user.phoneNumber}}
-                <p> {{msg.lastMessage.text || "Image received"}} </p>
+                <h2>{{chatName || "..."}}</h2>
+                <p>Online</p>
               </ion-label>
-              <ion-badge color="light" mode="ios"> {{msg.createdAt | date:"shortDate"}} </ion-badge>
             </ion-item>
-          </ion-list>
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-    <ion-col size="8" *ngIf="messages.length > 0">
-      <ion-card class="chat-card-container">
-        <ion-card-header>
-          <ion-item>
-            <ion-avatar slot="start">
-              <img crossorigin="anonymous" src="assets/icon/favicon.png" />
-            </ion-avatar>
-            <ion-label>{{chatName || "..."}}</ion-label>
-          </ion-item>
-        </ion-card-header>
+          </ion-card-header>
 
+          <ion-card-content class="messages-content">
+            <div class="messages-container" #messagesContainer>
+              <ion-text color="primary" class="ion-text-center" *ngIf="messages.length === 0">
+                <h1>No messages yet</h1>
+                <p>Start a conversation!</p>
+              </ion-text>
+              
+              <div class="message-list" *ngIf="messages.length > 0">
+                <div 
+                  *ngFor="let msg of messages" 
+                  class="message-item"
+                  [class.sent]="!msg.isUser"
+                  [class.received]="msg.isUser">
+                  <div class="message-bubble">
+                    <p class="message-text">{{msg.text}}</p>
+                    <span class="message-time">{{msg.time | date:'shortTime'}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ion-card-content>
 
-        <ion-card-content>
-          <ion-list>
-            <ion-item  class="chat-bubble" [color]="msg.lastMessage.isUser ? 'danger' : 'light'" lines="none" *ngFor="let msg of chatMessages">
-          
-              <ion-label style="float: right;" > {{msg.lastMessage.text}} </ion-label>
-              <!-- <img *ngIf="msg.isImage == true" src="assets/icon/favicon.png" alt="" srcset=""> -->
+          <!-- Message Input -->
+          <div class="message-input-container">
+            <ion-item class="input-item">
+              <ion-input 
+                fill="outline" 
+                type="text" 
+                [(ngModel)]="message" 
+                placeholder="Type a message..."
+                (keyup.enter)="sendMessage()"
+                class="message-input">
+              </ion-input>
+              <ion-button 
+                fill="clear" 
+                (click)="sendMessage()"
+                [disabled]="!message.trim()"
+                class="send-button">
+                <ion-icon slot="icon-only" name="send"></ion-icon>
+              </ion-button>
             </ion-item>
-         
-          </ion-list>
-          
-        </ion-card-content>
-        <div class="card-footer">
-          <ion-input fill="outline" type="text" [(ngModel)]="message" placeholder="Start a new message"></ion-input>
-          <ion-button fill="clear" (click)="sendMessage()">
-            <ion-icon slot="icon-only" name="send"></ion-icon>
-          </ion-button>
-        </div>
-      </ion-card>
-    </ion-col>
-  </ion-row>
- </ion-grid>
+          </div>
+        </ion-card>
+      </ion-col>
+
+      <!-- Empty State -->
+      <ion-col size="8" class="empty-state" *ngIf="!chatId">
+        <ion-card class="empty-card">
+          <ion-card-content class="empty-content">
+            <ion-icon name="chatbubbles-outline" class="empty-icon"></ion-icon>
+            <h2>Select a conversation</h2>
+            <p>Choose a conversation from the list to start chatting</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

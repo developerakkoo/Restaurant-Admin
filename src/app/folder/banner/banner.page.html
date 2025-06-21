@@ -1,91 +1,206 @@
 <ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
-    <ion-title>Banner</ion-title>
+    <ion-title>Banner Management</ion-title>
+    <ion-button
+      color="primary"
+      (click)="getBanners()"
+      slot="end"
+      fill="clear"
+    >
+      <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
- <ion-grid fixed>
-  <ion-row>
-    <ion-col size="6">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-subtitle>This image is visible in Home Page.</ion-card-subtitle>
-          <ion-card-title>Home Banner</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <input type="file" (change)="homeImageEvent($event)">
-          <ion-button 
-            (click)="uploadBanner(0)" 
-            expand="block" 
-            [disabled]="isBannerTypeExists(0)">
-            Upload
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-      <ion-card>
-        <ion-card-header>
-          <ion-card-subtitle>This image is visible in the user cart page</ion-card-subtitle>
-          <ion-card-title>Cart Banner</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <input type="file" (change)="cartImageEvent($event)">
-          <ion-button 
-            (click)="uploadBanner(1)" 
-            expand="block" 
-            [disabled]="isBannerTypeExists(1)">
-            Upload
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-      <ion-card>
-        <ion-card-header>
-          <ion-card-subtitle>This image is visible in user profile section.</ion-card-subtitle>
-          <ion-card-title>Profile Banner</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <input type="file" (change)="profileImageEvent($event)">
-          <ion-button 
-            (click)="uploadBanner(3)" 
-            expand="block" 
-            [disabled]="isBannerTypeExists(3)">
-            Upload
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    </ion-col>
-    <ion-col size="6">
+<ion-content [fullscreen]="true" class="banner-container">
+  <div class="banner-header">
+    <h2>Manage App Banners</h2>
+    <p>Upload and manage banner images for different sections of your app</p>
+  </div>
 
-      <ion-list>
-        <ion-list-header>
-          <ion-label>All Banners</ion-label>
-        </ion-list-header>
+  <div class="banner-content">
+    <ion-grid>
+      <ion-row>
+        <!-- Upload Section -->
+        <ion-col size="12" size-md="6">
+          <div class="upload-section">
+            <h3 class="section-title">Upload New Banners</h3>
+            
+            <!-- Home Banner Card -->
+            <ion-card class="upload-card">
+              <ion-card-header class="card-header">
+                <div class="card-icon home-icon">
+                  <ion-icon name="home-outline"></ion-icon>
+                </div>
+                <div class="card-info">
+                  <ion-card-title>Home Banner</ion-card-title>
+                  <ion-card-subtitle>Displayed on the home page</ion-card-subtitle>
+                </div>
+                <div class="status-badge">
+                  <ion-icon name="add-circle-outline"></ion-icon>
+                  <span>Multiple Allowed</span>
+                </div>
+              </ion-card-header>
+              <ion-card-content class="card-content">
+                <div class="upload-area" [class.has-file]="homeImage">
+                  <input 
+                    type="file" 
+                    (change)="homeImageEvent($event)"
+                    accept="image/*"
+                    class="file-input"
+                    id="home-banner-input"
+                  >
+                  <label for="home-banner-input" class="upload-label">
+                    <ion-icon name="cloud-upload-outline"></ion-icon>
+                    <span>{{ homeImage ? homeImage.name : 'Choose Image' }}</span>
+                  </label>
+                </div>
+                <ion-button 
+                  (click)="uploadBanner(0)" 
+                  expand="block" 
+                  [disabled]="!homeImage"
+                  class="upload-btn"
+                >
+                  <ion-icon name="upload-outline" slot="start"></ion-icon>
+                  Upload Home Banner
+                </ion-button>
+              </ion-card-content>
+            </ion-card>
 
-        <div *ngFor="let item of bannnerImages" style="position: relative; display: inline-block; margin: 10px;">
-          <img 
-            crossorigin="anonymous" 
-            [appRemoveport]="item.image_url" 
-            alt="" 
-            style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;" 
-            (click)="openImageModal(item.image_url)">
-          <span *ngIf="item.type === 0" style="position: absolute; top: 5px; left: 12px; background: #3880ff; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">
-            Home
-          </span>
+            <!-- Cart Banner Card -->
+            <ion-card class="upload-card">
+              <ion-card-header class="card-header">
+                <div class="card-icon cart-icon">
+                  <ion-icon name="cart-outline"></ion-icon>
+                </div>
+                <div class="card-info">
+                  <ion-card-title>Cart Banner</ion-card-title>
+                  <ion-card-subtitle>Displayed in the cart page</ion-card-subtitle>
+                </div>
+                <div class="status-badge" [class.active]="isBannerTypeExists(1)">
+                  <ion-icon name="checkmark-circle" *ngIf="isBannerTypeExists(1)"></ion-icon>
+                  <span>{{ isBannerTypeExists(1) ? 'Active' : 'Not Set' }}</span>
+                </div>
+              </ion-card-header>
+              <ion-card-content class="card-content">
+                <div class="upload-area" [class.has-file]="cartImage">
+                  <input 
+                    type="file" 
+                    (change)="cartImageEvent($event)"
+                    accept="image/*"
+                    class="file-input"
+                    id="cart-banner-input"
+                  >
+                  <label for="cart-banner-input" class="upload-label">
+                    <ion-icon name="cloud-upload-outline"></ion-icon>
+                    <span>{{ cartImage ? cartImage.name : 'Choose Image' }}</span>
+                  </label>
+                </div>
+                <ion-button 
+                  (click)="uploadBanner(1)" 
+                  expand="block" 
+                  [disabled]="!cartImage || isBannerTypeExists(1)"
+                  class="upload-btn"
+                >
+                  <ion-icon name="upload-outline" slot="start"></ion-icon>
+                  {{ isBannerTypeExists(1) ? 'Already Uploaded' : 'Upload Banner' }}
+                </ion-button>
+              </ion-card-content>
+            </ion-card>
 
-          <span *ngIf="item.type === 1" style="position: absolute; top: 5px; left: 12px; background: #3880ff; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">
-           Cart
-          </span>
+            <!-- Profile Banner Card -->
+            <ion-card class="upload-card">
+              <ion-card-header class="card-header">
+                <div class="card-icon profile-icon">
+                  <ion-icon name="person-outline"></ion-icon>
+                </div>
+                <div class="card-info">
+                  <ion-card-title>Profile Banner</ion-card-title>
+                  <ion-card-subtitle>Displayed in user profile section</ion-card-subtitle>
+                </div>
+                <div class="status-badge" [class.active]="isBannerTypeExists(3)">
+                  <ion-icon name="checkmark-circle" *ngIf="isBannerTypeExists(3)"></ion-icon>
+                  <span>{{ isBannerTypeExists(3) ? 'Active' : 'Not Set' }}</span>
+                </div>
+              </ion-card-header>
+              <ion-card-content class="card-content">
+                <div class="upload-area" [class.has-file]="profileImage">
+                  <input 
+                    type="file" 
+                    (change)="profileImageEvent($event)"
+                    accept="image/*"
+                    class="file-input"
+                    id="profile-banner-input"
+                  >
+                  <label for="profile-banner-input" class="upload-label">
+                    <ion-icon name="cloud-upload-outline"></ion-icon>
+                    <span>{{ profileImage ? profileImage.name : 'Choose Image' }}</span>
+                  </label>
+                </div>
+                <ion-button 
+                  (click)="uploadBanner(3)" 
+                  expand="block" 
+                  [disabled]="!profileImage || isBannerTypeExists(3)"
+                  class="upload-btn"
+                >
+                  <ion-icon name="upload-outline" slot="start"></ion-icon>
+                  {{ isBannerTypeExists(3) ? 'Already Uploaded' : 'Upload Banner' }}
+                </ion-button>
+              </ion-card-content>
+            </ion-card>
+          </div>
+        </ion-col>
 
-          <span *ngIf="item.type === 3" style="position: absolute; top: 5px; left: 12px; background: #3880ff; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">
-            Profile
-          </span>
-            <span (click)="deleteBanner(item._id)" style="position: absolute; top: 5px; right: 5px; background: #ff4d4d; color: white; width: 24px; height: 24px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-            ✕
-            </span>
-           
-        </div>
-      </ion-list>
-    </ion-col>
-  </ion-row>
- </ion-grid>
+        <!-- Gallery Section -->
+        <ion-col size="12" size-md="6">
+          <div class="gallery-section">
+            <div class="gallery-header">
+              <h3 class="section-title">Active Banners</h3>
+              <span class="banner-count">{{ bannnerImages.length }} banner{{ bannnerImages.length !== 1 ? 's' : '' }}</span>
+            </div>
+
+            <div class="banner-grid" *ngIf="bannnerImages.length > 0">
+              <div 
+                *ngFor="let item of bannnerImages" 
+                class="banner-item"
+                (click)="openImageModal(item.image_url)"
+              >
+                <div class="banner-image">
+                  <img 
+                    crossorigin="anonymous" 
+                    [appRemoveport]="item.image_url" 
+                    alt="Banner Image" 
+                    class="banner-img"
+                  >
+                  
+                  <!-- Type Badge -->
+                  <div class="type-badge" [class]="getTypeClass(item.type)">
+                    <ion-icon [name]="getTypeIcon(item.type)"></ion-icon>
+                    <span>{{ getTypeLabel(item.type) }}</span>
+                  </div>
+
+                  <!-- Delete Button -->
+                  <ion-button 
+                    (click)="deleteBanner(item._id); $event.stopPropagation()" 
+                    fill="clear" 
+                    color="danger"
+                    class="delete-btn"
+                  >
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" *ngIf="bannnerImages.length === 0">
+              <ion-icon name="images-outline" class="empty-icon"></ion-icon>
+              <h4>No Banners Uploaded</h4>
+              <p>Upload your first banner to get started</p>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

@@ -12,7 +12,7 @@ export class NotificationPage implements OnInit {
   constructor(private auth:AuthService,private modalController:ModalController) { }
 
   ngOnInit() {
-    this.auth.getAllCustomers("",1,10,"","","","0").subscribe((res:any) => {
+    this.auth.getAllCustomers("",1,1000,"","","","0").subscribe((res:any) => {
       console.log(res);
       
       this.users = res?.data?.content;

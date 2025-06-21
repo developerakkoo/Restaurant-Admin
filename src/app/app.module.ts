@@ -9,10 +9,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { RemoveportDirective } from './shared/directives/removeport.directive';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+
+const config: SocketIoConfig = { url: 'http://192.168.1.10:8000', options: {} };
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), IonicStorageModule.forRoot({name:'dropeat'}), AppRoutingModule, HttpClientModule],
+  imports: [BrowserModule, IonicModule.forRoot(), SocketIoModule.forRoot(config), IonicStorageModule.forRoot({name:'dropeat'}), AppRoutingModule, HttpClientModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },Geolocation],
   bootstrap: [AppComponent],
   schemas:[CUSTOM_ELEMENTS_SCHEMA]

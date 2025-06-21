@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Dish</ion-title>
+    <ion-title>Dish Management</ion-title>
     <ion-button
       color="primary"
       (click)="viewNotifications()"
@@ -20,48 +20,57 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12">
-        <form [formGroup]="form">
-          <div class="table-responsive" formArrayName="dishes">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>HotelId</th>
-                  <th scope="col">Category</th>
-                  <th scope="col">Menu Name</th>
-                  <th scope="col">Dish Type</th>
-                  <th scope="col">Partner Price</th>
-                  <th scope="col">User Price</th>
-                  <th scope="col">Spice Level</th>
-                  <th scope="col">Stock</th>
-                  <th scope="col">Image</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
+<ion-content [fullscreen]="true" class="sheet-container">
+  <div class="sheet-header">
+    <h2>Add Multiple Dishes</h2>
+    <p>Add multiple dishes to your menu at once. Each row represents one dish.</p>
+  </div>
+
+  <div class="sheet-content">
+    <form [formGroup]="form">
+      <div class="table-container" formArrayName="dishes">
+        <div class="table-wrapper">
+          <table class="sheet-table">
+            <thead>
+              <tr class="header-row">
+                <th class="header-cell">Hotel ID</th>
+                <th class="header-cell">Category</th>
+                <th class="header-cell">Menu Name</th>
+                <th class="header-cell">Dish Type</th>
+                <th class="header-cell">Partner Price</th>
+                <th class="header-cell">User Price</th>
+                <th class="header-cell">Spice Level</th>
+                <th class="header-cell">Stock</th>
+                <th class="header-cell">Image</th>
+                <th class="header-cell">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
               <tr
                 *ngFor="let dish of dishes.controls; let i = index"
                 [formGroupName]="i"
+                class="data-row"
               >
-                <th>
-                  <input
-                    type="text"
-                    readonly="true"
-                    style="width: 30px"
-                    formControlName="hotelId"
-                    [value]="hotelId"
-                  />
-                  <p>Don't change this value.</p>
-                </th>
-                <th>
+                <td class="data-cell hotel-id-cell">
+                  <div class="cell-content">
+                    <ion-input
+                      type="text"
+                      readonly="true"
+                      formControlName="hotelId"
+                      [value]="hotelId"
+                      class="readonly-input"
+                    ></ion-input>
+                    <small class="cell-hint">Auto-filled</small>
+                  </div>
+                </td>
+                
+                <td class="data-cell">
                   <ion-select
                     formControlName="categoryId"
                     interface="action-sheet"
                     placeholder="Select Category"
                     multiple="false"
+                    class="sheet-select"
                   >
                     <ion-select-option
                       *ngFor="let item of categories"
@@ -69,122 +78,169 @@
                       >{{item.name}}</ion-select-option
                     >
                   </ion-select>
-                </th>
+                </td>
 
-                <th>
+                <td class="data-cell">
                   <ion-input
                     type="text"
-                    placeholder=""
-                    label="Menu name"
-                    labelPlacement="stacked"
+                    placeholder="Enter menu name"
                     formControlName="name"
-                    fill="outline"
+                    class="sheet-input"
                   ></ion-input>
-                </th>
+                </td>
 
-                <th>
+                <td class="data-cell">
                   <ion-select
                     formControlName="dishType"
                     value="veg"
                     multiple="false"
                     placeholder="Select Type"
+                    class="sheet-select"
                   >
                     <ion-select-option value="veg">Veg</ion-select-option>
-                    <ion-select-option value="non-veg"
-                      >Non-veg</ion-select-option
-                    >
+                    <ion-select-option value="non-veg">Non-veg</ion-select-option>
                   </ion-select>
-                </th>
+                </td>
 
-                <th>
+                <td class="data-cell">
                   <ion-input
-                    type="text"
-                    placeholder=""
-                    label="Partner price"
-                    labelPlacement="stacked"
+                    type="number"
+                    placeholder="0.00"
                     formControlName="partnerPrice"
-                    fill="outline"
+                    class="sheet-input"
                   ></ion-input>
-                </th>
+                </td>
 
-                <th>
+                <td class="data-cell">
                   <ion-input
-                    type="text"
-                    placeholder=""
-                    label="User price"
-                    labelPlacement="stacked"
+                    type="number"
+                    placeholder="0.00"
                     formControlName="userPrice"
-                    fill="outline"
+                    class="sheet-input"
                   ></ion-input>
-                </th>
+                </td>
 
-                <th>
+                <td class="data-cell">
                   <ion-select
                     value="0"
                     multiple="false"
-                    placeholder="Select Spice Level"
+                    placeholder="Spice Level"
                     formControlName="spicLevel"
+                    class="sheet-select"
                   >
                     <ion-select-option value="0">No Spicy</ion-select-option>
-                    <ion-select-option value="1"
-                      >Medium Spicy</ion-select-option
-                    >
+                    <ion-select-option value="1">Medium Spicy</ion-select-option>
                     <ion-select-option value="2">Extra Spicy</ion-select-option>
                     <ion-select-option value="3">Very Spicy</ion-select-option>
                   </ion-select>
-                </th>
+                </td>
 
-                <th>
+                <td class="data-cell">
                   <ion-select
                     value="1"
                     multiple="false"
-                    placeholder="Select Stock"
+                    placeholder="Stock"
                     formControlName="stock"
+                    class="sheet-select"
                   >
-                    <ion-select-option value="1">Yes</ion-select-option>
-                    <ion-select-option value="0">No</ion-select-option>
+                    <ion-select-option value="1">In Stock</ion-select-option>
+                    <ion-select-option value="0">Out of Stock</ion-select-option>
                   </ion-select>
-                </th>
+                </td>
 
-                <th>
-                  <div>
-                    <label>Image</label>
-                    <input type="file" (change)="onFileChange($event, i)" />
-                    <img
-                      crossorigin="anonymous"
-                      style="height: 200px; width: auto"
-                      *ngIf="dish.get('image_url')?.value"
-                      [src]="dish.get('image_url')?.value"
-                      alt="Image Preview"
-                      width="100"
+                <td class="data-cell image-cell">
+                  <div class="image-upload-wrapper">
+                    <input 
+                      type="file" 
+                      (change)="onFileChange($event, i)" 
+                      class="file-input"
+                      accept="image/*"
                     />
+                    <div class="upload-area" *ngIf="!dish.get('image_url')?.value">
+                      <ion-icon name="cloud-upload-outline"></ion-icon>
+                      <span>Upload Image</span>
+                    </div>
+                    <div class="image-preview" *ngIf="dish.get('image_url')?.value">
+                      <img
+                        [src]="dish.get('image_url')?.value"
+                        alt="Dish Preview"
+                        class="preview-image"
+                      />
+                      <ion-button 
+                        fill="clear" 
+                        size="small" 
+                        color="danger"
+                        (click)="removeImage(i)"
+                        class="remove-image-btn"
+                      >
+                        <ion-icon name="close-circle"></ion-icon>
+                      </ion-button>
+                    </div>
                   </div>
-                </th>
+                </td>
 
-                <th>
-                  <ion-button type="button" fill="solid" (click)="addDish()"
-                    >Add Dish</ion-button
-                  >
-                  <ion-button type="submit" fill="solid" (click)="onSubmit()"
-                    >Submit</ion-button
-                  >
-
-                  <ion-button
-                    (click)="removeDish(i)"
-                    expand="block"
-                    color="danger"
-                  >
-                    remove
-                  </ion-button>
-                </th>
+                <td class="data-cell actions-cell">
+                  <div class="action-buttons">
+                    <ion-button 
+                      type="button" 
+                      fill="clear" 
+                      size="small"
+                      color="primary"
+                      (click)="addDish()"
+                      class="action-btn"
+                    >
+                      <ion-icon name="add-circle-outline"></ion-icon>
+                    </ion-button>
+                    
+                    <ion-button
+                      (click)="removeDish(i)"
+                      fill="clear"
+                      size="small"
+                      color="danger"
+                      class="action-btn"
+                      [disabled]="dishes.length === 1"
+                    >
+                      <ion-icon name="trash-outline"></ion-icon>
+                    </ion-button>
+                  </div>
+                </td>
               </tr>
-            </table>
-          </div>
-        </form>
-      </ion-col>
-      <ion-col size="6"></ion-col>
-    </ion-row>
-  </ion-grid>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sheet-footer">
+        <div class="footer-info">
+          <span class="row-count">{{dishes.length}} dish{{dishes.length !== 1 ? 'es' : ''}} ready to add</span>
+        </div>
+        <div class="footer-actions">
+          <ion-button 
+            type="button" 
+            fill="outline" 
+            color="medium"
+            (click)="addDish()"
+            class="footer-btn"
+          >
+            <ion-icon name="add" slot="start"></ion-icon>
+            Add Another Dish
+          </ion-button>
+          
+          <ion-button 
+            type="submit" 
+            fill="solid" 
+            color="primary"
+            (click)="onSubmit()"
+            class="footer-btn"
+            [disabled]="form.invalid"
+          >
+            <ion-icon name="checkmark" slot="start"></ion-icon>
+            Submit All Dishes
+          </ion-button>
+        </div>
+      </div>
+    </form>
+  </div>
 
   <ion-modal
     [isOpen]="isDishImageUploadModalOpen"

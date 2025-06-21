@@ -188,5 +188,12 @@ export class DishPage implements OnInit {
       });
     }
   }
-  
+
+  removeImage(index: number) {
+    const dishes = this.form.get('dishes') as FormArray;
+    const dish = dishes.at(index) as FormGroup;
+    dish.patchValue({
+      image_url: ''
+    });
+  }
 }

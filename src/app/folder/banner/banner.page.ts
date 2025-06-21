@@ -134,6 +134,23 @@ this.getBanners();
     next:async(value:any) =>{
       console.log(value);
       await loading.dismiss();
+      
+      // Clear the file input after successful upload
+      if(type == 0){
+        this.homeImage = null as any;
+        // Reset the file input
+        const homeInput = document.getElementById('home-banner-input') as HTMLInputElement;
+        if(homeInput) homeInput.value = '';
+      }else if(type == 1){
+        this.cartImage = null as any;
+        const cartInput = document.getElementById('cart-banner-input') as HTMLInputElement;
+        if(cartInput) cartInput.value = '';
+      }else if(type == 3){
+        this.profileImage = null as any;
+        const profileInput = document.getElementById('profile-banner-input') as HTMLInputElement;
+        if(profileInput) profileInput.value = '';
+      }
+      
       this.getBanners();
     },
     error:async(error:HttpErrorResponse) =>{
@@ -152,5 +169,45 @@ this.getBanners();
       cssClass: 'image-modal'
     });
     await modal.present();
+  }
+
+  // Helper methods for UI
+  getTypeClass(type: number): string {
+    switch (type) {
+      case 0:
+        return 'home-badge';
+      case 1:
+        return 'cart-badge';
+      case 3:
+        return 'profile-badge';
+      default:
+        return '';
+    }
+  }
+
+  getTypeIcon(type: number): string {
+    switch (type) {
+      case 0:
+        return 'home-outline';
+      case 1:
+        return 'cart-outline';
+      case 3:
+        return 'person-outline';
+      default:
+        return 'image-outline';
+    }
+  }
+
+  getTypeLabel(type: number): string {
+    switch (type) {
+      case 0:
+        return 'Home';
+      case 1:
+        return 'Cart';
+      case 3:
+        return 'Profile';
+      default:
+        return 'Unknown';
+    }
   }
 }

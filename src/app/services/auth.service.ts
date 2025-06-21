@@ -277,9 +277,9 @@ export class AuthService {
     query: string,
     pageNumber: any,
     pageSize: any,
-    startDate: any,
-    endDate: any,
-    status: any,
+    startDate: any = "",
+    endDate: any = "",
+    status: any = "",
     isBlocked: any
   ) {
     return this.http.get(
@@ -444,8 +444,8 @@ export class AuthService {
     );
   }
 
-  getMessagesByChatId(chatId: any) {
-    return this.http.get(environment.URL + `admin/get/chat/${chatId}`, {
+  getMessagesByChatId(userId: any) {
+    return this.http.get(environment.URL + `chat/history/admin/${userId}/666979f2983fa6cd5cf79d08`, {
       headers: {
         'x-access-token': this.accessToken.value,
       },
@@ -535,12 +535,12 @@ export class AuthService {
     message: any
   ) {
     return this.http.post(
-      environment.URL + `admin/send`,
+      environment.URL + `chat/send`,
       {
-        chatId,
-        senderId,
-        receiverId,
-        message,
+        isUser: false,
+        adminId: senderId,
+        userId: receiverId,
+        text:message,
         orderId,
       },
       {
