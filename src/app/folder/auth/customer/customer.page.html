@@ -1,49 +1,35 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
     <ion-title>Customers</ion-title>
-    <ion-button  color="primary" (click)="viewNotifications()" slot="end" fill="clear">
+    <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
       <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
     </ion-button>
     <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
       <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
     </ion-button>
   </ion-toolbar>
-  <ion-searchbar mode="ios" placeholder="Search here" inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
+  <ion-searchbar mode="ios" placeholder="Search customers..." inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
 </ion-header>
 
-<ion-content [fullscreen]="false">
-  <ion-text *ngIf="users.length == 0" color="primary" class="ion-text-center">
-    <h1>
-      No Users Found!
-    </h1>
-  </ion-text>
-  <ion-grid >
-    <ion-row>
-      <ion-col size="6">
-        <ion-item lines="none">
-          <ion-label>Users
-            <p>Your users here</p>
-          </ion-label>
-        </ion-item>
-      </ion-col>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h2>👥 Customer Management</h2>
+        <p>Manage your customer base and their information</p>
+      </div>
+      <div class="filter-section">
+        <ion-select value="All" fill="outline" interface="popover" placeholder="Select Status" (ionChange)="filterEvent($event)">
+          <ion-select-option value="true">Online</ion-select-option>
+          <ion-select-option value="false">Offline</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+  </div>
 
-    
-      <ion-col size="6" >
-        <div class="container">
-          <ion-item lines="none">
-            <ion-select value="All" fill="outline"  interface="popover" placeholder="Select Status" (ionChange)="filterEvent($event)">
-              <ion-select-option value="true">Online</ion-select-option>
-              <ion-select-option value="false">Offline</ion-select-option>
-
-            </ion-select>
-          </ion-item>
-         
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-
-  <ion-segment value="0" (ionChange)="segmentChanged($event)">
+  <!-- Filter Section -->
+  <ion-segment value="0" (ionChange)="segmentChanged($event)" class="filter-segment">
     <ion-segment-button value="0">
       <ion-label>Active</ion-label>
     </ion-segment-button>
@@ -52,41 +38,71 @@
     </ion-segment-button>
   </ion-segment>
 
-  <div class="table-responsive" *ngIf="users.length > 0">
-    <table class="table">
-      <thead>
-        <tr>
-          <!-- <th scope="col">Date</th> -->
-          <th scope="col">Customer name</th>
-          <th scope="col">Phone no</th>
-          <th scope="col">Orders</th>
-          <th scope="col">Address</th>
-          <th scope="col">Action</th>
-          <th scope="col">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of users">
-          <!-- <th>{{item.createdAt | date:"fullDate"}}</th> -->
-          <th>{{item?.name}}</th>
-          <th>{{item?.phoneNumber}}</th>
-          <th>{{item?.orderCount}}</th>
-          <th>{{item?.userAddresses?.[0]?.address || "No Address Added"}}</th>
-          <th>
-            <ion-badge style="cursor: pointer;" (click)="openDetailsPage(item._id)" class="ion-padding" color="danger" mode="ios">View</ion-badge>
-            <ion-badge style="cursor: pointer;" *ngIf="item.status == 0" class="ion-padding ion-margin-start" (click)="block(item._id)" color="success" mode="ios">Block</ion-badge>
-          <ion-badge style="cursor: pointer;" *ngIf="item.status == 1" class="ion-padding ion-margin-start" (click)="unblock(item._id)" color="tertiary" mode="ios">Unblock</ion-badge>
-          </th>
-          <th>
-          <ion-badge *ngIf="item?.isOnline === true" class="ion-padding" color="danger" mode="ios">Online</ion-badge>
-          <ion-badge *ngIf="item?.isOnline === false" class="ion-padding" color="danger" mode="ios">Offline</ion-badge>
-          
-
-          </th>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Table Section -->
+  <div class="table-container" *ngIf="users.length > 0">
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Customer List</h3>
+        <ion-badge color="primary">{{ users.length }} Customers</ion-badge>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Customer Name</th>
+              <th>Phone No</th>
+              <th>Orders</th>
+              <th>Address</th>
+              <th>Actions</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of users" class="table-row">
+              <td class="name-cell">{{item?.name}}</td>
+              <td class="phone-cell">{{item?.phoneNumber}}</td>
+              <td class="orders-cell">{{item?.orderCount}}</td>
+              <td class="address-cell">{{item?.userAddresses?.[0]?.address || "No Address Added"}}</td>
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  <ion-badge color="secondary" mode="ios" class="action-badge" (click)="openDetailsPage(item._id)">
+                    <ion-icon name="eye-outline" slot="start"></ion-icon>
+                    View
+                  </ion-badge>
+                  
+                  <ion-badge *ngIf="item.status === 0" color="success" mode="ios" class="action-badge" (click)="block(item._id)">
+                    <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+                    Block
+                  </ion-badge>
+                  
+                  <ion-badge *ngIf="item.status === 1" color="tertiary" mode="ios" class="action-badge" (click)="unblock(item._id)">
+                    <ion-icon name="lock-open-outline" slot="start"></ion-icon>
+                    Unblock
+                  </ion-badge>
+                </div>
+              </td>
+              <td class="status-cell">
+                <ion-badge *ngIf="item?.isOnline === true" color="success" mode="ios" class="status-badge">
+                  <ion-icon name="wifi-outline" slot="start"></ion-icon>
+                  Online
+                </ion-badge>
+                <ion-badge *ngIf="item?.isOnline === false" color="medium" mode="ios" class="status-badge">
+                  <ion-icon name="wifi-off-outline" slot="start"></ion-icon>
+                  Offline
+                </ion-badge>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-  
-  
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="users.length === 0">
+    <ion-icon name="people-outline" class="empty-icon"></ion-icon>
+    <h3>No Customers Found!</h3>
+    <p>Customer data will appear here once they start using your service</p>
+  </div>
 </ion-content>

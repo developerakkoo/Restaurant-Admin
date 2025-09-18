@@ -1,74 +1,94 @@
 <ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
     <ion-title>Delivery Boys</ion-title>
-    <ion-button  color="primary" (click)="viewNotifications()" slot="end" fill="clear">
+    <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
       <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
     </ion-button>
     <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
       <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
     </ion-button>
   </ion-toolbar>
-  <ion-searchbar mode="ios" placeholder="Search here" inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
+  <ion-searchbar mode="ios" placeholder="Search delivery boys..." inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
 </ion-header>
 
-<ion-content [fullscreen]="false">
- 
-  <ion-grid >
-    <ion-row>
-      <ion-col size="9">
-        <ion-item lines="none">
-          <ion-label>Delivery Boy
-            <p>Your delivery boys here</p>
-          </ion-label>
-        </ion-item>
-      </ion-col>
-
-      <ion-col size="3">
-        <ion-button (click)="openDriverRegisterPage()" expand="block" fill="solid">
-         Add Boy
-        </ion-button>
-      </ion-col>
-    
-      
-    </ion-row>
-  </ion-grid>
-
-  <ion-text *ngIf="boys.length === 0" color="primary" class="ion-text-center">
-    <h1>
-      No Delivery Boys Found!
-    </h1>
-  </ion-text>
-  <div class="table-container" *ngIf="boys.length > 0">
-    <table class="modern-table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Full Name</th>
-          <th>Phone No</th>
-          <th>Address</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of boys">
-          <td>{{item.createdAt | date:"fullDate"}}</td>
-          <td>{{item?.firstName || "No Name Added"}} {{item?.lastName}}</td>
-          <td>{{item?.phoneNumber}}</td>
-          <td>{{item?.address || "No Address Added"}}</td>
-          <td class="action-buttons">
-            <ion-badge color="secondary" mode="ios" class="action-badge" (click)="viewBoy(item._id)">View</ion-badge>
-            <ion-badge *ngIf="item.status === 0" (click)="block(item._id)" color="success" mode="ios" class="action-badge">Block</ion-badge>
-            <ion-badge *ngIf="item.status === 1" (click)="unblock(item._id)" color="tertiary" mode="ios" class="action-badge">Unblock</ion-badge>
-            <ion-badge (click)="deleteBoy(item._id)" color="danger" mode="ios" class="action-badge">Delete</ion-badge>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h2>🚚 Delivery Boy Management</h2>
+        <p>Manage your delivery personnel and their details</p>
+      </div>
+      <ion-button (click)="openDriverRegisterPage()" fill="solid" color="primary">
+        <ion-icon name="add" slot="start"></ion-icon>
+        Add Delivery Boy
+      </ion-button>
+    </div>
   </div>
 
-  <style>
-  
-  </style>
-  
-  
+  <!-- Table Section -->
+  <div class="table-container" *ngIf="boys.length > 0">
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Delivery Boy List</h3>
+        <ion-badge color="primary">{{ boys.length }} Delivery Boys</ion-badge>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Full Name</th>
+              <th>Phone No</th>
+              <th>Address</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of boys" class="table-row">
+              <td class="date-cell">{{item.createdAt | date:"fullDate"}}</td>
+              <td class="name-cell">{{item?.firstName || "No Name Added"}} {{item?.lastName}}</td>
+              <td class="phone-cell">{{item?.phoneNumber}}</td>
+              <td class="address-cell">{{item?.address || "No Address Added"}}</td>
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  <ion-badge color="secondary" mode="ios" class="action-badge" (click)="viewBoy(item._id)">
+                    <ion-icon name="eye-outline" slot="start"></ion-icon>
+                    View
+                  </ion-badge>
+                  
+                  <ion-badge *ngIf="item.status === 0" color="success" mode="ios" class="action-badge" (click)="block(item._id)">
+                    <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+                    Block
+                  </ion-badge>
+                  
+                  <ion-badge *ngIf="item.status === 1" color="tertiary" mode="ios" class="action-badge" (click)="unblock(item._id)">
+                    <ion-icon name="lock-open-outline" slot="start"></ion-icon>
+                    Unblock
+                  </ion-badge>
+                  
+                  <ion-badge color="danger" mode="ios" class="action-badge" (click)="deleteBoy(item._id)">
+                    <ion-icon name="trash-outline" slot="start"></ion-icon>
+                    Delete
+                  </ion-badge>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="boys.length === 0">
+    <ion-icon name="bicycle-outline" class="empty-icon"></ion-icon>
+    <h3>No Delivery Boys Found!</h3>
+    <p>Start by adding your first delivery personnel</p>
+    <ion-button fill="outline" (click)="openDriverRegisterPage()">
+      <ion-icon name="add" slot="start"></ion-icon>
+      Add Delivery Boy
+    </ion-button>
+  </div>
 </ion-content>

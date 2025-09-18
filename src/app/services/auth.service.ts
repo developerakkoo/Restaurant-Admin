@@ -23,6 +23,11 @@ export class AuthService {
 
     this.accessToken.next(token);
     this.userId.next(userId);
+
+    console.log("Auth Service Initialized");
+    console.log(this.accessToken.value, this.userId.value);
+    
+    
   }
 
   register(body: {}) {

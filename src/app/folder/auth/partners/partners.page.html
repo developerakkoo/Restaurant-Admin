@@ -1,38 +1,33 @@
 <ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
     <ion-title>Partners</ion-title>
-    <ion-button  color="primary" (click)="viewNotifications()" slot="end" fill="clear">
+    <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
       <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
     </ion-button>
     <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
       <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
     </ion-button>
-    
   </ion-toolbar>
-  <ion-searchbar mode="ios" placeholder="Search here" inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
+  <ion-searchbar mode="ios" placeholder="Search partners..." inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <ion-grid >
-    <ion-row>
-      <ion-col size="9">
-        <ion-item lines="none">
-          <ion-label>Partners
-            <p>Your partenrs here</p>
-          </ion-label>
-        </ion-item>
-      </ion-col>
-      <ion-col size="3">
-        <ion-button (click)="openPartnerRegisterPage()" expand="block" >
-         Add new Partner
-        </ion-button>
-      </ion-col>
-    
-    </ion-row>
-  </ion-grid>
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h2>👨‍🍳 Partner Management</h2>
+        <p>Manage your restaurant partners and their details</p>
+      </div>
+      <ion-button (click)="openPartnerRegisterPage()" fill="solid" color="primary">
+        <ion-icon name="add" slot="start"></ion-icon>
+        Add New Partner
+      </ion-button>
+    </div>
+  </div>
 
-
-  <ion-segment value="0" (ionChange)="segmentChanged($event)">
+  <!-- Filter Section -->
+  <ion-segment value="0" (ionChange)="segmentChanged($event)" class="filter-segment">
     <ion-segment-button value="0">
       <ion-label>Active</ion-label>
     </ion-segment-button>
@@ -40,88 +35,102 @@
       <ion-label>Blocked</ion-label>
     </ion-segment-button>
   </ion-segment>
-  <div class="table-responsive">
-    <div class="card shadow-sm mb-4">
-      <div class="card-header d-flex justify-content-between align-items-center bg-light">
-        <h5 class="mb-0">👨‍🍳 Partner List</h5>
-        <i class="bi bi-people-fill text-secondary fs-5"></i>
+
+  <!-- Table Section -->
+  <div class="table-container" *ngIf="partner.length > 0">
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Partner List</h3>
+        <ion-badge color="primary">{{ partner.length }} Partners</ion-badge>
       </div>
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-hover table-bordered mb-0">
-            <thead class="table-secondary">
-              <tr>
-                <th>Date</th>
-                <th>Partner Name</th>
-                <th>Restaurant Name</th>
-                <th>Phone No</th>
-                <th>Email</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of partner">
-                <td>{{ item.createdAt | date: 'shortDate' }}</td>
-                <td>{{ item.name }}</td>
-                <td>{{ item?.hotels[0]?.hotelName || 'N/A' }}</td>
-                <td>{{ item.phoneNumber }}</td>
-                <td>{{ item.email }}</td>
-                <td>
-                  <div class="d-flex flex-wrap align-items-center gap-2 gap-md-3 p-2">
-                    <ion-badge class="btn btn-sm mx-2" color="secondary" mode="ios" (click)="openViewPage(item._id)">
-                      View
+      
+      <div class="table-responsive">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Partner Name</th>
+              <th>Restaurant Name</th>
+              <th>Phone No</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of partner" class="table-row">
+              <td class="date-cell">{{ item.createdAt | date: 'shortDate' }}</td>
+              <td class="name-cell">{{ item.name }}</td>
+              <td class="restaurant-cell">{{ item?.hotels[0]?.hotelName || 'N/A' }}</td>
+              <td class="phone-cell">{{ item.phoneNumber }}</td>
+              <td class="email-cell">{{ item.email }}</td>
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  <ion-badge color="secondary" mode="ios" class="action-badge" (click)="openViewPage(item._id)">
+                    <ion-icon name="eye-outline" slot="start"></ion-icon>
+                    View
+                  </ion-badge>
+                  
+                  <ion-badge color="danger" mode="ios" class="action-badge" (click)="presentAlertConfirmForDelete(item._id, item.hotels._id)">
+                    <ion-icon name="trash-outline" slot="start"></ion-icon>
+                    Delete
+                  </ion-badge>
+                  
+                  <ng-container *ngIf="item?.hotels.length !== 0; else addHotel">
+                    <ion-badge color="warning" mode="ios" class="action-badge" [id]="'hover-trigger-' + item._id">
+                      <ion-icon name="restaurant-outline" slot="start"></ion-icon>
+                      Dish
                     </ion-badge>
+                    
+                    <ion-popover [trigger]="'hover-trigger-' + item._id" triggerAction="click">
+                      <ng-template>
+                        <ion-content class="ion-padding">
+                          <ion-list>
+                            <ion-item lines="full" (click)="openDishViewPage(item?.hotels[0]?._id)">
+                              <ion-icon name="eye-outline" slot="start"></ion-icon>
+                              <ion-label>View Dishes</ion-label>
+                            </ion-item>
+                            <ion-item lines="full" (click)="openAddDishPage(item?.hotels[0]?._id)">
+                              <ion-icon name="add-outline" slot="start"></ion-icon>
+                              <ion-label>Add Dish</ion-label>
+                            </ion-item>
+                          </ion-list>
+                        </ion-content>
+                      </ng-template>
+                    </ion-popover>
+                  </ng-container>
                   
-                    <ion-badge class="btn btn-sm mx-2" color="danger" mode="ios" (click)="presentAlertConfirmForDelete(item._id, item.hotels._id)">
-                      Delete
+                  <ng-template #addHotel>
+                    <ion-badge color="primary" mode="ios" class="action-badge" (click)="openLocationPage(item._id)">
+                      <ion-icon name="business-outline" slot="start"></ion-icon>
+                      Add Hotel
                     </ion-badge>
+                  </ng-template>
                   
-                    <ng-container *ngIf="item?.hotels.length !== 0; else addHotel">
-                      <ion-badge class="btn btn-sm mx-2" color="warning" mode="ios" [id]="'hover-trigger-' + item._id">
-                        Dish
-                      </ion-badge>
-                  
-                      <ion-popover [trigger]="'hover-trigger-' + item._id" triggerAction="click">
-                        <ng-template>
-                          <ion-content class="ion-padding">
-                            <ion-list>
-                              <ion-item lines="full" (click)="openDishViewPage(item?.hotels[0]?._id)">
-                                <ion-label>View</ion-label>
-                              </ion-item>
-                              <ion-item lines="full" (click)="openAddDishPage(item?.hotels[0]?._id)">
-                                <ion-label>Add</ion-label>
-                              </ion-item>
-                            </ion-list>
-                          </ion-content>
-                        </ng-template>
-                      </ion-popover>
-                    </ng-container>
-                  
-                    <ng-template #addHotel>
-                      <ion-badge class="btn btn-sm mx-2" color="primary" mode="ios" (click)="openLocationPage(item._id)">
-                        Add Hotel
-                      </ion-badge>
-                    </ng-template>
-                  
-                    <div class="ms-md-3 mt-2 mt-md-0">
-                      <ion-toggle
-                        slot="end"
-                        [enableOnOffLabels]="true"
-                        (ionChange)="openhotel(item?.hotels[0])"
-                        [checked]="item?.hotels[0]?.isOnline === true"
-                      ></ion-toggle>
-                    </div>
+                  <div class="toggle-container">
+                    <ion-toggle
+                      slot="end"
+                      [enableOnOffLabels]="true"
+                      (ionChange)="openhotel(item?.hotels[0])"
+                      [checked]="item?.hotels[0]?.isOnline === true"
+                    ></ion-toggle>
                   </div>
-                  
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-    <ion-text *ngIf="partner.length === 0" color="primary" class="ion-text-center">
-      <h1>No Partners Found!</h1>
-    </ion-text>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="partner.length === 0">
+    <ion-icon name="people-outline" class="empty-icon"></ion-icon>
+    <h3>No Partners Found!</h3>
+    <p>Start by adding your first restaurant partner</p>
+    <ion-button fill="outline" (click)="openPartnerRegisterPage()">
+      <ion-icon name="add" slot="start"></ion-icon>
+      Add Partner
+    </ion-button>
   </div>
 </ion-content>

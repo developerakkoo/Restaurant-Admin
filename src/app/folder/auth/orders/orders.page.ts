@@ -267,6 +267,17 @@ getStatusText(status: number): string {
   const statuses = ['Received', 'Being Prepared', 'Delivery Assigned', 'Delivered', 'Accepted', 'Cancelled', 'Pickup Confirmed'];
   return statuses[status] || 'Cancelled By User';
 }
+
+getStatusColor(status: number): string {
+  switch (status) {
+    case 0: return 'warning'; // New Order - yellow
+    case 2: return 'primary'; // Delivery Boy Assigned - blue
+    case 3: return 'success'; // Delivered - green
+    case 4: return 'secondary'; // On the Way - gray
+    case 5: return 'danger'; // Rejected - red
+    default: return 'medium'; // Unknown - gray
+  }
+}
  downloadExcelSheet(){
   let data = document.getElementById("table-data");
 

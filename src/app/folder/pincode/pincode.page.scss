@@ -1,10 +1,131 @@
-// #map {
-//   width: 50%;
-//   height: 100%;
-// }
+.pincode-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--ion-color-light);
+}
 
+.search-container {
+  padding: 16px;
+  background: white;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
 
-  ion-content {
-    --background: transparent;
+.pincode-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.pincode-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  margin: 8px 16px;
+  border-radius: 12px;
+  --background: white;
+  --border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
+}
+
+.pincode-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.pincode-number {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+  margin: 0;
+}
+
+.pincode-address {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin: 4px 0;
+  line-height: 1.4;
+}
+
+.pincode-coordinates {
+  font-size: 12px;
+  color: var(--ion-color-medium-shade);
+  margin: 4px 0 0 0;
+  font-family: monospace;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--ion-color-medium);
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.empty-state p {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+ion-searchbar {
+  --background: var(--ion-color-light);
+  --border-radius: 12px;
+  --box-shadow: none;
+  --placeholder-color: var(--ion-color-medium);
+}
+
+ion-badge {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+// Animation for list items
+.pincode-item {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .pincode-item {
+    margin: 6px 12px;
+  }
+  
+  .search-container {
+    padding: 12px;
+  }
+}
   
