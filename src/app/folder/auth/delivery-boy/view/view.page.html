@@ -157,4 +157,88 @@
       </div>
     </div>
   </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h5 class="mb-0">Settlement Summary</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="text-center p-3 border rounded">
+            <h6 class="text-muted mb-2">Total Settlements</h6>
+            <h3 class="mb-0">{{settlementSummary.totalSettlements}}</h3>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="text-center p-3 border rounded">
+            <h6 class="text-muted mb-2">Total Amount Paid</h6>
+            <h3 class="mb-0">₹{{settlementSummary.totalAmountPaid | number:'1.0-0'}}</h3>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="text-center p-3 border rounded">
+            <h6 class="text-muted mb-2">Average Settlement</h6>
+            <h3 class="mb-0">₹{{settlementSummary.averageSettlement | number:'1.0-0'}}</h3>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="text-center p-3 border rounded">
+            <h6 class="text-muted mb-2">Last Settlement</h6>
+            <h3 class="mb-0">
+              {{settlementSummary.lastSettlementDate ? (settlementSummary.lastSettlementDate | date:'mediumDate') : 'N/A'}}
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Settlement History</h5>
+    </div>
+    <div class="card-body">
+      <div *ngIf="settlementLoading" class="text-center my-4">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+      <div *ngIf="!settlementLoading">
+        <div class="table-responsive" *ngIf="driverSettlements.length; else noSettlements">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th>Settlement ID</th>
+                <th>Date</th>
+                <th>Amount Paid</th>
+                <th>Orders Settled</th>
+                <th>Note</th>
+                <th style="width: 120px;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let settlement of driverSettlements">
+                <td>#{{settlement?._id?.slice(-6)}}</td>
+                <td>{{settlement?.settlementDate | date:'medium'}}</td>
+                <td>₹{{settlement?.amountPaid || 0}}</td>
+                <td>{{settlement?.ordersSettled?.length || 0}}</td>
+                <td>{{settlement?.note || '—'}}</td>
+                <td>
+                  <ion-button size="small" fill="clear" (click)="viewSettlementDetails(settlement)">
+                    <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+                    View
+                  </ion-button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #noSettlements>
+          <div class="text-center text-muted py-4">
+            No settlements recorded yet.
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
 </ion-content>

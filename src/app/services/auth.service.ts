@@ -450,11 +450,24 @@ export class AuthService {
   }
 
   getMessagesByChatId(userId: any) {
-    return this.http.get(environment.URL + `chat/history/admin/${userId}/666979f2983fa6cd5cf79d08`, {
+    const adminId = this.userId.value;
+    return this.http.get(environment.URL + `chat/history/admin/${userId}/${adminId}`, {
       headers: {
         'x-access-token': this.accessToken.value,
       },
     });
+  }
+
+  markChatAsRead(userId: string) {
+    return this.http.put(
+      environment.URL + `chat/read/${userId}`,
+      {},
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
   }
 
   getDeliveryCharges() {

@@ -46,6 +46,15 @@ export class ViewPage implements OnInit {
   ordersUnsettled:any = [];
   totalOrdersDelivered:any = 0;
 
+  driverSettlements: any[] = [];
+  settlementSummary = {
+    totalSettlements: 0,
+    totalAmountPaid: 0,
+    averageSettlement: 0,
+    lastSettlementDate: null as Date | null
+  };
+  settlementLoading = false;
+
   startDate:any;
   endDate:any;
 
@@ -64,6 +73,7 @@ export class ViewPage implements OnInit {
   ionViewDidEnter(){
     this.getDeliveryBoy(this.id);
     this.getDeliveryBoyEarnings(this.id);
+    this.getDriverSettlementsData(this.id);
   }
 
   getDeliveryBoy(id:any){
@@ -80,15 +90,16 @@ export class ViewPage implements OnInit {
       next: (res:any) => {
         console.log('Delivery Boy Earnings');
         if (res) {
-          this.earnings = res;
-          this.totalEarnings = res.reduce((acc:any, curr:any) => acc + (curr.amount || 0), 0);
+          const earningsData = Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
+          this.earnings = earningsData;
+          this.totalEarnings = earningsData.reduce((acc:any, curr:any) => acc + (curr.amount || 0), 0);
           
-          this.ordersSettled = res.filter((item:any) => item.isSettled);
-          this.totalOrdersSettled = res.filter((item:any) => item.isSettled).length;
+          this.ordersSettled = earningsData.filter((item:any) => item.isSettled);
+          this.totalOrdersSettled = earningsData.filter((item:any) => item.isSettled).length;
           this.totalEarningsSettled = this.ordersSettled.reduce((acc:any, curr:any) => acc + (curr.amount || 0), 0);
           
-          this.totalOrdersDelivered = res.length;
-          this.ordersUnsettled = res.filter((item:any) => !item.isSettled);
+          this.totalOrdersDelivered = earningsData.length;
+          this.ordersUnsettled = earningsData.filter((item:any) => !item.isSettled);
           this.totalOrdersUnsettled = this.ordersUnsettled.length;
           this.totalEarningsUnsettled = this.ordersUnsettled.reduce((acc:any, curr:any) => acc + (curr.amount || 0), 0);
         }
@@ -99,11 +110,40 @@ export class ViewPage implements OnInit {
     });
   }
 
-  getDeliveryBoyOrdersSettled(id:any,startDate:string = '',endDate:string = ''){
-    this.http.getDeliveryBoyOrdersSettled(id,startDate,endDate).subscribe((res:any)=>{
-      console.log('Delivery Boy Orders Settled');
-      console.log(res);
-    })
+  getDriverSettlementsData(id: any, startDate: string = '', endDate: string = '') {
+    this.settlementLoading = true;
+    this.http.getDriverSettlements(id, startDate, endDate).subscribe({
+      next: (res: any) => {
+        this.settlementLoading = false;
+        const responseData = res?.data || res || [];
+        const settlementsArray = Array.isArray(responseData) ? responseData : [];
+
+        this.driverSettlements = settlementsArray.map((settlement: any) => ({
+          ...settlement,
+          settlementDate: settlement?.settlementDate ? new Date(settlement.settlementDate) : settlement?.settlementDate
+        }));
+
+        const totalAmountPaid = this.driverSettlements.reduce(
+          (total, settlement) => total + (settlement.amountPaid || 0),
+          0
+        );
+
+        this.settlementSummary = {
+          totalSettlements: this.driverSettlements.length,
+          totalAmountPaid,
+          averageSettlement: this.driverSettlements.length
+            ? totalAmountPaid / this.driverSettlements.length
+            : 0,
+          lastSettlementDate: this.driverSettlements.length
+            ? this.driverSettlements[0].settlementDate
+            : null
+        };
+      },
+      error: (err: any) => {
+        this.settlementLoading = false;
+        console.error('Error fetching driver settlements:', err);
+      }
+    });
   }
 
   // New methods for sorting and selection
@@ -112,10 +152,11 @@ export class ViewPage implements OnInit {
   }
 
   getFilteredEarnings() {
+    const earningsArray = Array.isArray(this.earnings) ? this.earnings : [];
     if (this.sortStatus === 'all') {
-      return this.earnings;
+      return earningsArray;
     }
-    return this.earnings.filter((item: any) => 
+    return earningsArray.filter((item: any) => 
       this.sortStatus === 'paid' ? item.isSettled : !item.isSettled
     );
   }
@@ -194,6 +235,7 @@ export class ViewPage implements OnInit {
 
         // Refresh the earnings data
         this.getDeliveryBoyEarnings(this.id);
+        this.getDriverSettlementsData(this.id);
         // Clear selections
         this.selectedEarnings = [];
         this.selectAll = false;
@@ -209,5 +251,37 @@ export class ViewPage implements OnInit {
         console.error('Settlement error:', err);
       }
     });
+  }
+
+  async viewSettlementDetails(settlement: any) {
+    const orders = settlement?.ordersSettled || [];
+    const ordersList = orders.length
+      ? orders
+          .map((earning: any, index: number) => {
+            const order = earning?.orderId || {};
+            const orderCode = order?.orderId || earning?.orderId || 'N/A';
+            const hotelName = order?.hotelId?.hotelName || 'N/A';
+            const amount = earning?.amount || 0;
+            return `${index + 1}. Order #${orderCode} (${hotelName}) - ₹${amount}`;
+          })
+          .join('<br>')
+      : 'No orders included in this settlement.';
+
+    const alert = await this.alertController.create({
+      header: 'Settlement Details',
+      message: `
+        <p><strong>Date:</strong> ${settlement?.settlementDate ? new Date(settlement.settlementDate).toLocaleString() : 'N/A'}</p>
+        <p><strong>Amount Paid:</strong> ₹${settlement?.amountPaid || 0}</p>
+        <p><strong>Orders Settled:</strong> ${orders.length}</p>
+        ${settlement?.note ? `<p><strong>Note:</strong> ${settlement.note}</p>` : ''}
+        <div style="text-align:left;margin-top:10px">
+          <p><strong>Orders:</strong></p>
+          <div style="font-size: 0.9rem; line-height: 1.4;">${ordersList}</div>
+        </div>
+      `,
+      buttons: ['Close']
+    });
+
+    await alert.present();
   }
 }

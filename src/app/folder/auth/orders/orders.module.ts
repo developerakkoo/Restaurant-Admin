@@ -7,7 +7,6 @@ import { IonicModule } from '@ionic/angular';
 import { OrdersPageRoutingModule } from './orders-routing.module';
 
 import { OrdersPage } from './orders.page';
-import { DataTablesModule } from "angular-datatables";
 
 @NgModule({
   imports: [
@@ -15,7 +14,6 @@ import { DataTablesModule } from "angular-datatables";
     FormsModule,
     IonicModule,
     OrdersPageRoutingModule,
-    DataTablesModule
   ],
   declarations: [OrdersPage]
 })

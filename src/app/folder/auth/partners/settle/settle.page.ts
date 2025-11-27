@@ -9,10 +9,11 @@ import { HttpService } from 'src/app/services/http.service';
   styleUrls: ['./settle.page.scss'],
 })
 export class SettlePage implements OnInit {
+  allSettlements: any[] = [];
   settlements: any[] = [];
   selectedItems = new Set<string>();
   selectAll: boolean = false;
-  sortStatus: 'all' | 'settled' | 'unsettled' = 'all';
+  sortStatus: 'all' | 'settled' | 'unsettled' = 'unsettled';
   
   totalSettledAmount: number = 0;
   totalUnsettledAmount: number = 0;
@@ -36,9 +37,11 @@ export class SettlePage implements OnInit {
     });
     await loading.present();
 
-    this.http.getPartnerSettlements(this.hotelId,true).subscribe({
+    this.http.getPartnerSettlements(this.hotelId).subscribe({
       next: (res: any) => {
-        this.settlements = res.data;
+        const data = Array.isArray(res?.data) ? res.data : [];
+        this.allSettlements = data;
+        this.applyFilters();
         this.calculateTotals();
         loading.dismiss();
       },
@@ -51,20 +54,32 @@ export class SettlePage implements OnInit {
   }
 
   calculateTotals() {
-    this.totalSettledAmount = this.settlements
+    this.totalSettledAmount = this.allSettlements
       .filter(s => s.isSettled)
       .reduce((acc, curr) => acc + curr.totalPartnerEarning, 0);
 
-    this.totalUnsettledAmount = this.settlements
+    this.totalUnsettledAmount = this.allSettlements
       .filter(s => !s.isSettled)
       .reduce((acc, curr) => acc + curr.totalPartnerEarning, 0);
 
-    this.totalAdminEarnings = this.settlements
+    this.totalAdminEarnings = this.allSettlements
       .reduce((acc, curr) => acc + curr.adminEarning, 0);
   }
 
   onSortStatusChange(event: any) {
     this.sortStatus = event.detail.value;
+    this.applyFilters();
+    this.resetSelection();
+  }
+
+  applyFilters() {
+    if (this.sortStatus === 'all') {
+      this.settlements = [...this.allSettlements];
+    } else if (this.sortStatus === 'settled') {
+      this.settlements = this.allSettlements.filter(item => item.isSettled);
+    } else {
+      this.settlements = this.allSettlements.filter(item => !item.isSettled);
+    }
   }
 
   getFilteredSettlements() {
@@ -79,11 +94,9 @@ export class SettlePage implements OnInit {
   onSelectAllChange(event: any) {
     this.selectAll = event.detail.checked;
     if (this.selectAll) {
-      this.getFilteredSettlements().forEach(item => {
-        if (!item.isSettled) {
-          this.selectedItems.add(item._id);
-        }
-      });
+      this.settlements
+        .filter(item => !item.isSettled)
+        .forEach(item => this.selectedItems.add(item._id));
     } else {
       this.selectedItems.clear();
     }
@@ -95,7 +108,7 @@ export class SettlePage implements OnInit {
     } else {
       this.selectedItems.delete(settlement._id);
     }
-    this.selectAll = this.selectedItems.size === this.getFilteredSettlements().length;
+    this.updateSelectAllState();
   }
 
   isSettlementSelected(settlement: any): boolean {
@@ -103,7 +116,7 @@ export class SettlePage implements OnInit {
   }
 
   getSelectedAmount(): number {
-    return this.settlements
+    return this.allSettlements
       .filter(s => this.selectedItems.has(s._id))
       .reduce((acc, curr) => acc + curr.totalPartnerEarning, 0);
   }
@@ -136,6 +149,16 @@ export class SettlePage implements OnInit {
         this.showToast('Failed to mark settlements', 'danger');
       }
     });
+  }
+
+  private resetSelection() {
+    this.selectedItems.clear();
+    this.selectAll = false;
+  }
+
+  private updateSelectAllState() {
+    const selectableCount = this.settlements.filter(item => !item.isSettled).length;
+    this.selectAll = selectableCount > 0 && this.selectedItems.size === selectableCount;
   }
 
   private async showToast(message: string, color: string) {

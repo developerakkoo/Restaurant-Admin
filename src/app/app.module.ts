@@ -11,7 +11,7 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 import { RemoveportDirective } from './shared/directives/removeport.directive';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
-const config: SocketIoConfig = { url: 'https://api.dropeat.in', options: {} };
+const config: SocketIoConfig = { url: 'http://localhost:8000', options: {} };
 
 @NgModule({
   declarations: [AppComponent],

@@ -1,9 +1,18 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ActionSheetController, LoadingController } from '@ionic/angular';
+import { ActionSheetController, LoadingController, ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import * as XLSX from 'xlsx';
+import {
+  OrderStatus,
+  getStatusName,
+  getStatusColor as getStatusColorFromConstants,
+  getStatusIcon as getStatusIconFromConstants,
+  getAdminStatuses,
+  canAdminAction,
+  ADMIN_ACTIONABLE_STATUSES,
+} from 'src/app/constants/order-status.constants';
 @Component({
   selector: 'app-orders',
   templateUrl: './orders.page.html',
@@ -29,15 +38,42 @@ totalPages: number = 1;
   startDate:any = "";
   endDate:any = "";
 
+  // Cache status options to avoid calling function in template
+  statusOptions: { value: string; label: string }[] = [];
 
   filename:any= "new-sheet.xlsx";
+  isRefreshing: boolean = false;
   constructor(private auth:AuthService,
     private router:Router,
     private actionSheetController: ActionSheetController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private toastController: ToastController
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log("Ng On Init");
+    // Initialize status options
+    this.initializeStatusOptions();
+  }
+
+  /**
+   * Initialize status options for dropdown
+   */
+  initializeStatusOptions() {
+    try {
+      const allStatuses = getAdminStatuses();
+      this.statusOptions = [
+        { value: '', label: 'All' },
+        ...allStatuses.map(status => ({
+          value: status.toString(),
+          label: getStatusName(status),
+        })),
+      ];
+    } catch (error) {
+      console.error('Error initializing status options:', error);
+      this.statusOptions = [{ value: '', label: 'All' }];
+    }
+  }
 
   onSearchChange(ev: any) {
     console.log(ev.detail.value);
@@ -48,8 +84,26 @@ totalPages: number = 1;
   }
 
   ionViewDidEnter(){
+    console.log("Ion View Did Enter");
     this.getAllOrders();
     this.getAllDeliveryBoys();
+  }
+
+  /**
+   * Refresh orders and delivery boys data
+   */
+  async handleRefresh() {
+    this.isRefreshing = true;
+    try {
+      // Fetch both orders and delivery boys
+      this.getAllOrders();
+      this.getAllDeliveryBoys();
+      
+      // Keep refreshing state for at least 500ms to show animation
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } finally {
+      this.isRefreshing = false;
+    }
   }
 
   filterEvent(ev:any){
@@ -100,23 +154,35 @@ console.log(type);
     })
   }
   async getAllOrders(){
+    console.log("Get All Orders");
     this.auth.getAllOrders(this.query, 1, 50, this.status,"",this.startDate,this.endDate)
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
-        this.orders = value['data'];
+        // Handle different response structures
+        if (Array.isArray(value['data'])) {
+          this.orders = value['data'];
+        } else if (value['data'] && Array.isArray(value['data']['content'])) {
+          this.orders = value['data']['content'];
+        } else if (value['data'] && Array.isArray(value['data']['data'])) {
+          this.orders = value['data']['data'];
+        } else {
+          this.orders = [];
+        }
         this.filteredOrders = [...this.orders];
         this.updatePagination();
       },
       error:async(error:HttpErrorResponse) =>{
         console.log(error.error);
-        
+        this.orders = [];
+        this.filteredOrders = [];
+        this.updatePagination();
       }
     })
   }
 
   acceptOrder(orderId:any){
-    this.auth.AcceptRejectOrder(orderId, 4)
+    this.auth.AcceptRejectOrder(orderId, OrderStatus.ACCEPTED)
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
@@ -131,7 +197,7 @@ console.log(type);
 
 
   rejectOrder(orderId:any){
-    this.auth.AcceptRejectOrder(orderId, 5)
+    this.auth.AcceptRejectOrder(orderId, OrderStatus.CANCELLED_BY_HOTEL)
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
@@ -198,42 +264,84 @@ console.log(type);
    }
 viewNotifications(){}
 assignDriverEvent(ev:any, orderId:any){
-  console.log(ev.detail.value);
-  console.log(orderId);
+  const selectedValue = ev.detail?.value;
+  console.log('Selected drivers:', selectedValue);
+  console.log('Order ID:', orderId);
 
-  let value = ev.detail.value;
-  console.log(value.length);
+  // Normalize selection to an array of unique, truthy driver IDs
+  const selectedIds: string[] = Array.isArray(selectedValue)
+    ? selectedValue
+    : selectedValue
+      ? [selectedValue]
+      : [];
 
-  if(value.length == 1){
-    this.auth.assignDeliveryBoy(orderId, ev.detail.value)
-    .subscribe({
-      next:async(value:any) =>{
-        console.log(value);
-        this.getAllOrders();
-        this.getAllDeliveryBoys();
-      },
-      error:async(error:HttpErrorResponse) =>{
-        console.log(error.error);
-        
-      }
-    })
+  const uniqueIds = Array.from(new Set(selectedIds.filter((id) => !!id)));
+
+  console.log('Normalized driver IDs:', uniqueIds);
+
+  if (uniqueIds.length === 0) {
+    return;
   }
-  else{
-    this.auth.assignMultipleDeliveryBoy(orderId, ev.detail.value)
-    .subscribe({
-      next:async(value:any) =>{
-        console.log(value);
-        this.getAllOrders();
-        this.getAllDeliveryBoys();
-      },
-      error:async(error:HttpErrorResponse) =>{
-        console.log(error.error);
-        
-      }
-    })
-  }
-  
 
+  if (uniqueIds.length === 1) {
+    this.assignSingleDriver(orderId, uniqueIds[0]);
+  } else {
+    this.assignMultipleDrivers(orderId, uniqueIds);
+  }
+}
+
+private async assignSingleDriver(orderId: string, deliveryBoyId: string) {
+  const loading = await this.loadingController.create({
+    message: 'Assigning driver...',
+    spinner: 'crescent',
+  });
+  await loading.present();
+
+  this.auth.assignDeliveryBoy(orderId, deliveryBoyId).subscribe({
+    next: async (value: any) => {
+      await loading.dismiss();
+      console.log(value);
+      await this.presentToast('Driver assigned successfully', 'success');
+      this.getAllOrders();
+      this.getAllDeliveryBoys();
+    },
+    error: async (error: HttpErrorResponse) => {
+      await loading.dismiss();
+      console.log(error.error);
+      const errorMessage = error.error?.message || 'Failed to assign driver';
+      await this.presentToast(errorMessage, 'danger');
+    },
+  });
+}
+
+private async assignMultipleDrivers(orderId: string, deliveryBoyIds: string[]) {
+  const loading = await this.loadingController.create({
+    message: `Assigning ${deliveryBoyIds.length} driver(s)...`,
+    spinner: 'crescent',
+  });
+  await loading.present();
+
+  this.auth.assignMultipleDeliveryBoy(orderId, deliveryBoyIds).subscribe({
+    next: async (value: any) => {
+      await loading.dismiss();
+      console.log(value);
+      const assignedCount = value?.data?.sentTo || deliveryBoyIds.length;
+      const totalCount = value?.data?.totalRequested || deliveryBoyIds.length;
+      if (assignedCount === totalCount) {
+        await this.presentToast(`Successfully assigned ${assignedCount} driver(s)`, 'success');
+      } else {
+        await this.presentToast(`Assigned to ${assignedCount} of ${totalCount} driver(s)`, 'warning');
+      }
+      this.getAllOrders();
+      this.getAllDeliveryBoys();
+    },
+    error: async (error: HttpErrorResponse) => {
+      await loading.dismiss();
+      console.log(error.error);
+      const errorMessage = error.error?.message || 'Failed to assign drivers';
+      await this.presentToast(errorMessage, 'danger');
+    },
+  });
 }
 filterOrders() {
   const term = this.searchTerm.toLowerCase();
@@ -263,20 +371,104 @@ totalPagesArray(): number[] {
   return Array(this.totalPages).fill(0).map((_, i) => i + 1);
 }
 
-getStatusText(status: number): string {
-  const statuses = ['Received', 'Being Prepared', 'Delivery Assigned', 'Delivered', 'Accepted', 'Cancelled', 'Pickup Confirmed'];
-  return statuses[status] || 'Cancelled By User';
+/**
+ * Get status text using constants
+ */
+getStatusText(status: number | string | undefined | null): string {
+  if (status === undefined || status === null) {
+    return 'Unknown';
+  }
+  // Convert string to number if needed
+  const statusNum = typeof status === 'string' ? parseInt(status, 10) : status;
+  if (isNaN(statusNum)) {
+    return 'Unknown';
+  }
+  return getStatusName(statusNum);
 }
 
-getStatusColor(status: number): string {
-  switch (status) {
-    case 0: return 'warning'; // New Order - yellow
-    case 2: return 'primary'; // Delivery Boy Assigned - blue
-    case 3: return 'success'; // Delivered - green
-    case 4: return 'secondary'; // On the Way - gray
-    case 5: return 'danger'; // Rejected - red
-    default: return 'medium'; // Unknown - gray
+/**
+ * Get status color using constants
+ */
+getStatusColor(status: number | string | undefined | null): string {
+  if (status === undefined || status === null) {
+    return 'medium';
   }
+  // Convert string to number if needed
+  const statusNum = typeof status === 'string' ? parseInt(status, 10) : status;
+  if (isNaN(statusNum)) {
+    return 'medium';
+  }
+  return getStatusColorFromConstants(statusNum);
+}
+
+/**
+ * Get status icon using constants
+ */
+getStatusIcon(status: number | string | undefined | null): string | undefined {
+  if (status === undefined || status === null) {
+    return undefined;
+  }
+  // Convert string to number if needed
+  const statusNum = typeof status === 'string' ? parseInt(status, 10) : status;
+  if (isNaN(statusNum)) {
+    return undefined;
+  }
+  return getStatusIconFromConstants(statusNum);
+}
+
+/**
+ * Check if admin can perform actions on this status
+ */
+canAdminPerformAction(status: number | string | undefined | null): boolean {
+  if (status === undefined || status === null) {
+    return false;
+  }
+  // Convert string to number if needed
+  const statusNum = typeof status === 'string' ? parseInt(status, 10) : status;
+  if (isNaN(statusNum)) {
+    return false;
+  }
+  return canAdminAction(statusNum);
+}
+
+/**
+ * Present toast notification
+ */
+async presentToast(message: string, color: 'success' | 'danger' | 'warning' | 'primary' = 'primary') {
+  const toast = await this.toastController.create({
+    message: message,
+    duration: 3000,
+    color: color,
+    position: 'top',
+  });
+  await toast.present();
+}
+
+/**
+ * Get driver name by ID
+ */
+getDriverName(driverId: any): string {
+  if (!driverId) return 'Unknown';
+  const driverIdStr = driverId.toString ? driverId.toString() : driverId;
+  const driver = this.drivers.find(d => d._id === driverIdStr || d._id?.toString() === driverIdStr);
+  if (driver) {
+    return `${driver.firstName || ''} ${driver.lastName || ''}`.trim() || 'Unknown Driver';
+  }
+  return 'Unknown Driver';
+}
+
+/**
+ * Get all admin statuses for filter dropdown
+ */
+getAdminStatusOptions(): { value: string; label: string }[] {
+  const allStatuses = getAdminStatuses();
+  return [
+    { value: '', label: 'All' },
+    ...allStatuses.map(status => ({
+      value: status.toString(),
+      label: getStatusName(status),
+    })),
+  ];
 }
  downloadExcelSheet(){
   let data = document.getElementById("table-data");

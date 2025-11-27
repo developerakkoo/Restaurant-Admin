@@ -55,8 +55,26 @@ export class HttpService {
     return this.http.post(environment.URL + `delivery-settlement/settle`,data);
   }
 
-  getDeliveryBoyOrdersSettled(boyId:any,startDate:string = '',endDate:string = ''){
-    return this.http.get(environment.URL + `delivery-earnings/list?driverId=${boyId}?startDate=${startDate}?endDate=${endDate}`);
+  getDriverSettlements(boyId: any, startDate: string = '', endDate: string = '') {
+    let url = environment.URL + `delivery-settlement/driver/${boyId}`;
+    const query: string[] = [];
+
+    if (startDate) {
+      query.push(`startDate=${startDate}`);
+    }
+    if (endDate) {
+      query.push(`endDate=${endDate}`);
+    }
+
+    if (query.length) {
+      url += `?${query.join('&')}`;
+    }
+
+    return this.http.get(url);
+  }
+
+  getDriverSettlementDetails(settlementId: string) {
+    return this.http.get(environment.URL + `delivery-settlement/${settlementId}`);
   }
 
   getDeliveryBoy(boyId:any){
@@ -64,8 +82,31 @@ export class HttpService {
   }
 
 //Partner API
-getPartnerSettlements(hotelId:any,isSettled:any){
-  return this.http.get(environment.URL + `partner-settlement/partner-settlements?hotelId=${hotelId}`);
+getPartnerSettlements(
+  hotelId: string,
+  options: { isSettled?: boolean; startDate?: string; endDate?: string } = {}
+) {
+  let url = environment.URL + `partner-settlement/partner-settlements`;
+  const params: string[] = [];
+
+  if (hotelId) {
+    params.push(`hotelId=${hotelId}`);
+  }
+  if (options.isSettled !== undefined) {
+    params.push(`isSettled=${options.isSettled}`);
+  }
+  if (options.startDate) {
+    params.push(`startDate=${options.startDate}`);
+  }
+  if (options.endDate) {
+    params.push(`endDate=${options.endDate}`);
+  }
+
+  if (params.length) {
+    url += `?${params.join('&')}`;
+  }
+
+  return this.http.get(url);
 }
 
 markPartnerSettlemetsPaid(settlementIds:any[]){

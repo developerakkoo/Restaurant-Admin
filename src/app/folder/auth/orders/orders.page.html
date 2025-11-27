@@ -1,6 +1,9 @@
 <ion-header [translucent]="true" class="ion-no-border">
   <ion-toolbar>
     <ion-title>Orders</ion-title>
+    <ion-button color="primary" (click)="handleRefresh()" slot="end" fill="clear" [disabled]="isRefreshing">
+      <ion-icon slot="icon-only" name="refresh-outline" [class.spinning]="isRefreshing"></ion-icon>
+    </ion-button>
     <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
       <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
     </ion-button>
@@ -35,12 +38,9 @@
             labelPlacement="stacked"
             (ionChange)="filterEvent($event)"
           >
-            <ion-select-option value="">All</ion-select-option>
-            <ion-select-option value="0">New Order</ion-select-option>
-            <ion-select-option value="5">Rejected</ion-select-option>
-            <ion-select-option value="2">Delivery Boy Assigned</ion-select-option>
-            <ion-select-option value="4">On the Way</ion-select-option>
-            <ion-select-option value="3">Delivered</ion-select-option>
+            <ion-select-option *ngFor="let option of statusOptions" [value]="option.value">
+              {{option.label}}
+            </ion-select-option>
           </ion-select>
         </ion-col>
         <ion-col size="3" size-md="3">
@@ -113,9 +113,15 @@
               <td class="address-cell">{{ order.userAddress?.address }}</td>
               <td class="amount-cell">{{ order.priceDetails?.totalAmountToPay | currency: 'INR' }}</td>
               <td class="status-cell">
-                <ion-badge [color]="getStatusColor(order.orderStatus)" mode="ios" class="status-badge">
-                  {{ getStatusText(order.orderStatus) }}
+                <ion-badge [color]="getStatusColor(order.orderStatus ?? order.status ?? 0)" mode="ios" class="status-badge">
+                  <ion-icon 
+                    *ngIf="getStatusIcon(order.orderStatus ?? order.status ?? 0)" 
+                    [name]="getStatusIcon(order.orderStatus ?? order.status ?? 0)" 
+                    slot="start"
+                  ></ion-icon>
+                  {{ getStatusText(order.orderStatus ?? order.status ?? 0) }}
                 </ion-badge>
+                <p>{{order.orderStatus ?? order.status}}</p>
               </td>
               <td class="actions-cell">
                 <div class="action-buttons">
@@ -125,7 +131,7 @@
                   </ion-badge>
                   
                   <ion-badge
-                    *ngIf="order?.orderStatus === 0"
+                    *ngIf="canAdminPerformAction(order?.orderStatus ?? order?.status ?? 0) && (order?.orderStatus ?? order?.status ?? 0) === 0"
                     color="success"
                     mode="ios"
                     class="action-badge"
@@ -137,9 +143,12 @@
 
                   <ion-select
                     (ionChange)="assignDriverEvent($event, order._id)"
-                    *ngIf="order?.orderStatus === 4"
+                    *ngIf="canAdminPerformAction(order?.orderStatus) && ((order?.orderStatus) === 4 || (order?.orderStatus) === 1)"
                     fill="outline"
                     multiple="true"
+                    interface="alert"
+                    cancelText="Cancel"
+                    okText="Assign"
                     placeholder="Select Driver"
                     class="driver-select"
                   >
@@ -147,6 +156,29 @@
                       {{d.firstName}} {{d.lastName}}
                     </ion-select-option>
                   </ion-select>
+                  
+                  <!-- Display assigned delivery boys -->
+                  <div *ngIf="order?.assignedDeliveryBoys && order.assignedDeliveryBoys.length > 0" class="assigned-drivers">
+                    <ion-text color="medium" class="assigned-label">
+                      <small>Assigned Drivers:</small>
+                    </ion-text>
+                    <div class="driver-badges">
+                      <ion-badge 
+                        *ngFor="let driverId of order.assignedDeliveryBoys" 
+                        color="tertiary"
+                        class="driver-badge"
+                      >
+                        {{ getDriverName(driverId) }}
+                      </ion-badge>
+                    </div>
+                  </div>
+                  
+                  <!-- Display accepted delivery boy if different from assigned -->
+                  <div *ngIf="order?.assignedDeliveryBoy && (!order?.assignedDeliveryBoys || !order.assignedDeliveryBoys.includes(order.assignedDeliveryBoy))" class="accepted-driver">
+                    <ion-text color="success" class="accepted-label">
+                      <small>Accepted by: {{ getDriverName(order.assignedDeliveryBoy) }}</small>
+                    </ion-text>
+                  </div>
                 </div>
               </td>
             </tr>
