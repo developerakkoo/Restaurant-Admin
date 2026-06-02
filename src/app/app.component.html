@@ -1,22 +1,48 @@
 <ion-app>
-  <ion-split-pane contentId="main-content">
-    <ion-menu contentId="main-content" type="overlay">
-      <ion-content>
-        <ion-list id="inbox-list">
-          <ion-list-header>DropEat</ion-list-header>
-          <ion-note>We Drop You Eat!</ion-note>
+  <ion-split-pane contentId="main-content" when="lg" class="de-split-pane">
+    <ion-menu
+      menuId="main-menu"
+      contentId="main-content"
+      type="overlay"
+      class="de-sidebar">
+      <ion-content class="de-sidebar__inner">
+        <div class="de-sidebar__brand">
+          <div class="de-sidebar__brand-logo">
+            <img src="assets/logo.svg" alt="DropEat" />
+          </div>
+          <div>
+            <div class="de-sidebar__brand-name">DropEat</div>
+            <div class="de-sidebar__brand-tagline">We Drop You Eat!</div>
+          </div>
+        </div>
 
-          <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
-            <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
-              <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
-              <ion-label>{{ p.title }}</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-        </ion-list>
+        <div class="de-sidebar__section">Main</div>
 
-       
+        <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
+          <a
+            [routerLink]="[p.url]"
+            routerLinkActive="active"
+            class="de-nav-item"
+            routerDirection="root">
+            <span class="de-nav-item__icon">
+              <ion-icon [name]="p.icon + '-outline'"></ion-icon>
+            </span>
+            <span class="de-nav-item__label">{{ p.title }}</span>
+          </a>
+        </ion-menu-toggle>
+
+        <div class="de-sidebar__footer">
+          <div class="de-sidebar__user">
+            <div class="de-avatar de-avatar--sm">A</div>
+            <div>
+              <div class="de-sidebar__user-name">Admin</div>
+              <div class="de-sidebar__user-role">Super Admin</div>
+            </div>
+          </div>
+        </div>
       </ion-content>
     </ion-menu>
+
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-split-pane>
 </ion-app>

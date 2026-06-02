@@ -1,244 +1,252 @@
-<ion-header [translucent]="true">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/folder/auth/delivery-boy"></ion-back-button>
     </ion-buttons>
-    <ion-title>Delivery Boy Details</ion-title>
+    <ion-title class="de-header__title">Delivery Boy Details</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-light">
-      <h5 class="mb-0">Personal Information</h5>
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>Delivery Boy Details</h2>
+      <p>Performance metrics and commission settlements</p>
     </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-6">
-          <div class="mb-3">
-            <label class="form-label fw-bold">Name</label>
-            <p class="form-control-plaintext">{{deliveryBoy?.firstName || 'N/A'}} {{deliveryBoy?.lastName || 'N/A'}}</p>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="mb-3">
-            <label class="form-label fw-bold">Phone Number</label>
-            <p class="form-control-plaintext">{{deliveryBoy?.phoneNumber || 'N/A'}}</p>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="mb-3">
-            <label class="form-label fw-bold">Date of Birth</label>
-            <p class="form-control-plaintext">{{deliveryBoy?.dateOfBirth || 'N/A'}}</p>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="mb-3">
-            <label class="form-label fw-bold">Address</label>
-            <p class="form-control-plaintext">{{deliveryBoy?.address || 'N/A'}}</p>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="mb-0">Personal Information</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Name</label>
+              <p class="form-control-plaintext">{{deliveryBoy?.firstName || 'N/A'}} {{deliveryBoy?.lastName || 'N/A'}}</p>
             </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Phone Number</label>
+              <p class="form-control-plaintext">{{deliveryBoy?.phoneNumber || 'N/A'}}</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Date of Birth</label>
+              <p class="form-control-plaintext">{{deliveryBoy?.dateOfBirth || 'N/A'}}</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Address</label>
+              <p class="form-control-plaintext">{{deliveryBoy?.address || 'N/A'}}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-light">
-      <h5 class="mb-0">Performance Metrics</h5>
-    </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-3">
-          <div class="text-center p-3 border rounded">
-            <h6 class="text-muted mb-2">Total Orders Delivered</h6>
-            <h3 class="mb-0">{{totalOrdersDelivered || 0}}</h3>
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="mb-0">Performance Metrics</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="text-center p-3 border rounded">
+              <h6 class="text-muted mb-2">Total Orders Delivered</h6>
+              <h3 class="mb-0">{{totalOrdersDelivered || 0}}</h3>
+            </div>
           </div>
-        </div>
-        <div class="col-md-3">
-          <div class="text-center p-3 border rounded">
-            <h6 class="text-muted mb-2">Total Earnings</h6>
-            <h3 class="mb-0">₹{{totalEarnings || 0}}</h3>
+          <div class="col-md-3">
+            <div class="text-center p-3 border rounded">
+              <h6 class="text-muted mb-2">Total Earnings</h6>
+              <h3 class="mb-0">₹{{totalEarnings || 0}}</h3>
+            </div>
           </div>
-        </div>
-        <div class="col-md-3">
-          <div class="text-center p-3 border rounded">
-            <h6 class="text-muted mb-2">Orders Settled</h6>
-            <h3 class="mb-0">{{totalOrdersSettled || 0}}</h3>
-            <small class="text-success">₹{{totalEarningsSettled || 0}}</small>
+          <div class="col-md-3">
+            <div class="text-center p-3 border rounded">
+              <h6 class="text-muted mb-2">Orders Settled</h6>
+              <h3 class="mb-0">{{totalOrdersSettled || 0}}</h3>
+              <small class="text-success">₹{{totalEarningsSettled || 0}}</small>
+            </div>
           </div>
-        </div>
-        <div class="col-md-3">
-          <div class="text-center p-3 border rounded">
-            <h6 class="text-muted mb-2">Orders Unsettled</h6>
-            <h3 class="mb-0">{{totalOrdersUnsettled || 0}}</h3>
-            <small class="text-warning">₹{{totalEarningsUnsettled || 0}}</small>
+          <div class="col-md-3">
+            <div class="text-center p-3 border rounded">
+              <h6 class="text-muted mb-2">Orders Unsettled</h6>
+              <h3 class="mb-0">{{totalOrdersUnsettled || 0}}</h3>
+              <small class="text-warning">₹{{totalEarningsUnsettled || 0}}</small>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="card shadow-sm">
-    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Commission Details</h5>
-      <div class="d-flex align-items-center gap-3">
-        <ion-select 
-          [value]="sortStatus" 
-          (ionChange)="onSortStatusChange($event)"
-          interface="action-sheet"
-          placeholder="Filter by status">
-          <ion-select-option value="all">All</ion-select-option>
-          <ion-select-option value="paid">Paid</ion-select-option>
-          <ion-select-option value="unpaid">Unpaid</ion-select-option>
-        </ion-select>
-        <div class="d-flex align-items-center">
-          <ion-checkbox 
-            [checked]="selectAll" 
-            (ionChange)="onSelectAllChange($event)"
-            labelPlacement="end">
-            Select All
-          </ion-checkbox>
-        </div>
-      </div>
-    </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table table-bordered">
-          <thead class="table-light">
-            <tr>
-              <th style="width: 50px">
-                <ion-checkbox 
-                  [checked]="selectAll" 
-                  (ionChange)="onSelectAllChange($event)">
-                </ion-checkbox>
-              </th>
-              <th>Order Number</th>
-              <th>Commission Amount</th>
-              <th>Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let commission of getFilteredEarnings()">
-              <td>
-                <ion-checkbox 
-                  [checked]="isEarningSelected(commission)"
-                  (ionChange)="onEarningSelect($event, commission)">
-                </ion-checkbox>
-              </td>
-              <td>Order #{{commission.orderId}}</td>
-              <td>₹{{commission.amount}}</td>
-              <td>{{commission.date | date:'medium'}}</td>
-              <td>
-                <ion-badge [color]="commission.isSettled ? 'success' : 'warning'">
-                  {{commission.isSettled ? 'Paid' : 'Unpaid'}}
-                </ion-badge>
-              </td>
-            </tr>
-            <tr *ngIf="!getFilteredEarnings()?.length">
-              <td colspan="5" class="text-center">No commission records found</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="d-flex justify-content-end mt-3" *ngIf="selectedEarnings.length > 0">
+    <div class="de-table-card shadow-sm">
+      <div class="de-table-toolbar">
+        <span class="de-card-header__title">Commission Details</span>
         <div class="d-flex align-items-center gap-3">
-          <div class="alert alert-info mb-0">
-            Selected Amount: ₹{{getSelectedAmount()}}
-          </div>
-          <ion-button 
-            color="primary" 
-            (click)="markSettlement()"
-            [disabled]="!selectedEarnings.length">
-            <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
-            Mark Settlement
-          </ion-button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-light">
-      <h5 class="mb-0">Settlement Summary</h5>
-    </div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-3">
-          <div class="text-center p-3 border rounded">
-            <h6 class="text-muted mb-2">Total Settlements</h6>
-            <h3 class="mb-0">{{settlementSummary.totalSettlements}}</h3>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="text-center p-3 border rounded">
-            <h6 class="text-muted mb-2">Total Amount Paid</h6>
-            <h3 class="mb-0">₹{{settlementSummary.totalAmountPaid | number:'1.0-0'}}</h3>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="text-center p-3 border rounded">
-            <h6 class="text-muted mb-2">Average Settlement</h6>
-            <h3 class="mb-0">₹{{settlementSummary.averageSettlement | number:'1.0-0'}}</h3>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="text-center p-3 border rounded">
-            <h6 class="text-muted mb-2">Last Settlement</h6>
-            <h3 class="mb-0">
-              {{settlementSummary.lastSettlementDate ? (settlementSummary.lastSettlementDate | date:'mediumDate') : 'N/A'}}
-            </h3>
+          <ion-select
+            [value]="sortStatus"
+            (ionChange)="onSortStatusChange($event)"
+            interface="action-sheet"
+            placeholder="Filter by status">
+            <ion-select-option value="all">All</ion-select-option>
+            <ion-select-option value="paid">Paid</ion-select-option>
+            <ion-select-option value="unpaid">Unpaid</ion-select-option>
+          </ion-select>
+          <div class="d-flex align-items-center">
+            <ion-checkbox
+              [checked]="selectAll"
+              (ionChange)="onSelectAllChange($event)"
+              labelPlacement="end">
+              Select All
+            </ion-checkbox>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Settlement History</h5>
-    </div>
-    <div class="card-body">
-      <div *ngIf="settlementLoading" class="text-center my-4">
-        <ion-spinner name="crescent"></ion-spinner>
-      </div>
-      <div *ngIf="!settlementLoading">
-        <div class="table-responsive" *ngIf="driverSettlements.length; else noSettlements">
-          <table class="table table-bordered">
+      <div class="card-body">
+        <div class="de-table-scroll table-responsive">
+          <table class="de-table table table-bordered">
             <thead class="table-light">
               <tr>
-                <th>Settlement ID</th>
+                <th style="width: 50px">
+                  <ion-checkbox
+                    [checked]="selectAll"
+                    (ionChange)="onSelectAllChange($event)">
+                  </ion-checkbox>
+                </th>
+                <th>Order Number</th>
+                <th>Commission Amount</th>
                 <th>Date</th>
-                <th>Amount Paid</th>
-                <th>Orders Settled</th>
-                <th>Note</th>
-                <th style="width: 120px;">Action</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let settlement of driverSettlements">
-                <td>#{{settlement?._id?.slice(-6)}}</td>
-                <td>{{settlement?.settlementDate | date:'medium'}}</td>
-                <td>₹{{settlement?.amountPaid || 0}}</td>
-                <td>{{settlement?.ordersSettled?.length || 0}}</td>
-                <td>{{settlement?.note || '—'}}</td>
+              <tr *ngFor="let commission of getFilteredEarnings()">
                 <td>
-                  <ion-button size="small" fill="clear" (click)="viewSettlementDetails(settlement)">
-                    <ion-icon slot="start" name="information-circle-outline"></ion-icon>
-                    View
-                  </ion-button>
+                  <ion-checkbox
+                    [checked]="isEarningSelected(commission)"
+                    (ionChange)="onEarningSelect($event, commission)">
+                  </ion-checkbox>
                 </td>
+                <td>Order #{{commission.orderId}}</td>
+                <td>₹{{commission.amount}}</td>
+                <td>{{commission.date | date:'medium'}}</td>
+                <td>
+                  <ion-badge [color]="commission.isSettled ? 'success' : 'warning'">
+                    {{commission.isSettled ? 'Paid' : 'Unpaid'}}
+                  </ion-badge>
+                </td>
+              </tr>
+              <tr *ngIf="!getFilteredEarnings()?.length">
+                <td colspan="5" class="text-center">No commission records found</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <ng-template #noSettlements>
-          <div class="text-center text-muted py-4">
-            No settlements recorded yet.
+        <div class="d-flex justify-content-end mt-3" *ngIf="selectedEarnings.length > 0">
+          <div class="d-flex align-items-center gap-3">
+            <div class="alert alert-info mb-0">
+              Selected Amount: ₹{{getSelectedAmount()}}
+            </div>
+            <ion-button
+              color="primary"
+              (click)="markSettlement()"
+              [disabled]="!selectedEarnings.length">
+              <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+              Mark Settlement
+            </ion-button>
           </div>
-        </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h5 class="mb-0">Settlement Summary</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="text-center p-3 border rounded">
+              <h6 class="text-muted mb-2">Total Settlements</h6>
+              <h3 class="mb-0">{{settlementSummary.totalSettlements}}</h3>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="text-center p-3 border rounded">
+              <h6 class="text-muted mb-2">Total Amount Paid</h6>
+              <h3 class="mb-0">₹{{settlementSummary.totalAmountPaid | number:'1.0-0'}}</h3>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="text-center p-3 border rounded">
+              <h6 class="text-muted mb-2">Average Settlement</h6>
+              <h3 class="mb-0">₹{{settlementSummary.averageSettlement | number:'1.0-0'}}</h3>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="text-center p-3 border rounded">
+              <h6 class="text-muted mb-2">Last Settlement</h6>
+              <h3 class="mb-0">
+                {{settlementSummary.lastSettlementDate ? (settlementSummary.lastSettlementDate | date:'mediumDate') : 'N/A'}}
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="de-table-card shadow-sm mb-4">
+      <div class="de-table-toolbar">
+        <span class="de-card-header__title">Settlement History</span>
+      </div>
+      <div class="card-body">
+        <div *ngIf="settlementLoading" class="text-center my-4">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+        <div *ngIf="!settlementLoading">
+          <div class="de-table-scroll table-responsive" *ngIf="driverSettlements.length; else noSettlements">
+            <table class="de-table table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>Settlement ID</th>
+                  <th>Date</th>
+                  <th>Amount Paid</th>
+                  <th>Orders Settled</th>
+                  <th>Note</th>
+                  <th style="width: 120px;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let settlement of driverSettlements">
+                  <td>#{{settlement?._id?.slice(-6)}}</td>
+                  <td>{{settlement?.settlementDate | date:'medium'}}</td>
+                  <td>₹{{settlement?.amountPaid || 0}}</td>
+                  <td>{{settlement?.ordersSettled?.length || 0}}</td>
+                  <td>{{settlement?.note || '—'}}</td>
+                  <td>
+                    <ion-button size="small" fill="clear" (click)="viewSettlementDetails(settlement)">
+                      <ion-icon slot="start" name="information-circle-outline"></ion-icon>
+                      View
+                    </ion-button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ng-template #noSettlements>
+            <div class="de-empty">
+              <ion-icon name="document-text-outline" class="de-empty__icon"></ion-icon>
+              <h4>No settlements recorded yet</h4>
+              <p>Settlement history will appear here once payments are made</p>
+            </div>
+          </ng-template>
+        </div>
       </div>
     </div>
   </div>
-
 </ion-content>

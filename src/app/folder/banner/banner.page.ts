@@ -175,11 +175,11 @@ this.getBanners();
   getTypeClass(type: number): string {
     switch (type) {
       case 0:
-        return 'home-badge';
+        return 'de-media-item__badge--red';
       case 1:
-        return 'cart-badge';
+        return 'de-media-item__badge--green';
       case 3:
-        return 'profile-badge';
+        return 'de-media-item__badge--purple';
       default:
         return '';
     }

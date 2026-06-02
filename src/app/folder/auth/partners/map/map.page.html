@@ -1,15 +1,27 @@
-<ion-header [translucent]="true">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
-    <ion-title>Select Partners Business Location</ion-title>
-    <ion-button (click)="setAddress()" expand="block" slot="end">
-      Set Location
-    </ion-button>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title class="de-header__title">Business Location</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="de-header-toolbar-btn" (click)="setAddress()" expand="block">
+        Set Location
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <capacitor-google-map id="map"></capacitor-google-map>
-  <div>
-    <p>Address:-  {{formattedAddress | uppercase}} </p>
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>Select Partner Location</h2>
+      <p>Pin the restaurant business location on the map</p>
+    </div>
+
+    <capacitor-google-map id="map"></capacitor-google-map>
+    <div>
+      <p>Address:- {{formattedAddress | uppercase}}</p>
+    </div>
   </div>
 </ion-content>

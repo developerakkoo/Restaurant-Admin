@@ -1,13 +1,22 @@
-<ion-header [translucent]="true">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
-    <ion-title>notifications</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button class="de-menu-btn" menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="de-header__title">Notifications</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">notifications</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner de-coming-soon">
+    <div class="de-hero">
+      <h2>Notifications</h2>
+      <p>Push and in-app notification management</p>
+    </div>
+    <div class="de-empty">
+      <ion-icon name="notifications-outline" class="de-empty__icon"></ion-icon>
+      <h4>Coming soon</h4>
+      <p>This feature is planned for Phase 2</p>
+    </div>
+  </div>
 </ion-content>

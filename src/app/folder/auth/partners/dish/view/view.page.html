@@ -1,27 +1,36 @@
-<ion-header [translucent]="true">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
-    <ion-title>Dish</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title class="de-header__title">Dish</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
- <ion-list>
-  <ion-list-header>
-    <ion-label>All Dishes</ion-label>
-  </ion-list-header>
-  <ion-item *ngFor="let item of dishes">
-    <ion-avatar slot="start">
-      <img crossorigin="anonymous" [src]="item?.image_url" />
-    </ion-avatar>
-    <ion-label>
-      {{item?.name}}
-      <p> <strong>Partner price:- </strong> {{item?.partnerPrice}} </p>
-      <p> <strong>User price:- </strong> {{item?.userPrice}} </p>
-    </ion-label>
-    <ion-button color="danger" (click)="delete(item)" slot="end">
-      <ion-icon slot="icon-only" name="remove"></ion-icon>
-    </ion-button>
-  </ion-item>
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>All Dishes</h2>
+      <p>View and manage dishes for this restaurant</p>
+    </div>
 
-</ion-list>
+    <ion-list>
+      <ion-list-header>
+        <ion-label>All Dishes</ion-label>
+      </ion-list-header>
+      <ion-item *ngFor="let item of dishes">
+        <ion-avatar slot="start">
+          <img crossorigin="anonymous" [src]="item?.image_url" />
+        </ion-avatar>
+        <ion-label>
+          {{item?.name}}
+          <p> <strong>Partner price:- </strong> {{item?.partnerPrice}} </p>
+          <p> <strong>User price:- </strong> {{item?.userPrice}} </p>
+        </ion-label>
+        <ion-button color="danger" (click)="delete(item)" slot="end">
+          <ion-icon slot="icon-only" name="remove"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </div>
 </ion-content>

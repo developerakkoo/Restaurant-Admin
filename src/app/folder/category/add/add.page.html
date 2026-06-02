@@ -1,26 +1,34 @@
-<ion-header [translucent]="true" class="ion-no-border">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
-    <ion-title>Add Category</ion-title>
-    <ion-button (click)="close()" slot="end" fill="clear">
-      <ion-icon slot="icon-only" name="close"></ion-icon>
-    </ion-button>
+    <ion-title class="de-header__title">Add Category</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="de-header-toolbar-btn" (click)="close()" fill="clear">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <form [formGroup]="fb" (ngSubmit)="add()" *ngIf="!isCategoryAdded">
-    <ion-input required formControlName="categoryName" mode="md" fill="outline" label="Category Name" labelPlacement="stacked" type="text"></ion-input>
-    <ion-button block color="primary" type="submit" [disabled]="fb.invalid">
-      Add 
-    </ion-button>
-  </form>
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>Add Category</h2>
+      <p>Create a new menu category</p>
+    </div>
 
-  <div *ngIf="isCategoryAdded" class="file-picker-container">
-    <label for="file" class="file-picker-label">
-      <ion-icon name="cloud-upload-outline"></ion-icon>
-      <span>Choose a file</span>
-    </label>
-    <input type="file" (change)="fileEvent($event)" id="file" class="file-picker-input">
+    <form [formGroup]="fb" (ngSubmit)="add()" *ngIf="!isCategoryAdded">
+      <ion-input required formControlName="categoryName" mode="md" fill="outline" label="Category Name" labelPlacement="stacked" type="text"></ion-input>
+      <ion-button block color="primary" type="submit" [disabled]="fb.invalid">
+        Add
+      </ion-button>
+    </form>
+
+    <div *ngIf="isCategoryAdded" class="file-picker-container">
+      <label for="file" class="file-picker-label">
+        <ion-icon name="cloud-upload-outline"></ion-icon>
+        <span>Choose a file</span>
+      </label>
+      <input type="file" (change)="fileEvent($event)" id="file" class="file-picker-input">
+    </div>
   </div>
 </ion-content>
-

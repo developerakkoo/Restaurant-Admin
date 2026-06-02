@@ -1,224 +1,173 @@
-<ion-header [translucent]="true" class="ion-no-border">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-menu-button class="de-menu-btn" menu="main-menu"></ion-menu-button>
     </ion-buttons>
-    <ion-title>🚀 Dashboard - Your Admin Hub 🌟</ion-title>
+    <ion-title class="de-header__title">Dashboard</ion-title>
     <ion-buttons slot="end">
-      <ion-button color="primary" (click)="viewNotifications()" fill="clear">
+      <ion-button class="de-header-toolbar-btn" (click)="viewNotifications()" fill="clear">
         <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
       </ion-button>
-      <ion-button color="primary" (click)="viewMessages()" fill="clear">
+      <ion-button class="de-header-toolbar-btn" (click)="viewMessages()" fill="clear">
         <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="animate__animated animate__fadeIn">
-  <ion-grid>
-    <ion-row>
-      <ion-col size="4">
-        <ion-input (ionChange)="setDateEvent($event,'s')" type="date" fill="outline" label="Start Date" labelPlacement="stacked" placeholder=""></ion-input>
-      </ion-col>
-      <ion-col size="4">
-        <ion-input  (ionChange)="setDateEvent($event,'e')" type="date" fill="outline" label="End Date" labelPlacement="stacked" placeholder=""></ion-input>
-      </ion-col>
-      <ion-col size="4" class="dropdown-container">
-        <ion-select fill="outline" value="month" placeholder="Sort" (ionChange)="onFilterChange($event)">
-          <ion-select-option value="dayOfWeek">Daily</ion-select-option>
-          <ion-select-option value="month">Monthly</ion-select-option>
-          <ion-select-option value="year">Yearly</ion-select-option>
-        </ion-select>
-      </ion-col>
-    </ion-row>
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>Operations Overview</h2>
+      <p>Track orders, revenue, and platform performance at a glance</p>
+    </div>
 
-    <ion-row>
-      <ion-col size="12">
-        <ion-card class="animate__animated animate__fadeInDown animate__faster">
-          <ion-card-header>
-            <ion-card-title>🌟 Overview - Your Performance at a Glance 🚀</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-grid>
-              <ion-row>
-                <ion-col size="3" class="animate__animated animate__fadeInUp animate__delay-1s">
-                  <ion-card>
-                    <ion-card-header>
-                        <ion-card-subtitle>📦 Total Orders</ion-card-subtitle>
-                        <ion-card-title>{{ totalOrders }}</ion-card-title>
-                    </ion-card-header>
-                  </ion-card>
-                </ion-col>
-                <ion-col size="3" class="animate__animated animate__fadeInUp animate__delay-2s">
-                  <ion-card>
-                    <ion-card-header>
-                        <ion-card-subtitle>💰 Total Revenue</ion-card-subtitle>
-                      <ion-card-title>{{ totalRevenue |currency:"INR" }}</ion-card-title>
-                    </ion-card-header>
-                  </ion-card>
-                </ion-col>
-                <ion-col size="3" class="animate__animated animate__fadeInUp animate__delay-3s">
-                  <ion-card>
-                    <ion-card-header>
-                        <ion-card-subtitle>👥 Active Users</ion-card-subtitle>
-                      <ion-card-title>{{ totalOnlineUsers }}</ion-card-title>
-                    </ion-card-header>
-                  </ion-card>
-                </ion-col>
-                <ion-col size="3" class="animate__animated animate__fadeInUp animate__delay-4s">
-                  <ion-card>
-                    <ion-card-header>
-                        <ion-card-subtitle>🤝 Partners</ion-card-subtitle>
-                      <ion-card-title>{{ totalPartners }}</ion-card-title>
-                    </ion-card-header>
-                  </ion-card>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-<ion-row>
-  <ion-col size="12">
-    <ion-card class="animate__animated animate__slideInLeft animate__faster">
-      <ion-card-header class="chart-header">
-        <ion-card-title>📊 Profit Statistics</ion-card-title>
-        <ion-select interface="popover" placeholder="Sort by"  (ionChange)="onRangeChange($event)" class="sort-select" fill="outline">
+    <div class="de-panel de-filters-panel">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-md="4">
+            <ion-input (ionChange)="setDateEvent($event,'s')" type="date" fill="outline" label="Start Date" labelPlacement="stacked"></ion-input>
+          </ion-col>
+          <ion-col size="12" size-md="4">
+            <ion-input (ionChange)="setDateEvent($event,'e')" type="date" fill="outline" label="End Date" labelPlacement="stacked"></ion-input>
+          </ion-col>
+          <ion-col size="12" size-md="4">
+            <ion-select fill="outline" value="month" label="Period" labelPlacement="stacked" (ionChange)="onFilterChange($event)">
+              <ion-select-option value="dayOfWeek">Daily</ion-select-option>
+              <ion-select-option value="month">Monthly</ion-select-option>
+              <ion-select-option value="year">Yearly</ion-select-option>
+            </ion-select>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <div class="de-stat-grid">
+      <div class="de-stat">
+        <div class="de-stat__icon de-stat__icon--red"><ion-icon name="cart-outline"></ion-icon></div>
+        <div class="t-label">Total Orders</div>
+        <div class="t-stat">{{ totalOrders }}</div>
+      </div>
+      <div class="de-stat">
+        <div class="de-stat__icon de-stat__icon--green"><ion-icon name="cash-outline"></ion-icon></div>
+        <div class="t-label">Total Revenue</div>
+        <div class="t-stat">{{ totalRevenue | currency:'INR' }}</div>
+      </div>
+      <div class="de-stat">
+        <div class="de-stat__icon de-stat__icon--blue"><ion-icon name="people-outline"></ion-icon></div>
+        <div class="t-label">Active Users</div>
+        <div class="t-stat">{{ totalOnlineUsers }}</div>
+      </div>
+      <div class="de-stat">
+        <div class="de-stat__icon de-stat__icon--purple"><ion-icon name="storefront-outline"></ion-icon></div>
+        <div class="t-label">Partners</div>
+        <div class="t-stat">{{ totalPartners }}</div>
+      </div>
+    </div>
+
+    <div class="de-card de-chart-card">
+      <div class="de-card-header">
+        <span class="de-card-header__title"><ion-icon name="bar-chart-outline"></ion-icon> Profit Statistics</span>
+        <ion-select interface="popover" fill="outline" (ionChange)="onRangeChange($event)" style="max-width: 140px">
           <ion-select-option value="daily">Daily</ion-select-option>
           <ion-select-option value="monthly">Monthly</ion-select-option>
           <ion-select-option value="yearly">Yearly</ion-select-option>
         </ion-select>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="chart-container-orders">
-          <canvas id="earningsChart">{{ profitChart }}</canvas>
-        </div>
-      </ion-card-content>
-    </ion-card>
-  </ion-col>
-</ion-row>
+      </div>
+      <div class="de-card-body">
+        <div class="chart-container-orders"><canvas id="earningsChart">{{ profitChart }}</canvas></div>
+      </div>
+    </div>
 
-<ion-row>
-  <ion-col size="4"><ion-card class="animate__animated animate__slideInLeft animate__faster">
-    <ion-card-header class="chart-header">
-      <ion-card-title>📊 Platform Fees</ion-card-title>
-      <ion-select interface="popover" placeholder="Sort by" [(ngModel)]="selectedOrderSort" (ionChange)="onOrderSortChange($event)" class="sort-select" fill="outline">
-        <ion-select-option value="day">Daily</ion-select-option>
-        <ion-select-option value="month">Monthly</ion-select-option>
-        <ion-select-option value="year">Yearly</ion-select-option>
-      </ion-select>
-    </ion-card-header>
-    <ion-card-content>
-      <div class="chart-container-orders">
-        <canvas id="platformFeesChart">{{ platformFeesChart }}</canvas>
-      </div>
-    </ion-card-content>
-  </ion-card></ion-col>
-  <ion-col size="4"><ion-card class="animate__animated animate__slideInLeft animate__faster">
-    <ion-card-header class="chart-header">
-      <ion-card-title>📊 GST Amount</ion-card-title>
-      <ion-select interface="popover" placeholder="Sort by" [(ngModel)]="selectedOrderSort" (ionChange)="onOrderSortChange($event)" class="sort-select" fill="outline">
-        <ion-select-option value="day">Daily</ion-select-option>
-        <ion-select-option value="month">Monthly</ion-select-option>
-        <ion-select-option value="year">Yearly</ion-select-option>
-      </ion-select>
-    </ion-card-header>
-    <ion-card-content>
-      <div class="chart-container-orders">
-        <canvas id="gstAmountChart">{{ gstAmountChart }}</canvas>
-      </div>
-    </ion-card-content>
-  </ion-card></ion-col>
-  <ion-col size="4"><ion-card class="animate__animated animate__slideInLeft animate__faster">
-    <ion-card-header class="chart-header">
-      <ion-card-title>📊 Admin Earnings</ion-card-title>
-      <ion-select interface="popover" placeholder="Sort by" [(ngModel)]="selectedOrderSort" (ionChange)="onOrderSortChange($event)" class="sort-select" fill="outline">
-        <ion-select-option value="day">Daily</ion-select-option>
-        <ion-select-option value="month">Monthly</ion-select-option>
-        <ion-select-option value="year">Yearly</ion-select-option>
-      </ion-select>
-    </ion-card-header>
-    <ion-card-content>
-      <div class="chart-container-orders">
-        <canvas id="adminEarningsChart">{{ adminEarningsChart }}</canvas>
-      </div>
-    </ion-card-content>
-  </ion-card></ion-col>
-</ion-row>
-    <ion-row>
-      <ion-col size="6">
-        <ion-card class="animate__animated animate__slideInLeft animate__faster">
-          <ion-card-header class="chart-header">
-            <ion-card-title>📊 Order Statistics</ion-card-title>
-            <ion-select interface="popover" placeholder="Sort by" [(ngModel)]="selectedOrderSort" (ionChange)="onOrderSortChange($event)" class="sort-select" fill="outline">
-              <ion-select-option value="day">Daily</ion-select-option>
-              <ion-select-option value="month">Monthly</ion-select-option>
-              <ion-select-option value="year">Yearly</ion-select-option>
-            </ion-select>
-          </ion-card-header>
-          <ion-card-content>
-            <div class="chart-container-orders">
-              <canvas id="MyChartOrder">{{ chartOrder }}</canvas>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-md="4">
+          <div class="de-card de-chart-card">
+            <div class="de-card-header">
+              <span class="de-card-header__title">Platform Fees</span>
+              <ion-select interface="popover" fill="outline" [(ngModel)]="selectedOrderSort" (ionChange)="onOrderSortChange($event)" style="max-width: 120px">
+                <ion-select-option value="day">Daily</ion-select-option>
+                <ion-select-option value="month">Monthly</ion-select-option>
+                <ion-select-option value="year">Yearly</ion-select-option>
+              </ion-select>
             </div>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-
-      <ion-col size="6">
-        <ion-card class="animate__animated animate__slideInRight animate__faster">
-          <ion-card-header class="chart-header">
-            <ion-card-title>💰 Revenue Statistics</ion-card-title>
-            <ion-select interface="popover" placeholder="Sort by" [(ngModel)]="selectedRevenueSort" (ionChange)="onSortChange($event)" class="sort-select" fill="outline">
-              <ion-select-option value="dayOfMonth">Daily</ion-select-option>
-              <ion-select-option value="month">Monthly</ion-select-option>
-              <ion-select-option value="year">Yearly</ion-select-option>
-            </ion-select>
-          </ion-card-header>
-          <ion-card-content>
-            <div class="chart-container-revenue">
-              <canvas id="MyRevenueChart">{{ chart }}</canvas>
+            <div class="de-card-body"><div class="chart-container-orders"><canvas id="platformFeesChart">{{ platformFeesChart }}</canvas></div></div>
+          </div>
+        </ion-col>
+        <ion-col size="12" size-md="4">
+          <div class="de-card de-chart-card">
+            <div class="de-card-header">
+              <span class="de-card-header__title">GST Amount</span>
+              <ion-select interface="popover" fill="outline" [(ngModel)]="selectedOrderSort" (ionChange)="onOrderSortChange($event)" style="max-width: 120px">
+                <ion-select-option value="day">Daily</ion-select-option>
+                <ion-select-option value="month">Monthly</ion-select-option>
+                <ion-select-option value="year">Yearly</ion-select-option>
+              </ion-select>
             </div>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
+            <div class="de-card-body"><div class="chart-container-orders"><canvas id="gstAmountChart">{{ gstAmountChart }}</canvas></div></div>
+          </div>
+        </ion-col>
+        <ion-col size="12" size-md="4">
+          <div class="de-card de-chart-card">
+            <div class="de-card-header">
+              <span class="de-card-header__title">Admin Earnings</span>
+              <ion-select interface="popover" fill="outline" [(ngModel)]="selectedOrderSort" (ionChange)="onOrderSortChange($event)" style="max-width: 120px">
+                <ion-select-option value="day">Daily</ion-select-option>
+                <ion-select-option value="month">Monthly</ion-select-option>
+                <ion-select-option value="year">Yearly</ion-select-option>
+              </ion-select>
+            </div>
+            <div class="de-card-body"><div class="chart-container-orders"><canvas id="adminEarningsChart">{{ adminEarningsChart }}</canvas></div></div>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12" size-md="6">
+          <div class="de-card de-chart-card">
+            <div class="de-card-header">
+              <span class="de-card-header__title">Order Statistics</span>
+              <ion-select interface="popover" fill="outline" [(ngModel)]="selectedOrderSort" (ionChange)="onOrderSortChange($event)" style="max-width: 120px">
+                <ion-select-option value="day">Daily</ion-select-option>
+                <ion-select-option value="month">Monthly</ion-select-option>
+                <ion-select-option value="year">Yearly</ion-select-option>
+              </ion-select>
+            </div>
+            <div class="de-card-body"><div class="chart-container-orders"><canvas id="MyChartOrder">{{ chartOrder }}</canvas></div></div>
+          </div>
+        </ion-col>
+        <ion-col size="12" size-md="6">
+          <div class="de-card de-chart-card">
+            <div class="de-card-header">
+              <span class="de-card-header__title">Revenue Statistics</span>
+              <ion-select interface="popover" fill="outline" [(ngModel)]="selectedRevenueSort" (ionChange)="onSortChange($event)" style="max-width: 120px">
+                <ion-select-option value="dayOfMonth">Daily</ion-select-option>
+                <ion-select-option value="month">Monthly</ion-select-option>
+                <ion-select-option value="year">Yearly</ion-select-option>
+              </ion-select>
+            </div>
+            <div class="de-card-body"><div class="chart-container-revenue"><canvas id="MyRevenueChart">{{ chart }}</canvas></div></div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 
-    <ion-row>
-      <ion-col size="12">
-        <ion-card class="animate__animated animate__fadeInUp animate__slower">
-          <ion-card-header>
-            <ion-card-title>🔥 Recent Activities - Stay Updated! 🕒</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-list>
-              <ion-item *ngFor="let activity of recentActivities" class="animate__animated animate__fadeInUp">
-                <ion-label>
-                  <p>
-                    🧾 Order <strong>#{{ activity.orderId }}</strong> from 
-                    <strong>{{ activity.user?.phoneNumber }}</strong> 
-                    to <strong>{{ activity.hotel?.hotelName }}</strong>
-                  </p>
-                  <p>{{ activity.userAddress?.address }}</p>
-                  <p>
-                    Total: ₹{{ activity.priceDetails?.totalAmountToPay }}
-                    <span>
-                      <ng-container [ngSwitch]="activity.paymentMode">
-                        <span *ngSwitchCase="'UPI'">💸 UPI</span>
-                        <span *ngSwitchCase="'COD'">💰 COD</span>
-                        <span *ngSwitchCase="'CASH'">🏦 Cash</span>
-                        <span *ngSwitchDefault>💳 {{ activity.paymentMode }}</span>
-                      </ng-container>
-                    </span>
-                  </p>
-                </ion-label>
-                <ion-note slot="end">{{ activity.updatedAt | date: 'MMM d, h:mm a' }}</ion-note>
-              </ion-item>
-            </ion-list>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+    <div class="de-card" style="margin-top: var(--sp-5)">
+      <div class="de-card-header">
+        <span class="de-card-header__title"><ion-icon name="time-outline"></ion-icon> Recent Activities</span>
+      </div>
+      <div class="de-card-body" style="padding: 0">
+        <ion-list lines="full">
+          <ion-item *ngFor="let activity of recentActivities">
+            <ion-label>
+              <h3>Order #{{ activity.orderId }}</h3>
+              <p>{{ activity.user?.phoneNumber }} → {{ activity.hotel?.hotelName }}</p>
+              <p>{{ activity.userAddress?.address }}</p>
+              <p>Total: ₹{{ activity.priceDetails?.totalAmountToPay }} · {{ activity.paymentMode }}</p>
+            </ion-label>
+            <ion-note slot="end">{{ activity.updatedAt | date: 'MMM d, h:mm a' }}</ion-note>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+  </div>
 </ion-content>

@@ -1,31 +1,31 @@
-<ion-header [translucent]="true" class="ion-no-border">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
-    <ion-title>Orders</ion-title>
-    <ion-button color="primary" (click)="handleRefresh()" slot="end" fill="clear" [disabled]="isRefreshing">
-      <ion-icon slot="icon-only" name="refresh-outline" [class.spinning]="isRefreshing"></ion-icon>
-    </ion-button>
-    <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
-      <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
-    </ion-button>
-    <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
-      <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
-    </ion-button>
+    <ion-buttons slot="start">
+      <ion-menu-button class="de-menu-btn" menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="de-header__title">Orders</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="de-header-toolbar-btn" (click)="handleRefresh()" slot="end" fill="clear" [disabled]="isRefreshing">
+        <ion-icon slot="icon-only" name="refresh-outline" [class.spinning]="isRefreshing"></ion-icon>
+      </ion-button>
+      <ion-button class="de-header-toolbar-btn" (click)="viewNotifications()" fill="clear">
+        <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
+      </ion-button>
+      <ion-button class="de-header-toolbar-btn" (click)="viewNotifications()" fill="clear">
+        <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <!-- Header Section -->
-  <div class="page-header">
-    <div class="header-content">
-      <div class="title-section">
-        <h2>📦 Order Management</h2>
-        <p>Track and manage all customer orders</p>
-      </div>
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>Order Management</h2>
+      <p>Track and manage all customer orders</p>
     </div>
-  </div>
 
-  <!-- Filters Section -->
-  <div class="filters-section">
+    <div class="de-panel de-filters-panel">
     <ion-grid>
       <ion-row>
         <ion-col size="5" size-md="5">
@@ -82,18 +82,15 @@
         show-clear-button="focus">
       </ion-searchbar>
     </div>
-  </div>
+    </div>
 
-  <!-- Table Section -->
-  <div class="table-container" *ngIf="orders.length > 0">
-    <div class="table-card">
-      <div class="table-header">
-        <h3>Order List</h3>
-        <ion-badge color="primary">{{ orders.length }} Orders</ion-badge>
+    <div class="de-table-card" *ngIf="orders.length > 0">
+      <div class="de-table-toolbar">
+        <span class="de-card-header__title">Order List</span>
+        <span class="de-count-badge">{{ orders.length }} orders</span>
       </div>
-      
-      <div class="table-responsive">
-        <table class="modern-table">
+      <div class="de-table-scroll table-responsive">
+        <table class="de-table modern-table">
           <thead>
             <tr>
               <th>#ID</th>
@@ -152,8 +149,9 @@
                     placeholder="Select Driver"
                     class="driver-select"
                   >
-                    <ion-select-option *ngFor="let d of drivers" [value]="d._id">
+                    <ion-select-option *ngFor="let d of drivers" [value]="d._id" [disabled]="d.isBusy">
                       {{d.firstName}} {{d.lastName}}
+                      <span *ngIf="d.isBusy" class="busy-badge"> (Busy)</span>
                     </ion-select-option>
                   </ion-select>
                   
@@ -186,12 +184,10 @@
         </table>
       </div>
     </div>
-  </div>
 
   <!-- Pagination -->
-  <div class="pagination-container" *ngIf="orders.length > pageSize">
-    <nav>
-      <ul class="pagination justify-content-end">
+    <nav class="de-pagination" *ngIf="orders.length > pageSize">
+      <ul class="pagination" style="display: flex; list-style: none; margin: 0; padding: 0; gap: 8px">
         <li class="page-item" [class.disabled]="currentPage === 1">
           <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
         </li>
@@ -207,12 +203,11 @@
         </li>
       </ul>
     </nav>
-  </div>
 
-  <!-- Empty State -->
-  <div class="empty-state" *ngIf="orders.length === 0">
-    <ion-icon name="receipt-outline" class="empty-icon"></ion-icon>
-    <h3>No Orders Found!</h3>
-    <p>Orders will appear here once customers start placing them</p>
+    <div class="de-empty" *ngIf="orders.length === 0">
+      <ion-icon name="receipt-outline" class="de-empty__icon"></ion-icon>
+      <h4>No Orders Found</h4>
+      <p>Orders will appear here once customers start placing them</p>
+    </div>
   </div>
 </ion-content>

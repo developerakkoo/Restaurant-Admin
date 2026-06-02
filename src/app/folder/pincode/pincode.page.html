@@ -1,59 +1,66 @@
-<ion-header [translucent]="true" class="ion-no-border">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
-    <ion-title>Pincode Management</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button class="de-menu-btn" menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="de-header__title">Pincode Management</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="addNewPincode()">
+      <ion-button class="de-header-toolbar-btn" (click)="addNewPincode()">
         <ion-icon name="add" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div class="pincode-container">
-    <!-- Search Bar -->
-    <div class="search-container">
-      <ion-searchbar 
-        [(ngModel)]="searchTerm" 
-        placeholder="Search pincodes..."
-        (ionInput)="filterPincodes()"
-        show-clear-button="focus">
-      </ion-searchbar>
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>Pincode Management</h2>
+      <p>Manage serviceable delivery areas and locations</p>
     </div>
 
-    <!-- Pincode List -->
-    <div class="pincode-list">
-      <ion-list>
-        <ion-item *ngFor="let pincode of filteredPincodes" class="pincode-item">
-          <ion-label>
-            <div class="pincode-header">
-              <h2 class="pincode-number">{{ pincode.pincode }}</h2>
-              <ion-badge color="primary" *ngIf="pincode.isActive">Active</ion-badge>
-            </div>
-            <p class="pincode-address">{{ pincode.address }}</p>
-            <p class="pincode-coordinates" *ngIf="pincode.lat && pincode.lng">
-              Coordinates: {{ pincode.lat | number:'1.4-4' }}, {{ pincode.lng | number:'1.4-4' }}
-            </p>
-          </ion-label>
-          <ion-button 
-            fill="clear" 
-            color="danger" 
-            slot="end" 
-            (click)="deletePincodeWithToast(pincode._id)">
-            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-        </ion-item>
-      </ion-list>
+    <div class="pincode-container">
+      <div class="search-container">
+        <ion-searchbar
+          [(ngModel)]="searchTerm"
+          placeholder="Search pincodes..."
+          (ionInput)="filterPincodes()"
+          show-clear-button="focus">
+        </ion-searchbar>
+      </div>
 
-      <!-- Empty State -->
-      <div class="empty-state" *ngIf="filteredPincodes.length === 0">
-        <ion-icon name="location-outline" class="empty-icon"></ion-icon>
-        <h3>No pincodes found</h3>
-        <p *ngIf="searchTerm">Try adjusting your search terms</p>
-        <p *ngIf="!searchTerm">Add your first pincode to get started</p>
-        <ion-button fill="outline" (click)="addNewPincode()" *ngIf="!searchTerm">
-          Add Pincode
-        </ion-button>
+      <div class="pincode-list">
+        <ion-list>
+          <ion-item *ngFor="let pincode of filteredPincodes" class="pincode-item">
+            <ion-label>
+              <div class="pincode-header">
+                <h2 class="pincode-number">{{ pincode.pincode }}</h2>
+                <ion-badge color="primary" *ngIf="pincode.isActive">Active</ion-badge>
+              </div>
+              <p class="pincode-address">{{ pincode.address }}</p>
+              <p class="pincode-coordinates" *ngIf="pincode.lat && pincode.lng">
+                Coordinates: {{ pincode.lat | number:'1.4-4' }}, {{ pincode.lng | number:'1.4-4' }}
+              </p>
+            </ion-label>
+            <ion-button
+              fill="clear"
+              color="danger"
+              slot="end"
+              (click)="deletePincodeWithToast(pincode._id)">
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+
+        <div class="de-empty" *ngIf="filteredPincodes.length === 0">
+          <ion-icon name="location-outline" class="de-empty__icon"></ion-icon>
+          <h4>No pincodes found</h4>
+          <p *ngIf="searchTerm">Try adjusting your search terms</p>
+          <p *ngIf="!searchTerm">Add your first pincode to get started</p>
+          <ion-button fill="outline" (click)="addNewPincode()" *ngIf="!searchTerm">
+            Add Pincode
+          </ion-button>
+        </div>
       </div>
     </div>
   </div>

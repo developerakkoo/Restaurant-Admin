@@ -1,18 +1,25 @@
-<ion-header [translucent]="true">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
-    <ion-title>Select User</ion-title>
+    <ion-title class="de-header__title">Select User</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="dismiss()">
+      <ion-button class="de-header-toolbar-btn" (click)="dismiss()">
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-list>
-    <ion-item *ngFor="let user of users" (click)="selectUser(user._id)">
-      {{ user.name }} - {{ user.phoneNumber }}
-    </ion-item>
-  </ion-list>
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>Notify User</h2>
+      <p>Select a customer to send this promo code</p>
+    </div>
+
+    <ion-list>
+      <ion-item *ngFor="let user of users" (click)="selectUser(user._id)">
+        {{ user.name }} - {{ user.phoneNumber }}
+      </ion-item>
+    </ion-list>
+  </div>
 </ion-content>

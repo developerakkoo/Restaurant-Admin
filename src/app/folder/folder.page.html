@@ -1,125 +1,115 @@
-<ion-header [translucent]="true">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-menu-button class="de-menu-btn" menu="main-menu"></ion-menu-button>
     </ion-buttons>
-    <ion-title>Dashboard</ion-title>
-    <ion-button  color="primary" (click)="viewNotifications()" slot="end" fill="clear">
-      <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
-    </ion-button>
-    <ion-button color="primary" (click)="viewNotifications()" slot="end" fill="clear">
-      <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
-    </ion-button>
+    <ion-title class="de-header__title">Dashboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="de-header-toolbar-btn" (click)="viewNotifications()" fill="clear">
+        <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
+      </ion-button>
+      <ion-button class="de-header-toolbar-btn" (click)="viewNotifications()" fill="clear">
+        <ion-icon slot="icon-only" name="chatbox-ellipses-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  
- <ion-grid>
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>Operations Overview</h2>
+      <p>Summary metrics and charts for your platform</p>
+    </div>
 
-  <ion-row>
-    
-    <ion-col size="3">
-      <ion-card>
-        <ion-card-header>
-          <ion-grid fixed>
-            <ion-row>
-              <ion-col size="6">
-                <img src="assets/Icon_Order.svg" alt="" srcset="">
-              </ion-col>
-              <ion-col size="6">
-                <ion-card-subtitle>Total Orders</ion-card-subtitle>
-                <ion-card-title>12345677</ion-card-title></ion-col>
-            </ion-row>
-          </ion-grid>
-        </ion-card-header>
-      
-      </ion-card>
-    </ion-col>
-    <ion-col size="3">
-      <ion-card>
-        <ion-card-header>
-          <ion-grid fixed>
-            <ion-row>
-              <ion-col size="6">
-                <img src="assets/icon Delivered.svg" alt="" srcset="">
-              </ion-col>
-              <ion-col size="6">
-                <ion-card-subtitle>Total Delivered</ion-card-subtitle>
-                <ion-card-title>12345677</ion-card-title></ion-col>
-            </ion-row>
-          </ion-grid>
-        </ion-card-header>
-      
-      </ion-card>
-    </ion-col>
-    <ion-col size="3">
-      <ion-card>
-        <ion-card-header>
-          <ion-grid fixed>
-            <ion-row>
-              <ion-col size="6">
-                <img src="assets/total_cancelled.svg" alt="" srcset="">
-              </ion-col>
-              <ion-col size="6">
-                <ion-card-subtitle>Total Canceled</ion-card-subtitle>
-                <ion-card-title>12345677</ion-card-title></ion-col>
-            </ion-row>
-          </ion-grid>
-        </ion-card-header>
-      
-      </ion-card>
-    </ion-col>
-    <ion-col size="3">
-      <ion-card>
-        <ion-card-header>
-          <ion-grid fixed>
-            <ion-row>
-              <ion-col size="6">
-                <img src="assets/total_revenue.svg" alt="" srcset="">
-              </ion-col>
-              <ion-col size="6">
-                <ion-card-subtitle>Total Revenue</ion-card-subtitle>
-                <ion-card-title>12345677</ion-card-title></ion-col>
-            </ion-row>
-          </ion-grid>
-        </ion-card-header>
-      
-      </ion-card>
-    </ion-col>
-  </ion-row>
- </ion-grid>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="3">
+          <ion-card>
+            <ion-card-header>
+              <ion-grid fixed>
+                <ion-row>
+                  <ion-col size="6">
+                    <img src="assets/Icon_Order.svg" alt="" srcset="">
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-card-subtitle>Total Orders</ion-card-subtitle>
+                    <ion-card-title>12345677</ion-card-title></ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="3">
+          <ion-card>
+            <ion-card-header>
+              <ion-grid fixed>
+                <ion-row>
+                  <ion-col size="6">
+                    <img src="assets/icon Delivered.svg" alt="" srcset="">
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-card-subtitle>Total Delivered</ion-card-subtitle>
+                    <ion-card-title>12345677</ion-card-title></ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="3">
+          <ion-card>
+            <ion-card-header>
+              <ion-grid fixed>
+                <ion-row>
+                  <ion-col size="6">
+                    <img src="assets/total_cancelled.svg" alt="" srcset="">
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-card-subtitle>Total Canceled</ion-card-subtitle>
+                    <ion-card-title>12345677</ion-card-title></ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+        <ion-col size="3">
+          <ion-card>
+            <ion-card-header>
+              <ion-grid fixed>
+                <ion-row>
+                  <ion-col size="6">
+                    <img src="assets/total_revenue.svg" alt="" srcset="">
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-card-subtitle>Total Revenue</ion-card-subtitle>
+                    <ion-card-title>12345677</ion-card-title></ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 
- <!-- Chart Grid -->
-
- <ion-grid >
-  <ion-row>
-    <ion-col size="4">
-      <ion-card>
-       
-        
-      </ion-card>
-    </ion-col>
-    <ion-col size="4">
-      <ion-card>
-        <div style="display: flex; flex-direction: row;">
-          
-         
-         
-        </div>
-        
-      </ion-card>
-    </ion-col>
-    <ion-col size="4">
-      <ion-card>
-        <div style="display: flex; flex-direction: row;">
-         
-         
-         
-        </div>
-        
-      </ion-card>
-    </ion-col>
-  </ion-row>
- </ion-grid>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="4">
+          <ion-card>
+          </ion-card>
+        </ion-col>
+        <ion-col size="4">
+          <ion-card>
+            <div style="display: flex; flex-direction: row;">
+            </div>
+          </ion-card>
+        </ion-col>
+        <ion-col size="4">
+          <ion-card>
+            <div style="display: flex; flex-direction: row;">
+            </div>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

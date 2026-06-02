@@ -15,6 +15,18 @@ dayjs.extend(localeData);
 dayjs.extend(weekday);
 dayjs.extend(isoWeek);
 
+const deChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { labels: { color: '#374151', font: { family: 'Barlow' } } },
+  },
+  scales: {
+    x: { grid: { color: '#e5e7eb' }, ticks: { color: '#6b7280' } },
+    y: { grid: { color: '#e5e7eb' }, ticks: { color: '#6b7280' } },
+  },
+};
+
 interface PlatformFeesData {
   _id: string;
   total: number;
@@ -136,14 +148,13 @@ export class DashPage implements OnInit {
 
         datasets: [{
           label:"Revenue",
-          data:data
+          data:data,
+          backgroundColor: 'rgba(255, 76, 90, 0.15)',
+          borderColor: '#ff4c5a',
+          borderWidth: 1,
         }]
       },
-      options: {
-        
-        responsive: true,
-        maintainAspectRatio: false
-      }
+      options: deChartOptions
 
     });
   }
@@ -162,17 +173,13 @@ export class DashPage implements OnInit {
           {
             label: 'Orders',
             data: data,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(255, 76, 90, 0.15)',
+            borderColor: '#ff4c5a',
             borderWidth: 1,
           },
         ],
       },
-      options: {
-
-        responsive: true,
-        maintainAspectRatio: false,
-      },
+      options: deChartOptions,
     });
   }
 

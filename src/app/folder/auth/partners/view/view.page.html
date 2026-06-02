@@ -1,88 +1,91 @@
-<ion-header [translucent]="true" class="ion-no-border">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/folder/auth/partners"></ion-back-button>
     </ion-buttons>
-    <ion-title>Partner Details</ion-title>
+    <ion-title class="de-header__title">Partner Details</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="viewSettlements()" color="primary" fill="clear">
+      <ion-button class="de-header-toolbar-btn" (click)="viewSettlements()" fill="clear">
         <ion-label>View Settlements</ion-label>
         <ion-icon slot="start" name="create-outline"></ion-icon>
       </ion-button>
-
-    
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <div class="row g-4">
-    <!-- Partner Information Card -->
-    <div class="col-md-6">
-      <div class="card shadow-sm h-100 border-0">
-        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-          <h5 class="mb-0 text-primary">
-            <ion-icon name="person-outline" class="me-2"></ion-icon>
-            Partner Information
-          </h5>
-          <ion-badge [color]="partnerDetails?.status === 1 ? 'success' : 'warning'" class="ms-2">
-            {{partnerDetails?.status === 1 ? 'Active' : 'Inactive'}}
-          </ion-badge>
-        </div>
-        <div class="card-body">
-          <div class="mb-4">
-            <label class="form-label text-muted small">Name</label>
-            <p class="form-control-plaintext fw-bold fs-5">{{partnerDetails?.name || 'N/A'}}</p>
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>Partner Details</h2>
+      <p>View partner and hotel information</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100 border-0">
+          <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-primary">
+              <ion-icon name="person-outline" class="me-2"></ion-icon>
+              Partner Information
+            </h5>
+            <ion-badge [color]="partnerDetails?.status === 1 ? 'success' : 'warning'" class="ms-2">
+              {{partnerDetails?.status === 1 ? 'Active' : 'Inactive'}}
+            </ion-badge>
           </div>
-          <div class="mb-4">
-            <label class="form-label text-muted small">Email</label>
-            <p class="form-control-plaintext fw-bold">{{partnerDetails?.email || 'N/A'}}</p>
-          </div>
-          <div class="mb-4">
-            <label class="form-label text-muted small">Phone Number</label>
-            <p class="form-control-plaintext fw-bold">{{partnerDetails?.phoneNumber || 'N/A'}}</p>
-          </div>
-          <div class="mb-4">
-            <label class="form-label text-muted small">Joined Date</label>
-            <p class="form-control-plaintext fw-bold">{{partnerDetails?.createdAt | date:'medium'}}</p>
+          <div class="card-body">
+            <div class="mb-4">
+              <label class="form-label text-muted small">Name</label>
+              <p class="form-control-plaintext fw-bold fs-5">{{partnerDetails?.name || 'N/A'}}</p>
+            </div>
+            <div class="mb-4">
+              <label class="form-label text-muted small">Email</label>
+              <p class="form-control-plaintext fw-bold">{{partnerDetails?.email || 'N/A'}}</p>
+            </div>
+            <div class="mb-4">
+              <label class="form-label text-muted small">Phone Number</label>
+              <p class="form-control-plaintext fw-bold">{{partnerDetails?.phoneNumber || 'N/A'}}</p>
+            </div>
+            <div class="mb-4">
+              <label class="form-label text-muted small">Joined Date</label>
+              <p class="form-control-plaintext fw-bold">{{partnerDetails?.createdAt | date:'medium'}}</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Hotel Information Card -->
-    <div class="col-md-6">
-      <div class="card shadow-sm h-100 border-0">
-        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-          <h5 class="mb-0 text-primary">
-            <ion-icon name="business-outline" class="me-2"></ion-icon>
-            Hotel Information
-          </h5>
-          <div class="d-flex align-items-center">
-            <ion-badge [color]="hotelDetails?.isOnline ? 'success' : 'warning'" class="me-2">
-              {{hotelDetails?.isOnline ? 'Online' : 'Offline'}}
-            </ion-badge>
-            <ion-badge [color]="hotelDetails?.isTop ? 'primary' : 'secondary'" class="me-2">
-              {{hotelDetails?.isTop ? 'Top Rated' : 'Regular'}}
-            </ion-badge>
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100 border-0">
+          <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-primary">
+              <ion-icon name="business-outline" class="me-2"></ion-icon>
+              Hotel Information
+            </h5>
+            <div class="d-flex align-items-center">
+              <ion-badge [color]="hotelDetails?.isOnline ? 'success' : 'warning'" class="me-2">
+                {{hotelDetails?.isOnline ? 'Online' : 'Offline'}}
+              </ion-badge>
+              <ion-badge [color]="hotelDetails?.isTop ? 'primary' : 'secondary'" class="me-2">
+                {{hotelDetails?.isTop ? 'Top Rated' : 'Regular'}}
+              </ion-badge>
+            </div>
           </div>
-        </div>
-        <div class="card-body">
-          <div class="mb-4">
-            <label class="form-label text-muted small">Hotel Name</label>
-            <p class="form-control-plaintext fw-bold fs-5">{{hotelDetails?.hotelName || 'N/A'}}</p>
-          </div>
-          <div class="mb-4">
-            <label class="form-label text-muted small">Address</label>
-            <p class="form-control-plaintext fw-bold">{{hotelDetails?.address || 'N/A'}}</p>
-          </div>
-          <div class="mb-4">
-            <label class="form-label text-muted small">Location</label>
-            <p class="form-control-plaintext fw-bold">
-              <ion-icon name="location-outline" class="me-1"></ion-icon>
-              Lat: {{hotelDetails?.location?.coordinates[1] || 'N/A'}}, 
-              Lng: {{hotelDetails?.location?.coordinates[0] || 'N/A'}}
-            </p>
+          <div class="card-body">
+            <div class="mb-4">
+              <label class="form-label text-muted small">Hotel Name</label>
+              <p class="form-control-plaintext fw-bold fs-5">{{hotelDetails?.hotelName || 'N/A'}}</p>
+            </div>
+            <div class="mb-4">
+              <label class="form-label text-muted small">Address</label>
+              <p class="form-control-plaintext fw-bold">{{hotelDetails?.address || 'N/A'}}</p>
+            </div>
+            <div class="mb-4">
+              <label class="form-label text-muted small">Location</label>
+              <p class="form-control-plaintext fw-bold">
+                <ion-icon name="location-outline" class="me-1"></ion-icon>
+                Lat: {{hotelDetails?.location?.coordinates[1] || 'N/A'}},
+                Lng: {{hotelDetails?.location?.coordinates[0] || 'N/A'}}
+              </p>
+            </div>
           </div>
         </div>
       </div>

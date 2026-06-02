@@ -13,6 +13,17 @@ import {
   canAdminAction,
   ADMIN_ACTIONABLE_STATUSES,
 } from 'src/app/constants/order-status.constants';
+
+interface DeliveryBoy {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  isBusy?: boolean;
+  activeOrderCount?: number;
+  [key: string]: any; // Allow other fields
+}
+
 @Component({
   selector: 'app-orders',
   templateUrl: './orders.page.html',
@@ -31,7 +42,7 @@ currentPage: number = 1;
 totalPages: number = 1;
 
 
-  drivers:any[] = [];
+  drivers: DeliveryBoy[] = [];
   query:string = "";
   status:string = "";
 

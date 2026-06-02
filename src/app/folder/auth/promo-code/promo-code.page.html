@@ -1,37 +1,46 @@
-<ion-header [translucent]="true" class="ion-no-border">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
-    <ion-title>Promo Code</ion-title>
-    <ion-button slot="end" (click)="openAddPromoModal()" expand="block">
-     Add new Promo
-    </ion-button>
+    <ion-buttons slot="start">
+      <ion-menu-button class="de-menu-btn" menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="de-header__title">Promo Code</ion-title>
+    <ion-buttons slot="end">
+      <ion-button class="de-header-toolbar-btn" slot="end" (click)="openAddPromoModal()" expand="block">
+        Add new Promo
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>Promo Codes</h2>
+      <p>Create and manage discount offers for customers</p>
+    </div>
 
-  <ion-grid>
-    <ion-row>
-      <ion-col size="4" *ngFor="let item of codes">
-        <ion-card>
-          <ion-card-header>
-       
-            <ion-card-subtitle>Upto Rs {{item.minOrderAmount}}</ion-card-subtitle>
-            <ion-card-title>{{item.discountAmount}}% OFF</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-           <ion-item lines="none" color="primary">
-            <ion-label color="dark">
-              <h2>{{item.code | uppercase}}</h2>
-            </ion-label>
-            <ion-icon slot="end" name="copy-outline"></ion-icon>
-           </ion-item>
-           <ion-button slot="end" (click)="openNotificationModal(item)" expand="block">
-             Notify User
-           </ion-button>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-      
-    </ion-row>
-  </ion-grid>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="4" *ngFor="let item of codes">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-subtitle>Upto Rs {{item.minOrderAmount}}</ion-card-subtitle>
+              <ion-card-title>{{item.discountAmount}}% OFF</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-item lines="none" color="primary">
+                <ion-label color="dark">
+                  <h2>{{item.code | uppercase}}</h2>
+                </ion-label>
+                <ion-icon slot="end" name="copy-outline"></ion-icon>
+              </ion-item>
+              <ion-button slot="end" (click)="openNotificationModal(item)" expand="block">
+                Notify User
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

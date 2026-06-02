@@ -10,8 +10,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { RemoveportDirective } from './shared/directives/removeport.directive';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { environment } from '../environments/environment';
 
-const config: SocketIoConfig = { url: 'http://localhost:8000', options: {} };
+const config: SocketIoConfig = { url: environment.SOCKET_URL, options: {} };
 
 @NgModule({
   declarations: [AppComponent],

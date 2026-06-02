@@ -1,11 +1,11 @@
-<ion-header [translucent]="true" class="ion-no-border">
+<ion-header class="de-header ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/folder/auth/partners/view"></ion-back-button>
     </ion-buttons>
-    <ion-title>Settlements</ion-title>
+    <ion-title class="de-header__title">Settlements</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="submitSettlements()" [disabled]="selectedItems.size === 0" color="primary">
+      <ion-button class="de-header-toolbar-btn" (click)="submitSettlements()" [disabled]="selectedItems.size === 0">
         <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
         Mark Selected as Settled
       </ion-button>
@@ -13,78 +13,78 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <!-- Summary Cards -->
-  <div class="row g-4 mb-4">
-    <div class="col-md-3">
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
-          <h6 class="text-muted mb-2">Total Settled Amount</h6>
-          <h3 class="mb-0 text-success">₹{{totalSettledAmount}}</h3>
-        </div>
-      </div>
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>Partner Settlements</h2>
+      <p>Review and settle partner earnings from orders</p>
     </div>
-    <div class="col-md-3">
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
-          <h6 class="text-muted mb-2">Total Unsettled Amount</h6>
-          <h3 class="mb-0 text-warning">₹{{totalUnsettledAmount}}</h3>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
-          <h6 class="text-muted mb-2">Total Admin Earnings</h6>
-          <h3 class="mb-0 text-primary">₹{{totalAdminEarnings}}</h3>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
-          <h6 class="text-muted mb-2">Selected Amount</h6>
-          <h3 class="mb-0 text-info">₹{{getSelectedAmount()}}</h3>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Filters and Table -->
-  <div class="card shadow-sm border-0">
-    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-      <h5 class="mb-0 text-primary">
-        <ion-icon name="list-outline" class="me-2"></ion-icon>
-        Settlement Details
-      </h5>
-      <div class="d-flex align-items-center gap-3">
-        <ion-select 
-          [value]="sortStatus" 
-          (ionChange)="onSortStatusChange($event)"
-          interface="action-sheet"
-          placeholder="Filter by status">
-          <ion-select-option value="all">All</ion-select-option>
-          <ion-select-option value="settled">Settled</ion-select-option>
-          <ion-select-option value="unsettled">Unsettled</ion-select-option>
-        </ion-select>
-        <div class="d-flex align-items-center">
-          <ion-checkbox 
-            [checked]="selectAll" 
-            (ionChange)="onSelectAllChange($event)"
-            labelPlacement="end">
-            Select All
-          </ion-checkbox>
+    <div class="row g-4 mb-4">
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h6 class="text-muted mb-2">Total Settled Amount</h6>
+            <h3 class="mb-0 text-success">₹{{totalSettledAmount}}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h6 class="text-muted mb-2">Total Unsettled Amount</h6>
+            <h3 class="mb-0 text-warning">₹{{totalUnsettledAmount}}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h6 class="text-muted mb-2">Total Admin Earnings</h6>
+            <h3 class="mb-0 text-primary">₹{{totalAdminEarnings}}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h6 class="text-muted mb-2">Selected Amount</h6>
+            <h3 class="mb-0 text-info">₹{{getSelectedAmount()}}</h3>
+          </div>
         </div>
       </div>
     </div>
-    <div class="card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-hover mb-0">
+
+    <div class="de-table-card">
+      <div class="de-table-toolbar">
+        <span class="de-card-header__title">Settlement Details</span>
+        <div class="d-flex align-items-center gap-3">
+          <ion-select
+            [value]="sortStatus"
+            (ionChange)="onSortStatusChange($event)"
+            interface="action-sheet"
+            placeholder="Filter by status">
+            <ion-select-option value="all">All</ion-select-option>
+            <ion-select-option value="settled">Settled</ion-select-option>
+            <ion-select-option value="unsettled">Unsettled</ion-select-option>
+          </ion-select>
+          <div class="d-flex align-items-center">
+            <ion-checkbox
+              [checked]="selectAll"
+              (ionChange)="onSelectAllChange($event)"
+              labelPlacement="end">
+              Select All
+            </ion-checkbox>
+          </div>
+        </div>
+      </div>
+      <div class="de-table-scroll table-responsive">
+        <table class="de-table table table-hover mb-0">
           <thead class="table-light">
             <tr>
               <th style="width: 50px">
-                <ion-checkbox 
-                  [checked]="selectAll" 
+                <ion-checkbox
+                  [checked]="selectAll"
                   (ionChange)="onSelectAllChange($event)">
                 </ion-checkbox>
               </th>
@@ -101,7 +101,7 @@
           <tbody>
             <tr *ngFor="let settlement of getFilteredSettlements()">
               <td>
-                <ion-checkbox 
+                <ion-checkbox
                   [checked]="isSettlementSelected(settlement)"
                   (ionChange)="onSettlementSelect($event, settlement)"
                   [disabled]="settlement.isSettled">

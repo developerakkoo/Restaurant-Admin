@@ -1,121 +1,210 @@
-ion-menu ion-content {
-  --background: var(--ion-item-background, var(--ion-background-color, #fff));
+.de-sidebar {
+  --background: var(--surface-white);
+  --width: var(--sidebar-width, 200px);
+  --min-width: var(--sidebar-width, 200px);
+  --max-width: var(--sidebar-width, 200px);
+  border-right: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+
+  &__inner {
+    --background: var(--surface-white);
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: 14px var(--sp-3) 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    min-width: 0;
+  }
+
+  &__brand-logo {
+    width: 32px;
+    height: 32px;
+    background: var(--brand-50);
+    border-radius: var(--r-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  &__brand-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__brand-tagline {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__section {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-placeholder);
+    padding: 12px var(--sp-3) 4px;
+  }
+
+  &__footer {
+    margin-top: auto;
+    padding: var(--sp-3);
+    border-top: 1px solid var(--border-subtle);
+    background: var(--surface-subtle);
+    min-width: 0;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-width: 0;
+  }
+
+  &__user-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__user-role {
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
-ion-menu.md ion-content {
-  --padding-start: 8px;
-  --padding-end: 8px;
-  --padding-top: 20px;
-  --padding-bottom: 20px;
+.de-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-2);
+  margin: 2px 6px;
+  height: 36px;
+  border-radius: var(--r-md);
+  text-decoration: none;
+  transition: all var(--t-base);
+  cursor: pointer;
+  min-width: 0;
+
+  &__icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--r-sm);
+    flex-shrink: 0;
+
+    ion-icon {
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+  }
+
+  &__label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &:hover {
+    background: var(--surface-subtle);
+    .de-nav-item__label {
+      color: var(--text-primary);
+    }
+    .de-nav-item__icon ion-icon {
+      color: var(--text-primary);
+    }
+  }
+
+  &.active {
+    background: var(--brand-50);
+
+    .de-nav-item__icon {
+      background: var(--brand-100);
+      ion-icon {
+        color: var(--brand-500);
+      }
+    }
+
+    .de-nav-item__label {
+      color: var(--brand-600);
+      font-weight: 600;
+    }
+  }
 }
 
-ion-menu.md ion-list {
-  padding: 20px 0;
+/* Tablet & mobile: overlay drawer (split-pane disabled below lg / 992px) */
+@media (max-width: 991.98px) {
+  ion-menu.de-sidebar {
+    --width: var(--sidebar-width-mobile, min(260px, 88vw));
+    --min-width: unset;
+    --max-width: var(--sidebar-width-mobile, min(260px, 88vw));
+  }
+
+  .de-sidebar__brand-tagline {
+    display: block;
+  }
 }
 
-ion-menu.md ion-note {
-  margin-bottom: 30px;
+@media (max-width: 575.98px) {
+  ion-menu.de-sidebar {
+    --width: min(240px, 90vw);
+    --max-width: min(240px, 90vw);
+  }
+
+  .de-sidebar__brand-tagline,
+  .de-sidebar__user-role {
+    display: none;
+  }
+
+  .de-sidebar__footer {
+    padding: var(--sp-2) var(--sp-3);
+  }
 }
 
-ion-menu.md ion-list-header,
-ion-menu.md ion-note {
-  padding-left: 10px;
+/* Split pane: only pin sidebar on large screens */
+ion-split-pane {
+  --side-width: var(--sidebar-width, 200px);
+  --side-max-width: var(--sidebar-width, 200px);
+  --side-min-width: var(--sidebar-width, 200px);
 }
 
-ion-menu.md ion-list#inbox-list {
-  border-bottom: 1px solid var(--ion-color-step-150, #d7d8da);
-}
-
-ion-menu.md ion-list#inbox-list ion-list-header {
-  font-size: 22px;
-  font-weight: 600;
-
-  min-height: 20px;
-}
-
-ion-menu.md ion-list#labels-list ion-list-header {
-  font-size: 16px;
-
-  margin-bottom: 18px;
-
-  color: #757575;
-
-  min-height: 26px;
-}
-
-ion-menu.md ion-item {
-  --padding-start: 10px;
-  --padding-end: 10px;
-  border-radius: 4px;
-}
-
-ion-menu.md ion-item.selected {
-  --background: rgba(var(--ion-color-primary-rgb), 0.14);
-}
-
-ion-menu.md ion-item.selected ion-icon {
-  color: var(--ion-color-primary);
-}
-
-ion-menu.md ion-item ion-icon {
-  color: #616e7e;
-  font-size: 16px;
-}
-
-ion-menu.md ion-item ion-label {
-  font-weight: 500;
-  font-size: 16px;
-}
-
-ion-menu.ios ion-content {
-  --padding-bottom: 20px;
-}
-
-ion-menu.ios ion-list {
-  padding: 20px 0 0 0;
-}
-
-ion-menu.ios ion-note {
-  line-height: 24px;
-  margin-bottom: 20px;
-}
-
-ion-menu.ios ion-item {
-  --padding-start: 16px;
-  --padding-end: 16px;
-  --min-height: 50px;
-}
-
-ion-menu.ios ion-item.selected ion-icon {
-  color: var(--ion-color-primary);
-}
-
-ion-menu.ios ion-item ion-icon {
-  font-size: 24px;
-  color: #73849a;
-}
-
-ion-menu.ios ion-list#labels-list ion-list-header {
-  margin-bottom: 8px;
-}
-
-ion-menu.ios ion-list-header,
-ion-menu.ios ion-note {
-  padding-left: 16px;
-  padding-right: 16px;
-}
-
-ion-menu.ios ion-note {
-  margin-bottom: 8px;
-}
-
-ion-note {
-  display: inline-block;
-  font-size: 16px;
-
-  color: var(--ion-color-medium-shade);
-}
-
-ion-item.selected {
-  --color: var(--ion-color-primary);
-}
