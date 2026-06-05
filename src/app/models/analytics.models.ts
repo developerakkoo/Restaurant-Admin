@@ -55,4 +55,11 @@ export interface AnalyticsLoadResult {
   geoClusters: { lat: number; lng: number; count: number }[];
   recentOrders: any[];
   errors: Record<string, string>;
+  reconciliation?: {
+    passed: boolean;
+    ordersChartSum: number;
+    revenueChartSum: number;
+    statusSum: number;
+    cancellationSum: number;
+  };
 }

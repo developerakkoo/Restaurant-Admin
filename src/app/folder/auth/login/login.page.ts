@@ -9,6 +9,7 @@ import {
 } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
+import { AnalyticsService } from 'src/app/services/analytics.service';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +24,7 @@ export class LoginPage implements OnInit {
     private formBuilder: FormBuilder,
     private auth: AuthService,
     private data: DataService,
+    private analytics: AnalyticsService,
     private router: Router,
     private loadingController: LoadingController,
     private toastController: ToastController
@@ -77,6 +79,7 @@ export class LoginPage implements OnInit {
         await this.data.set('accessToken', accessToken);
         await this.data.set('refreshToken', refreshToken);
         await this.data.set('userId', userId);
+        this.analytics.clearCache();
         await loading.dismiss();
         this.presentToast("Login Successfull!", 2000, "top","success");
         this.router.navigate(["folder", "dash"]);

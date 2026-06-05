@@ -1,0 +1,18 @@
+.recipient-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0;
+  color: var(--ion-color-medium);
+  font-size: 14px;
+}
+
+.recipient-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.send-button {
+  margin: 16px 0 32px;
+}

@@ -1,10 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, forkJoin } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import * as dayjs from 'dayjs';
 import { environment } from 'src/environments/environment';
 import { DataService } from './data.service';
+import { AnalyticsMetricsService } from './analytics-metrics.service';
 import {
   AnalyticsFilterState,
   AnalyticsLoadResult,
@@ -19,7 +20,11 @@ export class AnalyticsService {
   private cacheKey = '';
   private cache: AnalyticsLoadResult | null = null;
 
-  constructor(private http: HttpClient, private storage: DataService) {}
+  constructor(
+    private http: HttpClient,
+    private storage: DataService,
+    private metrics: AnalyticsMetricsService
+  ) {}
 
   buildFilterFromPreset(preset: AnalyticsPreset): AnalyticsFilterState {
     const today = dayjs();
@@ -48,7 +53,7 @@ export class AnalyticsService {
       preset,
       startDate: start.format('YYYY-MM-DD'),
       endDate: end.format('YYYY-MM-DD'),
-      granularity: preset === 'ytd' ? 'month' : preset === '30d' || preset === 'mtd' ? 'day' : 'day',
+      granularity: preset === 'ytd' ? 'month' : 'day',
     };
   }
 
@@ -62,84 +67,125 @@ export class AnalyticsService {
     };
   }
 
-  loadAll(filters: AnalyticsFilterState, force = false): Observable<AnalyticsLoadResult> {
-    const key = JSON.stringify(filters);
+  clearCache(): void {
+    this.cache = null;
+    this.cacheKey = '';
+  }
+
+  loadDashboardSnapshot(filters: AnalyticsFilterState, force = false): Observable<AnalyticsLoadResult> {
+    const key = this.cacheKeyFor(filters);
     if (!force && this.cache && this.cacheKey === key) {
       return of(this.cache);
     }
 
-    const prev = this.previousRange(filters);
     const iso = { startDate: filters.startDate, endDate: filters.endDate };
-    const prevIso = { startDate: prev.startDate, endDate: prev.endDate };
-    const dashSort = this.mapGranularityToDashboardSort(filters.granularity);
 
-    return forkJoin({
-      dashboard: this.getDashboardData(dashSort, filters.startDate, filters.endDate),
-      previousDashboard: this.getDashboardData(dashSort, prev.startDate, prev.endDate),
-      earnings: this.getAdminEarnings(iso.startDate, iso.endDate),
-      previousEarnings: this.getAdminEarnings(prevIso.startDate, prevIso.endDate),
-      settlementAnalytics: this.getSettlementAnalytics(),
-      orderChart: this.getOrderChartData(filters.granularity, filters.startDate, filters.endDate),
-      revenueChart: this.getRevenueChartData(filters.granularity, filters.startDate, filters.endDate),
-      statusBreakdown: this.getOrderStatusBreakdown(iso.startDate, iso.endDate),
-      earningsBreakdown: this.getEarningsBreakdown(iso.startDate, iso.endDate),
-      topPartners: this.getTopPartners(iso.startDate, iso.endDate),
-      topDishes: this.getMostSellingProducts(this.mapPeriodFromFilters(filters)),
-      customerActivity: this.getCustomerMapChartData(filters.granularity === 'year' ? 'month' : filters.granularity),
-      ratings: this.getRatingStatistics(iso.startDate, iso.endDate),
-      settlementsPending: this.getPartnerSettlements(false),
-      settlementsSettled: this.getPartnerSettlements(true),
-      geoClusters: this.getUserLocationClusters(),
-      recentOrders: this.getRecentOrders(),
-    }).pipe(
-      map((raw) => {
-        const errors: Record<string, string> = {};
-        const unwrap = (res: any, field: string) => {
-          if (!res || res.error) {
-            errors[field] = res?.error?.message || 'Failed to load';
-            return null;
-          }
-          return res?.data ?? res;
-        };
+    return this.getAnalyticsSummary(filters).pipe(
+      switchMap((summary) => {
+        const base = this.mapSummaryToResult(summary, filters);
+        return this.getRecentOrders(iso.startDate, iso.endDate).pipe(
+          map((recentOrders) => {
+            const errors = { ...base.errors };
+            if (!recentOrders || (recentOrders as any).error) {
+              errors['recentOrders'] =
+                (recentOrders as any)?.error?.message ||
+                (recentOrders as any)?.error?.error?.message ||
+                'Failed to load recent orders';
+            }
 
-        const result: AnalyticsLoadResult = {
-          dashboard: unwrap(raw.dashboard, 'dashboard') || {},
-          previousDashboard: unwrap(raw.previousDashboard, 'previousDashboard') || {},
-          earnings: unwrap(raw.earnings, 'earnings') || {},
-          previousEarnings: unwrap(raw.previousEarnings, 'previousEarnings') || {},
-          settlementAnalytics: unwrap(raw.settlementAnalytics, 'settlementAnalytics') || {},
-          orderChart: unwrap(raw.orderChart, 'orderChart') || { labels: [], data: [] },
-          revenueChart: this.normalizeRevenueChart(unwrap(raw.revenueChart, 'revenueChart')),
-          statusBreakdown: unwrap(raw.statusBreakdown, 'statusBreakdown'),
-          earningsBreakdown: unwrap(raw.earningsBreakdown, 'earningsBreakdown') || {},
-          topPartners: (unwrap(raw.topPartners, 'topPartners') || []) as TopPartnerRow[],
-          topDishes: unwrap(raw.topDishes, 'topDishes') || [],
-          customerActivity: unwrap(raw.customerActivity, 'customerActivity') || [],
-          ratings: unwrap(raw.ratings, 'ratings') || {},
-          settlementsPending: this.countSettlements(raw.settlementsPending),
-          settlementsSettled: this.countSettlements(raw.settlementsSettled),
-          geoClusters: this.normalizeClusters(raw.geoClusters),
-          recentOrders: this.normalizeRecentOrders(raw.recentOrders),
-          errors,
-        };
+            const result: AnalyticsLoadResult = {
+              ...base,
+              recentOrders: this.normalizeRecentOrders(recentOrders),
+              errors,
+            };
 
-        this.cacheKey = key;
-        this.cache = result;
-        return result;
+            this.metrics.validateReconciliation(result);
+            this.cacheKey = key;
+            this.cache = result;
+            return result;
+          })
+        );
       })
     );
   }
 
+  loadAll(filters: AnalyticsFilterState, force = false): Observable<AnalyticsLoadResult> {
+    const key = this.cacheKeyFor(filters);
+    if (!force && this.cache && this.cacheKey === key && this.cacheHasWidgets(this.cache)) {
+      return of(this.cache);
+    }
+
+    const iso = { startDate: filters.startDate, endDate: filters.endDate };
+    const sort = filters.granularity === 'year' ? 'month' : filters.granularity;
+
+    const summary$ =
+      !force && this.cache && this.cacheKey === key
+        ? of(this.cache)
+        : this.getAnalyticsSummary(filters).pipe(map((summary) => this.mapSummaryToResult(summary, filters)));
+
+    return summary$.pipe(
+      switchMap((base) =>
+        forkJoin({
+          earningsBreakdown: this.getEarningsBreakdown(iso.startDate, iso.endDate),
+          topPartners: this.getTopPartners(iso.startDate, iso.endDate),
+          topDishes: this.getMostSellingProducts(iso.startDate, iso.endDate),
+          customerActivity: this.getCustomerMapChartData(sort, iso.startDate, iso.endDate),
+          ratings: this.getRatingStatistics(iso.startDate, iso.endDate),
+          settlementsPending: this.getPartnerSettlements(false, iso.startDate, iso.endDate),
+          settlementsSettled: this.getPartnerSettlements(true, iso.startDate, iso.endDate),
+          settlementAnalytics: this.getSettlementAnalytics(iso.startDate, iso.endDate),
+          geoClusters: this.getUserLocationClusters(),
+          recentOrders: this.getRecentOrders(iso.startDate, iso.endDate),
+        }).pipe(
+          map((extra) => {
+            const errors = { ...base.errors };
+            const unwrap = (res: any, field: string) => {
+              if (!res || res.error) {
+                errors[field] = res?.error?.message || res?.error?.error?.message || 'Failed to load';
+                return null;
+              }
+              return res?.data ?? res;
+            };
+
+            const result: AnalyticsLoadResult = {
+              ...base,
+              earningsBreakdown: unwrap(extra.earningsBreakdown, 'earningsBreakdown') || {},
+              topPartners: (unwrap(extra.topPartners, 'topPartners') || []) as TopPartnerRow[],
+              topDishes: unwrap(extra.topDishes, 'topDishes') || [],
+              customerActivity: unwrap(extra.customerActivity, 'customerActivity') || [],
+              ratings: unwrap(extra.ratings, 'ratings') || {},
+              settlementsPending: this.countSettlements(extra.settlementsPending),
+              settlementsSettled: this.countSettlements(extra.settlementsSettled),
+              settlementAnalytics: unwrap(extra.settlementAnalytics, 'settlementAnalytics') || {},
+              geoClusters: this.normalizeClusters(extra.geoClusters),
+              recentOrders: this.normalizeRecentOrders(extra.recentOrders),
+              errors,
+            };
+
+            this.metrics.validateReconciliation(result);
+            this.cacheKey = key;
+            this.cache = result;
+            return result;
+          })
+        )
+      )
+    );
+  }
+
   exportCsv(result: AnalyticsLoadResult, filters: AnalyticsFilterState): void {
+    const reconciliation = this.metrics.validateReconciliation(result);
     const rows: string[][] = [
       ['Metric', 'Value'],
       ['Period', `${filters.startDate} to ${filters.endDate}`],
       ['Total Orders', String(result.dashboard.totalOrders ?? 0)],
       ['Delivered Orders', String(result.dashboard.totalDeliveredOrders ?? 0)],
+      ['Cancelled Orders', String(result.dashboard.totalCanceledOrders ?? 0)],
       ['Gross Revenue', String(result.dashboard.totalRevenue ?? 0)],
+      ['Users Online', String(result.dashboard.totalOnlineUsers ?? 0)],
       ['Platform Fees', String(result.earnings.totalEarnings?.platformFees ?? 0)],
       ['GST', String(result.earnings.totalEarnings?.gstAmount ?? 0)],
       ['Admin Earnings', String(result.earnings.totalEarnings?.adminEarnings ?? 0)],
+      ['Reconciliation Passed', String(reconciliation.passed)],
     ];
     const csv = rows.map((r) => r.join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -150,103 +196,166 @@ export class AnalyticsService {
     URL.revokeObjectURL(a.href);
   }
 
-  private async headers(): Promise<HttpHeaders> {
-    const token = await this.storage.get('accessToken');
-    return new HttpHeaders({ 'x-access-token': token || '' });
+  computeDelta(current: number, previous: number): number | null {
+    return this.metrics.computeDelta(current, previous);
   }
 
-  private safeGet<T>(url: string, field: string): Observable<T | { error: any }> {
+  private mapSummaryToResult(summary: any, filters: AnalyticsFilterState): AnalyticsLoadResult {
+    const kpis = summary?.kpis || {};
+    const previousKpis = summary?.previousKpis || {};
+    const dashboard = {
+      totalOrders: kpis.totalOrders,
+      totalDeliveredOrders: kpis.totalDeliveredOrders,
+      totalCanceledOrders: kpis.totalCanceledOrders,
+      totalUsers: kpis.totalUsers,
+      totalOnlineUsers: kpis.totalOnlineUsers,
+      totalPartners: kpis.totalPartners,
+      totalDeliveryBoys: kpis.totalDeliveryBoys,
+      totalRevenue: kpis.totalRevenue,
+    };
+    const previousDashboard = {
+      totalOrders: previousKpis.totalOrders,
+      totalDeliveredOrders: previousKpis.totalDeliveredOrders,
+      totalCanceledOrders: previousKpis.totalCanceledOrders,
+      totalUsers: previousKpis.totalUsers,
+      totalOnlineUsers: previousKpis.totalOnlineUsers,
+      totalPartners: previousKpis.totalPartners,
+      totalDeliveryBoys: previousKpis.totalDeliveryBoys,
+      totalRevenue: previousKpis.totalRevenue,
+    };
+
+    return {
+      dashboard,
+      previousDashboard,
+      earnings: summary?.earnings || {
+        totalEarnings: {
+          platformFees: kpis.platformFees,
+          gstAmount: kpis.gstAmount,
+          adminEarnings: kpis.adminEarnings,
+        },
+        chartData: summary?.earnings?.chartData || [],
+      },
+      previousEarnings: {
+        totalEarnings: {
+          platformFees: previousKpis.platformFees,
+          gstAmount: previousKpis.gstAmount,
+          adminEarnings: previousKpis.adminEarnings,
+        },
+      },
+      settlementAnalytics: {},
+      orderChart: summary?.charts?.orders || { labels: [], data: [] },
+      revenueChart: this.normalizeRevenueChart(summary?.charts?.revenue),
+      statusBreakdown: summary?.statusBreakdown || null,
+      earningsBreakdown: {},
+      topPartners: [],
+      topDishes: [],
+      customerActivity: [],
+      ratings: {},
+      settlementsPending: 0,
+      settlementsSettled: 0,
+      geoClusters: [],
+      recentOrders: [],
+      reconciliation: summary?.reconciliation,
+      errors: {},
+    };
+  }
+
+  private getAnalyticsSummary(filters: AnalyticsFilterState): Observable<any> {
+    const url =
+      `${environment.URL}admin/analytics/summary?startDate=${filters.startDate}` +
+      `&endDate=${filters.endDate}&granularity=${filters.granularity}&includePrevious=true`;
     return new Observable((observer) => {
       this.headers().then((h) => {
         this.http.get<any>(url, { headers: h }).subscribe({
-          next: (v) => { observer.next(v); observer.complete(); },
-          error: (e) => { observer.next({ error: e }); observer.complete(); },
+          next: (v) => {
+            if (v?.data) {
+              observer.next(v.data);
+            } else {
+              observer.error(v);
+            }
+            observer.complete();
+          },
+          error: (e) => {
+            observer.error(e);
+            observer.complete();
+          },
         });
       });
     });
   }
 
-  private toDashboardDate(iso: string): string {
-    return dayjs(iso).format('DD-MM-YYYY');
+  private async headers(): Promise<HttpHeaders> {
+    const token = await this.storage.get('accessToken');
+    return new HttpHeaders({ 'x-access-token': token || '' });
   }
 
-  private mapGranularityToDashboardSort(g: string): string {
-    if (g === 'year') return 'year';
-    if (g === 'month') return 'month';
-    return 'day';
+  private safeGet<T>(url: string): Observable<T | { error: any }> {
+    return new Observable((observer) => {
+      this.headers().then((h) => {
+        this.http.get<any>(url, { headers: h }).subscribe({
+          next: (v) => {
+            observer.next(v);
+            observer.complete();
+          },
+          error: (e) => {
+            observer.next({ error: e });
+            observer.complete();
+          },
+        });
+      });
+    });
   }
 
-  private mapPeriodFromFilters(f: AnalyticsFilterState): string {
-    const days = dayjs(f.endDate).diff(dayjs(f.startDate), 'day');
-    if (days <= 1) return 'daily';
-    if (days <= 7) return 'weekly';
-    return 'monthly';
+  private getEarningsBreakdown(startDate: string, endDate: string) {
+    return this.safeGet(
+      `${environment.URL}analytics/admin-earnings-breakdown?startDate=${startDate}&endDate=${endDate}`
+    );
   }
 
-  getDashboardData(sort: string, startDate: string, endDate: string) {
-    let url = `${environment.URL}admin/get/dashboard-data?sort=${sort}`;
-    if (startDate) url += `&startDate=${this.toDashboardDate(startDate)}`;
-    if (endDate) url += `&endDate=${this.toDashboardDate(endDate)}`;
-    return this.safeGet(url, 'dashboard');
+  private getTopPartners(startDate: string, endDate: string) {
+    return this.safeGet(
+      `${environment.URL}admin/analytics/top-partners?startDate=${startDate}&endDate=${endDate}&limit=10`
+    );
   }
 
-  getOrderChartData(sort: string, startDate: string, endDate: string) {
-    let url = `${environment.URL}admin/get/orderChartData?sort=${sort}&startDate=${startDate}&endDate=${endDate}`;
-    return this.safeGet<ChartSeriesPayload>(url, 'orderChart');
+  private getMostSellingProducts(startDate: string, endDate: string) {
+    return this.safeGet(
+      `${environment.URL}admin/most-selling-products?startDate=${startDate}&endDate=${endDate}`
+    );
   }
 
-  getRevenueChartData(sort: string, startDate: string, endDate: string) {
-    let url = `${environment.URL}admin/get/revenueChartData?sort=${sort}&startDate=${startDate}&endDate=${endDate}`;
-    return this.safeGet(url, 'revenueChart');
+  private getCustomerMapChartData(sort: string, startDate: string, endDate: string) {
+    return this.safeGet(
+      `${environment.URL}admin/get/customerMapChartData?sort=${sort}&startDate=${startDate}&endDate=${endDate}`
+    );
   }
 
-  getAdminEarnings(startDate: string, endDate: string) {
-    const url = `${environment.URL}analytics/admin-earnings?startDate=${startDate}&endDate=${endDate}`;
-    return this.safeGet(url, 'earnings');
+  private getRatingStatistics(startDate: string, endDate: string) {
+    return this.safeGet(
+      `${environment.URL}admin/ratings/statistics?startDate=${startDate}&endDate=${endDate}`
+    );
   }
 
-  getEarningsBreakdown(startDate: string, endDate: string) {
-    const url = `${environment.URL}analytics/admin-earnings-breakdown?startDate=${startDate}&endDate=${endDate}`;
-    return this.safeGet(url, 'earningsBreakdown');
+  private getPartnerSettlements(isSettled: boolean, startDate: string, endDate: string) {
+    return this.safeGet(
+      `${environment.URL}partner-settlement/partner-settlements?isSettled=${isSettled}&startDate=${startDate}&endDate=${endDate}`
+    );
   }
 
-  getSettlementAnalytics() {
-    return this.safeGet(`${environment.URL}partner-settlement/partner-settlements/analytics`, 'settlementAnalytics');
+  private getSettlementAnalytics(startDate: string, endDate: string) {
+    return this.safeGet(
+      `${environment.URL}partner-settlement/partner-settlements/analytics?startDate=${startDate}&endDate=${endDate}`
+    );
   }
 
-  getOrderStatusBreakdown(startDate: string, endDate: string) {
-    const url = `${environment.URL}admin/analytics/order-status-breakdown?startDate=${startDate}&endDate=${endDate}`;
-    return this.safeGet<OrderStatusBreakdown>(url, 'statusBreakdown');
+  private getUserLocationClusters() {
+    return this.safeGet(`${environment.URL}admin/get/user-location-cluster`);
   }
 
-  getTopPartners(startDate: string, endDate: string) {
-    const url = `${environment.URL}admin/analytics/top-partners?startDate=${startDate}&endDate=${endDate}&limit=10`;
-    return this.safeGet<TopPartnerRow[]>(url, 'topPartners');
-  }
-
-  getMostSellingProducts(period: string) {
-    return this.safeGet(`${environment.URL}admin/most-selling-products?period=${period}`, 'topDishes');
-  }
-
-  getCustomerMapChartData(sort: string) {
-    return this.safeGet(`${environment.URL}admin/get/customerMapChartData?sort=${sort}`, 'customerActivity');
-  }
-
-  getRatingStatistics(startDate: string, endDate: string) {
-    const url = `${environment.URL}admin/ratings/statistics?startDate=${startDate}&endDate=${endDate}`;
-    return this.safeGet(url, 'ratings');
-  }
-
-  getPartnerSettlements(isSettled: boolean) {
-    return this.safeGet(`${environment.URL}partner-settlement/partner-settlements?isSettled=${isSettled}`, 'settlements');
-  }
-
-  getUserLocationClusters() {
-    return this.safeGet(`${environment.URL}admin/get/user-location-cluster`, 'geoClusters');
-  }
-
-  getRecentOrders() {
-    return this.safeGet(`${environment.URL}admin/get/populated-order`, 'recentOrders');
+  private getRecentOrders(startDate: string, endDate: string) {
+    return this.safeGet(
+      `${environment.URL}admin/get/populated-order?startDate=${startDate}&endDate=${endDate}&limit=5`
+    );
   }
 
   private normalizeRevenueChart(raw: any): ChartSeriesPayload {
@@ -255,7 +364,7 @@ export class AnalyticsService {
   }
 
   private countSettlements(raw: any): number {
-    const data = raw?.data ?? raw?.error ? 0 : raw;
+    const data = raw?.data ?? (raw?.error ? 0 : raw);
     if (Array.isArray(data)) return data.length;
     if (raw?.data && Array.isArray(raw.data)) return raw.data.length;
     return 0;
@@ -271,8 +380,11 @@ export class AnalyticsService {
     return Array.isArray(data) ? data.slice(0, 5) : [];
   }
 
-  computeDelta(current: number, previous: number): number | null {
-    if (previous === 0) return current > 0 ? 100 : null;
-    return Number((((current - previous) / previous) * 100).toFixed(1));
+  private cacheKeyFor(filters: AnalyticsFilterState): string {
+    return JSON.stringify(filters);
+  }
+
+  private cacheHasWidgets(result: AnalyticsLoadResult): boolean {
+    return (result.topPartners?.length ?? 0) > 0 || Object.keys(result.earningsBreakdown || {}).length > 0;
   }
 }

@@ -19,43 +19,34 @@
   <div class="de-page__inner">
     <div class="de-hero">
       <h2>Operations Overview</h2>
-      <p>Quick snapshot of today's platform health</p>
+      <p>{{ periodSubtitle }}</p>
+      <p class="period-badge">{{ periodLabel }}</p>
+      <div class="analytics-presets">
+        <ion-button size="small" [fill]="filters.preset === 'today' ? 'solid' : 'outline'" (click)="applyPreset('today')">Today</ion-button>
+        <ion-button size="small" [fill]="filters.preset === '7d' ? 'solid' : 'outline'" (click)="applyPreset('7d')">7 days</ion-button>
+        <ion-button size="small" [fill]="filters.preset === '30d' ? 'solid' : 'outline'" (click)="applyPreset('30d')">30 days</ion-button>
+      </div>
       <ion-button fill="outline" size="small" routerLink="/folder/analytics">
         View full analytics
         <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
       </ion-button>
     </div>
 
-    <div class="de-stat-grid">
-      <div class="de-stat">
-        <div class="de-stat__icon de-stat__icon--red"><ion-icon name="cart-outline"></ion-icon></div>
-        <div class="t-label">Total Orders</div>
-        <div class="t-stat">{{ totalOrders }}</div>
+    <div *ngIf="loading" class="dash-kpi">
+      <div class="de-stat" *ngFor="let s of [1,2,3,4]">
+        <ion-skeleton-text animated style="width: 60%; height: 14px"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 40%; height: 28px; margin-top: 8px"></ion-skeleton-text>
       </div>
-      <div class="de-stat">
-        <div class="de-stat__icon de-stat__icon--green"><ion-icon name="checkmark-done-outline"></ion-icon></div>
-        <div class="t-label">Delivered</div>
-        <div class="t-stat">{{ totalDeliveredOrders }}</div>
-      </div>
-      <div class="de-stat">
-        <div class="de-stat__icon de-stat__icon--green"><ion-icon name="cash-outline"></ion-icon></div>
-        <div class="t-label">Revenue (30d)</div>
-        <div class="t-stat">{{ totalRevenue | currency:'INR':'symbol':'1.0-0' }}</div>
-      </div>
-      <div class="de-stat">
-        <div class="de-stat__icon de-stat__icon--blue"><ion-icon name="people-outline"></ion-icon></div>
-        <div class="t-label">Users Online</div>
-        <div class="t-stat">{{ totalOnlineUsers }}</div>
-      </div>
-      <div class="de-stat">
-        <div class="de-stat__icon de-stat__icon--purple"><ion-icon name="storefront-outline"></ion-icon></div>
-        <div class="t-label">Partners</div>
-        <div class="t-stat">{{ totalPartners }}</div>
-      </div>
-      <div class="de-stat">
-        <div class="de-stat__icon de-stat__icon--red"><ion-icon name="bicycle-outline"></ion-icon></div>
-        <div class="t-label">Delivery Boys</div>
-        <div class="t-stat">{{ totalDeliveryBoys }}</div>
+    </div>
+
+    <div class="de-stat-grid" *ngIf="!loading && kpis.length">
+      <div class="de-stat" *ngFor="let kpi of kpis">
+        <div class="de-stat__icon" [ngClass]="kpi.iconClass"><ion-icon [name]="kpi.icon"></ion-icon></div>
+        <div class="t-label">{{ kpi.label }}</div>
+        <div class="t-stat">
+          <ng-container *ngIf="kpi.format === 'currency'; else numberVal">{{ kpi.value | currency:'INR':'symbol':'1.0-0' }}</ng-container>
+          <ng-template #numberVal>{{ kpi.value }}</ng-template>
+        </div>
       </div>
     </div>
 
@@ -73,6 +64,7 @@
     <div class="de-card">
       <div class="de-card-header">
         <span class="de-card-header__title"><ion-icon name="time-outline"></ion-icon> Recent orders</span>
+        <span class="scope-label">Selected period</span>
       </div>
       <div class="de-card-body" style="padding: 0">
         <ion-list lines="full">

@@ -117,19 +117,6 @@ getPartnerDetails(partnerId:any){
   return this.http.get(environment.URL + `partner/get/byId/${partnerId}`);
 }
 
-getProfitAnalytics(){
-  return this.http.get(environment.URL + `analytics/admin-earnings`);
-}
-getEarningsBreakdown(){
-  return this.http.get(environment.URL + `analytics/admin-earnings-breakdown`);
-}
-//Admin Analytics API
-getPartnerSettlementsAnalytics(hotelId:any){
-  return this.http.get(environment.URL + `partner-settlement/partner-settlements/analytics`);
-}
-
-
-
 //Promo Code API
 
 sendPromoNotification(data:any){

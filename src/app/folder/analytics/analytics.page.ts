@@ -9,7 +9,10 @@ import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import Chart from 'chart.js/auto';
 import * as dayjs from 'dayjs';
+import { environment } from 'src/environments/environment';
+import { DASHBOARD_DEFAULT_PRESET } from 'src/app/constants/analytics.constants';
 import { AnalyticsService } from 'src/app/services/analytics.service';
+import { AnalyticsMetricsService } from 'src/app/services/analytics-metrics.service';
 import { ChartThemeService } from 'src/app/services/chart-theme.service';
 import {
   AnalyticsFilterState,
@@ -37,15 +40,19 @@ export class AnalyticsPage implements AfterViewInit, OnDestroy {
   @ViewChild('ratingsCanvas') ratingsCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('settlementsCanvas') settlementsCanvas!: ElementRef<HTMLCanvasElement>;
 
-  filters: AnalyticsFilterState = this.analytics.buildFilterFromPreset('30d');
+  filters: AnalyticsFilterState = this.analytics.buildFilterFromPreset(DASHBOARD_DEFAULT_PRESET);
   data: AnalyticsLoadResult | null = null;
   kpis: KpiMetric[] = [];
   loading = false;
+  periodLabel = '';
+  reconciliationPassed: boolean | null = null;
+  showReconciliation = !environment.production;
   private charts = new Map<string, Chart>();
   private viewReady = false;
 
   constructor(
     private analytics: AnalyticsService,
+    private metrics: AnalyticsMetricsService,
     private chartTheme: ChartThemeService,
     private loadingCtrl: LoadingController,
     private router: Router
@@ -82,7 +89,10 @@ export class AnalyticsPage implements AfterViewInit, OnDestroy {
     this.analytics.loadAll(this.filters, force).subscribe({
       next: (result) => {
         this.data = result;
-        this.kpis = this.buildKpis(result);
+        this.periodLabel = this.metrics.formatPeriodLabel(this.filters);
+        this.kpis = this.metrics.buildKpis(result);
+        const reconciliation = this.metrics.validateReconciliation(result);
+        this.reconciliationPassed = reconciliation.passed;
         this.loading = false;
         loader.dismiss();
         setTimeout(() => this.renderAllCharts(), 50);
@@ -101,63 +111,26 @@ export class AnalyticsPage implements AfterViewInit, OnDestroy {
   }
 
   deltaClass(delta: number | null | undefined): string {
-    if (delta == null) return 'de-stat__delta--flat';
-    if (delta > 0) return 'de-stat__delta--up';
-    if (delta < 0) return 'de-stat__delta--down';
-    return 'de-stat__delta--flat';
+    return this.metrics.deltaClass(delta);
   }
 
   deltaLabel(delta: number | null | undefined): string {
-    if (delta == null) return '—';
-    const arrow = delta > 0 ? '↑' : delta < 0 ? '↓' : '→';
-    return `${arrow} ${Math.abs(delta)}% vs prior period`;
+    return this.metrics.deltaLabel(delta);
+  }
+
+  hasError(field: string): boolean {
+    return !!this.data?.errors?.[field];
+  }
+
+  get errorEntries(): { key: string; value: string }[] {
+    if (!this.data?.errors) return [];
+    return Object.entries(this.data.errors).map(([key, value]) => ({ key, value }));
   }
 
   openOrder(order: any): void {
     if (order?._id) {
       this.router.navigate(['folder', 'orders', 'view', order._id]);
     }
-  }
-
-  private buildKpis(r: AnalyticsLoadResult): KpiMetric[] {
-    const d = r.dashboard;
-    const pd = r.previousDashboard;
-    const e = r.earnings?.totalEarnings || {};
-    const pe = r.previousEarnings?.totalEarnings || {};
-    const cancelled =
-      r.statusBreakdown?.cancellations?.reduce((s, c) => s + c.count, 0) ??
-      d.totalCanceledOrders ??
-      0;
-
-    const mk = (
-      key: string,
-      label: string,
-      value: number,
-      prev: number,
-      format: 'number' | 'currency',
-      icon: string,
-      iconClass: string
-    ): KpiMetric => ({
-      key,
-      label,
-      value: value || 0,
-      previousValue: prev,
-      deltaPercent: this.analytics.computeDelta(value || 0, prev || 0),
-      format,
-      icon,
-      iconClass,
-    });
-
-    return [
-      mk('orders', 'Total Orders', d.totalOrders, pd.totalOrders, 'number', 'cart-outline', 'de-stat__icon--red'),
-      mk('delivered', 'Delivered', d.totalDeliveredOrders, pd.totalDeliveredOrders, 'number', 'checkmark-done-outline', 'de-stat__icon--green'),
-      mk('cancelled', 'Cancelled', cancelled, 0, 'number', 'close-circle-outline', 'de-stat__icon--purple'),
-      mk('revenue', 'Gross Revenue', d.totalRevenue, pd.totalRevenue, 'currency', 'cash-outline', 'de-stat__icon--green'),
-      mk('platform', 'Platform Fees', e.platformFees, pe.platformFees, 'currency', 'pie-chart-outline', 'de-stat__icon--blue'),
-      mk('gst', 'GST Collected', e.gstAmount, pe.gstAmount, 'currency', 'receipt-outline', 'de-stat__icon--purple'),
-      mk('admin', 'Admin Earnings', e.adminEarnings || r.settlementAnalytics?.totalAdminEarnings, pe.adminEarnings, 'currency', 'trending-up-outline', 'de-stat__icon--red'),
-      mk('online', 'Users Online', d.totalOnlineUsers, pd.totalOnlineUsers, 'number', 'people-outline', 'de-stat__icon--blue'),
-    ];
   }
 
   private renderAllCharts(): void {

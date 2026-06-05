@@ -3,20 +3,130 @@
     <ion-buttons slot="start">
       <ion-menu-button class="de-menu-btn" menu="main-menu"></ion-menu-button>
     </ion-buttons>
-    <ion-title class="de-header__title">Notifications</ion-title>
+    <ion-title class="de-header__title">Push Notifications</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="de-page">
-  <div class="de-page__inner de-coming-soon">
+  <div class="de-page__inner">
     <div class="de-hero">
-      <h2>Notifications</h2>
-      <p>Push and in-app notification management</p>
+      <h2>Send Push Notifications</h2>
+      <p>Deliver in-app and Firebase notifications to customer devices</p>
     </div>
-    <div class="de-empty">
-      <ion-icon name="notifications-outline" class="de-empty__icon"></ion-icon>
-      <h4>Coming soon</h4>
-      <p>This feature is planned for Phase 2</p>
-    </div>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Compose Message</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item lines="full">
+          <ion-label position="stacked">Title</ion-label>
+          <ion-input
+            [(ngModel)]="notificationTitle"
+            maxlength="100"
+            placeholder="Notification title"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item lines="full">
+          <ion-label position="stacked">Message</ion-label>
+          <ion-textarea
+            [(ngModel)]="description"
+            maxlength="500"
+            rows="4"
+            placeholder="Write your notification message"
+          ></ion-textarea>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Recipients</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-segment
+          [(ngModel)]="recipientMode"
+          (ionChange)="onRecipientModeChange($event)"
+        >
+          <ion-segment-button value="single">
+            <ion-label>Single</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="multiple">
+            <ion-label>Multiple</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="all">
+            <ion-label>All with token</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+
+        <div class="recipient-summary" *ngIf="recipientMode !== 'all'">
+          <span>{{ selectedCount }} selected</span>
+          <span>{{ usersWithTokenCount }} customers with push token</span>
+        </div>
+
+        <div class="recipient-summary" *ngIf="recipientMode === 'all'">
+          <span>Sends to all customers with a registered push token</span>
+        </div>
+
+        <div class="recipient-actions" *ngIf="recipientMode === 'multiple'">
+          <ion-button fill="outline" size="small" (click)="selectAllWithToken()">
+            Select all with token
+          </ion-button>
+          <ion-button fill="clear" size="small" (click)="clearSelection()">
+            Clear
+          </ion-button>
+        </div>
+
+        <ion-searchbar
+          *ngIf="recipientMode !== 'all'"
+          mode="ios"
+          placeholder="Search customers..."
+          [debounce]="250"
+          (ionInput)="onSearchChange($event)"
+        ></ion-searchbar>
+
+        <ion-list *ngIf="recipientMode !== 'all'">
+          <ion-item
+            *ngFor="let user of users"
+            button
+            detail="false"
+            (click)="toggleUser(user._id)"
+          >
+            <ion-checkbox
+              slot="start"
+              [checked]="isSelected(user._id)"
+            ></ion-checkbox>
+            <ion-label>
+              <h3>{{ user.name || 'Customer' }}</h3>
+              <p>{{ user.phoneNumber }}</p>
+            </ion-label>
+            <ion-badge color="success" *ngIf="user.firebaseToken">Push</ion-badge>
+            <ion-badge color="medium" *ngIf="!user.firebaseToken">No token</ion-badge>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card *ngIf="lastResult">
+      <ion-card-header>
+        <ion-card-title>Last Send Result</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Total users: {{ lastResult.totalUsers }}</p>
+        <p>Sent: {{ lastResult.sent }}</p>
+        <p>Failed: {{ lastResult.failed }}</p>
+        <p>No token: {{ lastResult.noToken }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button
+      expand="block"
+      class="send-button"
+      [disabled]="!canSend || isSending"
+      (click)="sendNotification()"
+    >
+      {{ isSending ? 'Sending...' : 'Send Notification' }}
+    </ion-button>
   </div>
 </ion-content>

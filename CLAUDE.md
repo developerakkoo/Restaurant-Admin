@@ -353,19 +353,27 @@ Point-wise inventory for design.md feature specs. Each subsection maps to a menu
 
 ### 4.2 Dashboard (`/folder/dash`)
 
-Lightweight **operations snapshot** (30-day window). Link: **View full analytics →** `/folder/analytics`.
+Lightweight **operations snapshot** (default: last 30 days via `DASHBOARD_DEFAULT_PRESET`). Link: **View full analytics →** `/folder/analytics`.
 
-- 6 KPI cards: orders, delivered, revenue, users online, partners, delivery boys
-- 2 charts: revenue trend (line), orders trend (bar)
-- Recent orders list (links to order detail)
+- Shared KPI builder (`AnalyticsMetricsService.buildKpis` with `dashboardOnly`) — same values as Analytics on matching preset
+- Period badge + quick presets (Today / 7d / 30d)
+- 4 KPI cards: orders, delivered, revenue, users online
+- 2 charts: revenue trend (line), orders trend (bar) — from `GET admin/analytics/summary`
+- Recent orders list filtered to selected period (links to order detail)
+
+Metrics definitions: [`docs/ADMIN_ANALYTICS_METRICS.md`](../docs/ADMIN_ANALYTICS_METRICS.md)
 
 ### 4.2b Analytics (`/folder/analytics`)
 
-**Advanced analytics hub** — `AnalyticsService`, `ChartThemeService`, unified date presets (Today / 7d / 30d / MTD / YTD / custom), granularity, CSV export, period-over-period KPI deltas.
+**Advanced analytics hub** — `AnalyticsService`, `AnalyticsMetricsService`, `ChartThemeService`, unified date presets (Today / 7d / 30d / MTD / YTD / custom), granularity, CSV export, period-over-period KPI deltas.
 
-Charts: revenue & orders trends, order status & cancellations, platform fees / GST / profit stack, top partners & dishes, customer activity, ratings, settlements, geo cluster table, recent orders.
+Primary data: `GET admin/analytics/summary` (KPIs, charts, status breakdown, reconciliation). Widget endpoints load with matching `startDate`/`endDate`.
 
-API: existing admin + analytics routes plus `GET admin/analytics/order-status-breakdown`, `GET admin/analytics/top-partners`.
+Charts: revenue & orders trends, order status & cancellations, platform fees / GST / profit stack, top partners & dishes, customer activity, ratings, settlements, geo cluster table (all-time), recent orders.
+
+Dev/staging: reconciliation panel when `!environment.production`.
+
+API: summary endpoint plus existing admin + analytics routes. See metrics catalog for canonical definitions.
 
 ---
 

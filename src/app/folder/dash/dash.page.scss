@@ -1,3 +1,36 @@
+.period-badge {
+  font-size: 0.875rem;
+  color: var(--ion-color-medium);
+  margin: 4px 0 12px;
+}
+
+.analytics-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  ion-button {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    margin: 0;
+    min-height: 36px;
+  }
+}
+
+.scope-label {
+  font-size: 0.7rem;
+  color: var(--ion-color-medium);
+  font-weight: 500;
+}
+
+.de-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
 .dash-row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -8,8 +8,15 @@ import {
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import Chart from 'chart.js/auto';
+import { DASHBOARD_DEFAULT_PRESET } from 'src/app/constants/analytics.constants';
 import { AnalyticsService } from 'src/app/services/analytics.service';
+import { AnalyticsMetricsService } from 'src/app/services/analytics-metrics.service';
 import { ChartThemeService } from 'src/app/services/chart-theme.service';
+import {
+  AnalyticsFilterState,
+  AnalyticsPreset,
+  KpiMetric,
+} from 'src/app/models/analytics.models';
 
 @Component({
   selector: 'app-dash',
@@ -20,19 +27,19 @@ export class DashPage implements AfterViewInit, OnDestroy {
   @ViewChild('revenueCanvas') revenueCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('ordersCanvas') ordersCanvas!: ElementRef<HTMLCanvasElement>;
 
-  totalOrders = 0;
-  totalDeliveredOrders = 0;
-  totalRevenue = 0;
-  totalOnlineUsers = 0;
-  totalPartners = 0;
-  totalDeliveryBoys = 0;
+  filters: AnalyticsFilterState = this.analytics.buildFilterFromPreset(DASHBOARD_DEFAULT_PRESET);
+  kpis: KpiMetric[] = [];
+  periodLabel = '';
+  periodSubtitle = 'Last 30 days platform snapshot';
   recentActivities: any[] = [];
+  loading = false;
 
   private revenueChart: Chart | null = null;
   private ordersChart: Chart | null = null;
 
   constructor(
     private analytics: AnalyticsService,
+    private metrics: AnalyticsMetricsService,
     private chartTheme: ChartThemeService,
     private loadingCtrl: LoadingController,
     private router: Router
@@ -54,20 +61,40 @@ export class DashPage implements AfterViewInit, OnDestroy {
     this.ordersChart = null;
   }
 
-  private async loadSnapshot(): Promise<void> {
-    const filters = this.analytics.buildFilterFromPreset('30d');
+  applyPreset(preset: AnalyticsPreset): void {
+    this.filters = this.analytics.buildFilterFromPreset(preset);
+    this.periodSubtitle = this.subtitleForPreset(preset);
+    void this.loadSnapshot(true);
+  }
+
+  private subtitleForPreset(preset: AnalyticsPreset): string {
+    const labels: Record<AnalyticsPreset, string> = {
+      today: "Today's platform snapshot",
+      '7d': 'Last 7 days platform snapshot',
+      '30d': 'Last 30 days platform snapshot',
+      mtd: 'Month-to-date platform snapshot',
+      ytd: 'Year-to-date platform snapshot',
+      custom: 'Custom period platform snapshot',
+    };
+    return labels[preset] || labels['30d'];
+  }
+
+  kpiValue(kpi: KpiMetric): string | number {
+    if (kpi.format === 'currency') {
+      return kpi.value;
+    }
+    return kpi.value;
+  }
+
+  private async loadSnapshot(force = false): Promise<void> {
+    this.loading = true;
     const loader = await this.loadingCtrl.create({ message: 'Loading...', spinner: 'crescent' });
     await loader.present();
 
-    this.analytics.loadAll(filters).subscribe({
+    this.analytics.loadDashboardSnapshot(this.filters, force).subscribe({
       next: (r) => {
-        const d = r.dashboard;
-        this.totalOrders = d.totalOrders || 0;
-        this.totalDeliveredOrders = d.totalDeliveredOrders || 0;
-        this.totalRevenue = d.totalRevenue || 0;
-        this.totalOnlineUsers = d.totalOnlineUsers || 0;
-        this.totalPartners = d.totalPartners || 0;
-        this.totalDeliveryBoys = d.totalDeliveryBoys || 0;
+        this.periodLabel = this.metrics.formatPeriodLabel(this.filters);
+        this.kpis = this.metrics.buildKpis(r, { dashboardOnly: true });
         this.recentActivities = r.recentOrders || [];
 
         this.chartTheme.destroy(this.revenueChart);
@@ -84,9 +111,13 @@ export class DashPage implements AfterViewInit, OnDestroy {
           r.orderChart.data,
           'Orders'
         );
+        this.loading = false;
         loader.dismiss();
       },
-      error: () => loader.dismiss(),
+      error: () => {
+        this.loading = false;
+        loader.dismiss();
+      },
     });
   }
 

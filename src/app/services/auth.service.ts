@@ -209,54 +209,6 @@ export class AuthService {
       },
     });
   }
-  getDashboardData(sort: any, startDate: any, endDate: any) {
-    let url = environment.URL + `admin/get/dashboard-data?sort=${sort}`;
-    if (startDate) {
-      url += `&startDate=${startDate}`;
-    }
-    if (endDate) {
-      url += `&endDate=${endDate}`;
-    }
-    return this.http.get(
-      url,
-      {
-        headers: {
-          'x-access-token': this.accessToken.value,
-        },
-      }
-    );
-  }
-  getRevenueChartData(sort: any) {
-    return this.http.get(
-      environment.URL + `admin/get/revenueChartData?sort=${sort}`,
-      {
-        headers: {
-          'x-access-token': this.accessToken.value,
-        },
-      }
-    );
-  }
-  getOrderChartData(sort: any) {
-    return this.http.get(
-      environment.URL + `admin/get/orderChartData?sort=${sort}`,
-      {
-        headers: {
-          'x-access-token': this.accessToken.value,
-        },
-      }
-    );
-  }
-
-  getUserClusterPlottngData(){
-    return this.http.get(
-      environment.URL + `admin/get/user-location-cluster`,
-      {
-        headers: {
-          'x-access-token': this.accessToken.value,
-        },
-      }
-    );
-  }
   getAllHotelsPartner(partnerId: any) {
     return this.http.get(environment.URL + `partner/get/hotels/${partnerId}`, {
       headers: {
@@ -297,6 +249,24 @@ export class AuthService {
     return this.http.get(
       environment.URL +
         `admin/get/all-users?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1&status=${status}&isBlocked=${isBlocked}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  sendFirebaseNotification(body: {
+    userIds: string[];
+    notificationTitle: string;
+    description: string;
+    type?: string;
+    sendToAll?: boolean;
+  }) {
+    return this.http.post(
+      environment.URL + 'admin/send/firebaseNotification',
+      body,
       {
         headers: {
           'x-access-token': this.accessToken.value,

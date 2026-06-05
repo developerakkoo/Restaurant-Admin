@@ -21,6 +21,7 @@
     <div class="de-hero">
       <h2>Advanced Analytics</h2>
       <p>Deep-dive into orders, revenue, partners, customers, and settlements</p>
+      <p class="period-badge">{{ periodLabel }}</p>
     </div>
 
     <div class="de-panel analytics-filters">
@@ -40,7 +41,7 @@
             <ion-input type="date" label="End" labelPlacement="stacked" fill="outline" [(ngModel)]="filters.endDate" (ionChange)="onCustomDate()"></ion-input>
           </ion-col>
           <ion-col size="12" size-md="3">
-            <ion-select label="Granularity" labelPlacement="stacked" fill="outline" [(ngModel)]="filters.granularity" (ionChange)="refresh()">
+            <ion-select label="Granularity" labelPlacement="stacked" fill="outline" [(ngModel)]="filters.granularity" (ionChange)="refresh(true)">
               <ion-select-option value="day">Daily</ion-select-option>
               <ion-select-option value="month">Monthly</ion-select-option>
               <ion-select-option value="year">Yearly</ion-select-option>
@@ -51,6 +52,17 @@
           </ion-col>
         </ion-row>
       </ion-grid>
+    </div>
+
+    <div class="error-chips" *ngIf="errorEntries.length">
+      <ion-chip color="danger" *ngFor="let err of errorEntries">
+        <ion-label>{{ err.key }}: {{ err.value }}</ion-label>
+      </ion-chip>
+    </div>
+
+    <div class="reconciliation-panel" *ngIf="showReconciliation && reconciliationPassed !== null" [class.reconciliation-panel--failed]="!reconciliationPassed">
+      <strong>Reconciliation</strong>
+      <span>{{ reconciliationPassed ? 'Passed — KPIs match chart totals' : 'Failed — check console for details' }}</span>
     </div>
 
     <div *ngIf="loading" class="dash-kpi">
@@ -73,72 +85,114 @@
 
     <div class="dash-row-2">
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">Revenue over time</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">Revenue over time</span>
+          <span class="scope-label">Selected period</span>
+        </div>
         <div class="de-card-body"><canvas #revenueCanvas></canvas></div>
-        <p class="de-empty" *ngIf="data?.errors?.['revenueChart']">Could not load revenue chart.</p>
       </div>
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">Orders over time</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">Orders over time</span>
+          <span class="scope-label">Selected period</span>
+        </div>
         <div class="de-card-body"><canvas #ordersCanvas></canvas></div>
-        <p class="de-empty" *ngIf="data?.errors?.['orderChart']">Could not load orders chart.</p>
       </div>
     </div>
 
     <div class="dash-row-2">
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">Order status breakdown</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">Order status breakdown</span>
+          <span class="scope-label">Selected period</span>
+        </div>
         <div class="de-card-body"><canvas #statusCanvas></canvas></div>
       </div>
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">Cancellation reasons</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">Cancellation reasons</span>
+          <span class="scope-label">Selected period</span>
+        </div>
         <div class="de-card-body"><canvas #cancelCanvas></canvas></div>
       </div>
     </div>
 
     <div class="dash-row-3">
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">Platform fees by payment</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">Platform fees by payment</span>
+          <span class="scope-label">Selected period</span>
+        </div>
         <div class="de-card-body"><canvas #platformFeesCanvas></canvas></div>
+        <p class="de-empty" *ngIf="hasError('earningsBreakdown')">Could not load earnings breakdown.</p>
       </div>
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">GST by payment</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">GST by payment</span>
+          <span class="scope-label">Selected period</span>
+        </div>
         <div class="de-card-body"><canvas #gstCanvas></canvas></div>
       </div>
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">Profit composition</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">Profit composition</span>
+          <span class="scope-label">Selected period</span>
+        </div>
         <div class="de-card-body"><canvas #profitCanvas></canvas></div>
       </div>
     </div>
 
     <div class="dash-row-2">
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">Top restaurants by revenue</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">Top restaurants by revenue</span>
+          <span class="scope-label">Selected period</span>
+        </div>
         <div class="de-card-body"><canvas #topPartnersCanvas></canvas></div>
+        <p class="de-empty" *ngIf="hasError('topPartners')">Could not load top partners.</p>
       </div>
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">Top selling dishes</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">Top selling dishes</span>
+          <span class="scope-label">Matches selected period</span>
+        </div>
         <div class="de-card-body"><canvas #topDishesCanvas></canvas></div>
+        <p class="de-empty" *ngIf="hasError('topDishes')">Could not load top dishes.</p>
       </div>
     </div>
 
     <div class="dash-row-2">
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">Customer activity</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">Customer activity</span>
+          <span class="scope-label">Selected period</span>
+        </div>
         <div class="de-card-body"><canvas #customerCanvas></canvas></div>
+        <p class="de-empty" *ngIf="hasError('customerActivity')">Could not load customer activity.</p>
       </div>
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">Ratings overview</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">Ratings overview</span>
+          <span class="scope-label">Selected period</span>
+        </div>
         <div class="de-card-body"><canvas #ratingsCanvas></canvas></div>
+        <p class="de-empty" *ngIf="hasError('ratings')">Could not load ratings.</p>
       </div>
     </div>
 
     <div class="dash-row-2">
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">Settlement pipeline</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">Settlement pipeline</span>
+          <span class="scope-label">Settlements in selected period</span>
+        </div>
         <div class="de-card-body"><canvas #settlementsCanvas></canvas></div>
       </div>
       <div class="de-card dash-chart-card">
-        <div class="de-card-header"><span class="de-card-header__title">Customer density (top clusters)</span></div>
+        <div class="de-card-header">
+          <span class="de-card-header__title">Customer density (top clusters)</span>
+          <span class="scope-label">All registered addresses</span>
+        </div>
         <div class="de-card-body">
           <table class="geo-table" *ngIf="data?.geoClusters?.length">
             <thead><tr><th>Lat</th><th>Lng</th><th>Customers</th></tr></thead>
@@ -148,13 +202,16 @@
               </tr>
             </tbody>
           </table>
-          <p class="de-empty" *ngIf="!data?.geoClusters?.length">No location clusters for this period.</p>
+          <p class="de-empty" *ngIf="!data?.geoClusters?.length">No location clusters available.</p>
         </div>
       </div>
     </div>
 
     <div class="de-card" *ngIf="data?.recentOrders?.length">
-      <div class="de-card-header"><span class="de-card-header__title">Recent orders</span></div>
+      <div class="de-card-header">
+        <span class="de-card-header__title">Recent orders</span>
+        <span class="scope-label">Selected period</span>
+      </div>
       <div class="de-card-body">
         <table class="recent-orders-table">
           <thead><tr><th>Order</th><th>Status</th><th>Amount</th></tr></thead>
