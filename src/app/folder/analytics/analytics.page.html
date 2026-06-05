@@ -1,0 +1,172 @@
+<ion-header class="de-header ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button class="de-menu-btn" menu="main-menu"></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="de-header__title">Analytics</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="exportCsv()" [disabled]="!data">
+        <ion-icon slot="start" name="download-outline"></ion-icon>
+        Export
+      </ion-button>
+      <ion-button fill="clear" (click)="refresh(true)">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="de-page">
+  <div class="de-page__inner">
+    <div class="de-hero">
+      <h2>Advanced Analytics</h2>
+      <p>Deep-dive into orders, revenue, partners, customers, and settlements</p>
+    </div>
+
+    <div class="de-panel analytics-filters">
+      <div class="analytics-presets">
+        <ion-button size="small" [fill]="filters.preset === 'today' ? 'solid' : 'outline'" (click)="applyPreset('today')">Today</ion-button>
+        <ion-button size="small" [fill]="filters.preset === '7d' ? 'solid' : 'outline'" (click)="applyPreset('7d')">7 days</ion-button>
+        <ion-button size="small" [fill]="filters.preset === '30d' ? 'solid' : 'outline'" (click)="applyPreset('30d')">30 days</ion-button>
+        <ion-button size="small" [fill]="filters.preset === 'mtd' ? 'solid' : 'outline'" (click)="applyPreset('mtd')">MTD</ion-button>
+        <ion-button size="small" [fill]="filters.preset === 'ytd' ? 'solid' : 'outline'" (click)="applyPreset('ytd')">YTD</ion-button>
+      </div>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-md="3">
+            <ion-input type="date" label="Start" labelPlacement="stacked" fill="outline" [(ngModel)]="filters.startDate" (ionChange)="onCustomDate()"></ion-input>
+          </ion-col>
+          <ion-col size="12" size-md="3">
+            <ion-input type="date" label="End" labelPlacement="stacked" fill="outline" [(ngModel)]="filters.endDate" (ionChange)="onCustomDate()"></ion-input>
+          </ion-col>
+          <ion-col size="12" size-md="3">
+            <ion-select label="Granularity" labelPlacement="stacked" fill="outline" [(ngModel)]="filters.granularity" (ionChange)="refresh()">
+              <ion-select-option value="day">Daily</ion-select-option>
+              <ion-select-option value="month">Monthly</ion-select-option>
+              <ion-select-option value="year">Yearly</ion-select-option>
+            </ion-select>
+          </ion-col>
+          <ion-col size="12" size-md="3" class="ion-align-self-end">
+            <ion-button expand="block" (click)="refresh(true)">Apply</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <div *ngIf="loading" class="dash-kpi">
+      <div class="de-stat" *ngFor="let s of [1,2,3,4,5,6,7,8]">
+        <ion-skeleton-text animated style="width: 60%; height: 14px"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 40%; height: 28px; margin-top: 8px"></ion-skeleton-text>
+      </div>
+    </div>
+
+    <div class="dash-kpi" *ngIf="!loading && kpis.length">
+      <div class="de-stat" *ngFor="let kpi of kpis">
+        <div class="de-stat__icon" [ngClass]="kpi.iconClass"><ion-icon [name]="kpi.icon"></ion-icon></div>
+        <div class="t-label">{{ kpi.label }}</div>
+        <div class="t-stat">{{ kpi.format === 'currency' ? (kpi.value | currency:'INR':'symbol':'1.0-0') : kpi.value }}</div>
+        <div class="de-stat__delta" [ngClass]="deltaClass(kpi.deltaPercent)" *ngIf="kpi.deltaPercent !== null && kpi.deltaPercent !== undefined">
+          {{ deltaLabel(kpi.deltaPercent) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-row-2">
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">Revenue over time</span></div>
+        <div class="de-card-body"><canvas #revenueCanvas></canvas></div>
+        <p class="de-empty" *ngIf="data?.errors?.['revenueChart']">Could not load revenue chart.</p>
+      </div>
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">Orders over time</span></div>
+        <div class="de-card-body"><canvas #ordersCanvas></canvas></div>
+        <p class="de-empty" *ngIf="data?.errors?.['orderChart']">Could not load orders chart.</p>
+      </div>
+    </div>
+
+    <div class="dash-row-2">
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">Order status breakdown</span></div>
+        <div class="de-card-body"><canvas #statusCanvas></canvas></div>
+      </div>
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">Cancellation reasons</span></div>
+        <div class="de-card-body"><canvas #cancelCanvas></canvas></div>
+      </div>
+    </div>
+
+    <div class="dash-row-3">
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">Platform fees by payment</span></div>
+        <div class="de-card-body"><canvas #platformFeesCanvas></canvas></div>
+      </div>
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">GST by payment</span></div>
+        <div class="de-card-body"><canvas #gstCanvas></canvas></div>
+      </div>
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">Profit composition</span></div>
+        <div class="de-card-body"><canvas #profitCanvas></canvas></div>
+      </div>
+    </div>
+
+    <div class="dash-row-2">
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">Top restaurants by revenue</span></div>
+        <div class="de-card-body"><canvas #topPartnersCanvas></canvas></div>
+      </div>
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">Top selling dishes</span></div>
+        <div class="de-card-body"><canvas #topDishesCanvas></canvas></div>
+      </div>
+    </div>
+
+    <div class="dash-row-2">
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">Customer activity</span></div>
+        <div class="de-card-body"><canvas #customerCanvas></canvas></div>
+      </div>
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">Ratings overview</span></div>
+        <div class="de-card-body"><canvas #ratingsCanvas></canvas></div>
+      </div>
+    </div>
+
+    <div class="dash-row-2">
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">Settlement pipeline</span></div>
+        <div class="de-card-body"><canvas #settlementsCanvas></canvas></div>
+      </div>
+      <div class="de-card dash-chart-card">
+        <div class="de-card-header"><span class="de-card-header__title">Customer density (top clusters)</span></div>
+        <div class="de-card-body">
+          <table class="geo-table" *ngIf="data?.geoClusters?.length">
+            <thead><tr><th>Lat</th><th>Lng</th><th>Customers</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let c of data?.geoClusters | slice:0:10">
+                <td>{{ c.lat }}</td><td>{{ c.lng }}</td><td>{{ c.count }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="de-empty" *ngIf="!data?.geoClusters?.length">No location clusters for this period.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="de-card" *ngIf="data?.recentOrders?.length">
+      <div class="de-card-header"><span class="de-card-header__title">Recent orders</span></div>
+      <div class="de-card-body">
+        <table class="recent-orders-table">
+          <thead><tr><th>Order</th><th>Status</th><th>Amount</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let o of data?.recentOrders" (click)="openOrder(o)" style="cursor:pointer">
+              <td>{{ o.orderId }}</td>
+              <td>{{ o.orderStatus }}</td>
+              <td>{{ o.priceDetails?.totalAmountToPay | currency:'INR' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</ion-content>

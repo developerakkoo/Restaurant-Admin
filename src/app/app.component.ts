@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class AppComponent {
   public appPages = [
     { title: 'Dashboard', url: '/folder/dash', icon: 'speedometer' },
+    { title: 'Analytics', url: '/folder/analytics', icon: 'analytics' },
     { title: 'Orders', url: '/folder/orders', icon: 'cart' },
     { title: 'Partners', url: '/folder/partners', icon: 'people' },
     { title: 'Customers', url: '/folder/customer', icon: 'person' },

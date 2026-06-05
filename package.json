@@ -7,6 +7,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration production",
+    "deploy": "npm run build:prod && firebase deploy --only hosting --project dropeat-admin",
+    "deploy:hosting": "firebase deploy --only hosting --project dropeat-admin",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"
@@ -23,8 +26,6 @@
     "@angular/platform-browser": "^17.0.2",
     "@angular/platform-browser-dynamic": "^17.0.2",
     "@angular/router": "^17.0.2",
-    "@canvasjs/angular-charts": "^1.2.0",
-    "@canvasjs/charts": "^3.10.4",
     "@capacitor/app": "5.0.7",
     "@capacitor/core": "5.7.4",
     "@capacitor/geolocation": "^6.0.0",

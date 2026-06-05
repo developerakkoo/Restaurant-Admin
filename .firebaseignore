@@ -1,0 +1,12 @@
+node_modules
+.git
+.firebase
+src
+angular.json
+tsconfig.json
+tsconfig.app.json
+karma.conf.js
+*.md
+e2e
+coverage
+.angular

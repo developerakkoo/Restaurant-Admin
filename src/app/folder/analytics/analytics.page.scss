@@ -1,0 +1,89 @@
+.analytics-filters {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  margin-bottom: var(--sp-4, 16px);
+}
+
+.analytics-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  ion-button {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    margin: 0;
+    min-height: 36px;
+  }
+}
+
+.dash-kpi {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.dash-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dash-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dash-chart-card canvas {
+  height: 220px !important;
+}
+
+.de-stat__delta {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 4px;
+
+  &--up { color: var(--ion-color-success); }
+  &--down { color: var(--ion-color-danger); }
+  &--flat { color: var(--ion-color-medium); }
+}
+
+.geo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  th, td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--ion-color-light);
+    text-align: left;
+  }
+}
+
+.recent-orders-table {
+  width: 100%;
+  font-size: 0.875rem;
+
+  th, td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+}
+
+@media (max-width: 1280px) {
+  .dash-kpi { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 960px) {
+  .dash-row-2, .dash-row-3 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .dash-kpi { grid-template-columns: 1fr; }
+}

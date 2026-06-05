@@ -17,6 +17,11 @@ log.txt
 /.versions
 /coverage
 
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+
 # Ionic
 /.ionic
 

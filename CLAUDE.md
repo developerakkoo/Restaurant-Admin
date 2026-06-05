@@ -283,6 +283,7 @@ flowchart TB
 | # | Label | Route | Icon |
 |---|-------|-------|------|
 | 1 | Dashboard | `/folder/dash` | speedometer |
+| 2 | Analytics | `/folder/analytics` | analytics |
 | 2 | Orders | `/folder/orders` | cart |
 | 3 | Partners | `/folder/partners` | people |
 | 4 | Customers | `/folder/customer` | person |
@@ -352,49 +353,19 @@ Point-wise inventory for design.md feature specs. Each subsection maps to a menu
 
 ### 4.2 Dashboard (`/folder/dash`)
 
-**Toolbar**
+Lightweight **operations snapshot** (30-day window). Link: **View full analytics →** `/folder/analytics`.
 
-- Menu button
-- Title: Dashboard - Your Admin Hub (includes emoji in current UI)
-- Notifications button → `/folder/notifications` (stub)
-- Messages button → `/folder/messages` (stub)
+- 6 KPI cards: orders, delivered, revenue, users online, partners, delivery boys
+- 2 charts: revenue trend (line), orders trend (bar)
+- Recent orders list (links to order detail)
 
-**Filters (top row)**
+### 4.2b Analytics (`/folder/analytics`)
 
-- Start date (`ion-input` type date)
-- End date (`ion-input` type date)
-- Sort granularity: Daily / Monthly / Yearly (`dayOfWeek`, `month`, `year`)
+**Advanced analytics hub** — `AnalyticsService`, `ChartThemeService`, unified date presets (Today / 7d / 30d / MTD / YTD / custom), granularity, CSV export, period-over-period KPI deltas.
 
-**Overview KPI cards**
+Charts: revenue & orders trends, order status & cancellations, platform fees / GST / profit stack, top partners & dishes, customer activity, ratings, settlements, geo cluster table, recent orders.
 
-- Total orders
-- Total revenue (INR currency pipe)
-- Active online users
-- Partners count
-
-**Profit statistics chart**
-
-- Chart.js canvas: earnings / profit
-- Sort: Daily / Monthly / Yearly
-
-**Financial charts (3 columns)**
-
-- Platform fees chart (daily/monthly/yearly)
-- GST amount chart (daily/monthly/yearly)
-- Admin earnings chart (daily/monthly/yearly)
-
-**Order and revenue charts (2 columns)**
-
-- Order statistics chart
-- Revenue statistics chart
-- Each with own sort selector (day/month/year variants)
-
-**Recent activities list**
-
-- Order ID, customer phone, hotel name
-- Delivery address
-- Total amount, payment mode (UPI, COD, CASH)
-- Timestamp per row
+API: existing admin + analytics routes plus `GET admin/analytics/order-status-breakdown`, `GET admin/analytics/top-partners`.
 
 ---
 
@@ -665,6 +636,8 @@ Point-wise inventory for design.md feature specs. Each subsection maps to a menu
 ---
 
 ## 5. Order status reference
+
+**End-to-end order lifecycle (all apps + API, sockets, diagnostics):** [docs/ORDER_FLOW.md](../docs/ORDER_FLOW.md) at the monorepo root.
 
 Source: `src/app/constants/order-status.constants.ts`
 

@@ -1,3 +1,16 @@
-.de-stat ion-icon {
-  font-size: 22px;
+.dash-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.de-chart-card canvas {
+  height: 200px !important;
+}
+
+@media (max-width: 960px) {
+  .dash-row-2 {
+    grid-template-columns: 1fr;
+  }
 }

@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { FolderPage } from './folder.page';
-
 const routes: Routes = [
   {
     path: 'folder',
-    component: FolderPage
+    redirectTo: 'dash',
+    pathMatch: 'full',
   },
   {
     path: 'login',
@@ -51,6 +50,10 @@ const routes: Routes = [
   {
     path: 'dash',
     loadChildren: () => import('./dash/dash.module').then( m => m.DashPageModule)
+  },
+  {
+    path: 'analytics',
+    loadChildren: () => import('./analytics/analytics.module').then( m => m.AnalyticsPageModule)
   },
 
   {

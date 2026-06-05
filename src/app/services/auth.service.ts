@@ -210,8 +210,15 @@ export class AuthService {
     });
   }
   getDashboardData(sort: any, startDate: any, endDate: any) {
+    let url = environment.URL + `admin/get/dashboard-data?sort=${sort}`;
+    if (startDate) {
+      url += `&startDate=${startDate}`;
+    }
+    if (endDate) {
+      url += `&endDate=${endDate}`;
+    }
     return this.http.get(
-      environment.URL + `admin/get/dashboard-data?sort=${sort}`,
+      url,
       {
         headers: {
           'x-access-token': this.accessToken.value,
