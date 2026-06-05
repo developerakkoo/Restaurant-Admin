@@ -170,7 +170,9 @@ export class DishPage implements OnInit {
     //   },
     // });
   }
-  viewNotifications() {}
+  viewNotifications() {
+    this.router.navigate(['folder', 'notifications']);
+  }
   onFileChange(event: any, index: number) {
     const file = event.target.files[0];
     if (file) {

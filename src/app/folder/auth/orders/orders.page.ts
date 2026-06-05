@@ -273,7 +273,9 @@ console.log(type);
     //  await actionSheet.present();
     // }
    }
-viewNotifications(){}
+  viewNotifications() {
+    this.router.navigate(['folder', 'notifications']);
+  }
 assignDriverEvent(ev:any, orderId:any){
   const selectedValue = ev.detail?.value;
   console.log('Selected drivers:', selectedValue);

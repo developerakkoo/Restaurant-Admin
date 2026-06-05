@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingController, MenuController, ToastController } from '@ionic/angular';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import Chart from 'chart.js/auto';
@@ -16,7 +16,7 @@ export class FolderPage implements OnInit {
   constructor(private menuController: MenuController,
               private loadingController: LoadingController,
               private toastController: ToastController,
-              
+              private router: Router,
   ) {}
 
   ngOnInit() {
@@ -58,5 +58,7 @@ export class FolderPage implements OnInit {
     
   }
 
-  viewNotifications(){}
+  viewNotifications() {
+    this.router.navigate(['folder', 'notifications']);
+  }
 }

@@ -53,7 +53,9 @@ export class DeliveryBoyPage implements OnInit {
       }
     })
   }
-viewNotifications(){}
+  viewNotifications() {
+    this.router.navigate(['folder', 'notifications']);
+  }
 viewBoy(id:any){
   this.router.navigate(['folder','delivery-boy','view',id])
 }

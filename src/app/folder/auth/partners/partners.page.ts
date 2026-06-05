@@ -73,7 +73,9 @@ export class PartnersPage implements OnInit {
   openPartnerRegisterPage(){
 this.router.navigate(['folder','partners','add'])
   }
-  viewNotifications(){}
+  viewNotifications() {
+    this.router.navigate(['folder', 'notifications']);
+  }
 
   openhotel(hotel:any){
     console.log(hotel);

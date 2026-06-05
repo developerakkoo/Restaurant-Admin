@@ -52,7 +52,9 @@ export class CustomerPage implements OnInit {
       }
     })
   }
-viewNotifications(){}
+viewNotifications(){
+  this.router.navigate(['folder', 'notifications']);
+}
 openDetailsPage(id:any){
   this.router.navigate(['folder','customer','view',id])
 }

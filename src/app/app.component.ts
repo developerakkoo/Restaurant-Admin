@@ -18,6 +18,7 @@ export class AppComponent {
     { title: 'Categories', url: '/folder/category', icon: 'pricetags' },
     { title: 'Chat', url: '/folder/chat', icon: 'chatbubbles' },
     { title: 'Promo code', url: '/folder/promo-code', icon: 'pricetag' },
+    { title: 'Push Notifications', url: '/folder/notifications', icon: 'notifications' },
     { title: 'Banners', url: '/folder/banner', icon: 'images' },
     {
       title: 'Delivery/handling Charges',

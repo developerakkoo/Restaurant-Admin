@@ -30,7 +30,9 @@ export class CategoryPage implements OnInit {
     this.getAllCategory();
   }
 
-  viewNotifications() {}
+  viewNotifications() {
+    this.router.navigate(['folder', 'notifications']);
+  }
 
   async add() {
     const modal = await this.modalController.create({
