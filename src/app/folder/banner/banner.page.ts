@@ -171,6 +171,10 @@ this.getBanners();
     await modal.present();
   }
 
+  get homeBannerCount(): number {
+    return this.bannnerImages.filter((item: any) => item.type === 0).length;
+  }
+
   // Helper methods for UI
   getTypeClass(type: number): string {
     switch (type) {
