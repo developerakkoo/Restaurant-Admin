@@ -1,0 +1,56 @@
+.promo-code-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  background: #ede9fe;
+  color: #3b0764;
+  border: 1px solid #c4b5fd;
+  padding: 3px 9px;
+  border-radius: var(--r-md, 8px);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.promo-card--expired {
+  opacity: 0.55;
+  filter: grayscale(0.85);
+
+  .promo-code-tag {
+    background: #f3f4f6;
+    color: #6b7280;
+    border-color: #d1d5db;
+  }
+}
+
+.promo-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.promo-card__details {
+  p {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+}
+
+.promo-card__description {
+  color: var(--ion-color-medium);
+  margin-top: 8px !important;
+}
+
+.promo-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.promo-empty {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--ion-color-medium);
+}

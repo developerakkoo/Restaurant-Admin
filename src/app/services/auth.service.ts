@@ -591,6 +591,41 @@ export class AuthService {
     });
   }
 
+  updatePromo(promoCodeId: string, body: {}) {
+    return this.http.put(
+      environment.URL + `admin/promoCode/update/${promoCodeId}`,
+      body,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  deletePromo(promoCodeId: string) {
+    return this.http.delete(
+      environment.URL + `admin/promoCode/delete/${promoCodeId}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
+  sendPromoNotification(promoCodeId: string, userId: string) {
+    return this.http.post(
+      environment.URL + `admin/promoCode/notify/${promoCodeId}`,
+      { userId },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
   addCategory(body: {}) {
     return this.http.post(environment.URL + `admin/category/add`, body, {
       headers: {

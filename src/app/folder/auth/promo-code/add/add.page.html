@@ -1,6 +1,8 @@
 <ion-header class="de-header ion-no-border">
   <ion-toolbar>
-    <ion-title class="de-header__title">Add new Promo Code</ion-title>
+    <ion-title class="de-header__title">
+      {{ isEditMode ? 'Edit / Renew Promo Code' : 'Add new Promo Code' }}
+    </ion-title>
     <ion-buttons slot="end">
       <ion-button class="de-header-toolbar-btn" fill="clear" (click)="close()">
         <ion-icon slot="icon-only" name="close"></ion-icon>
@@ -12,8 +14,14 @@
 <ion-content [fullscreen]="true" class="de-page">
   <div class="de-page__inner">
     <div class="de-hero">
-      <h2>Add Promo Code</h2>
-      <p>Create a new discount offer for customers</p>
+      <h2>{{ isEditMode ? 'Renew Promo Code' : 'Add Promo Code' }}</h2>
+      <p>
+        {{
+          isEditMode
+            ? 'Update expiry or details to reactivate this offer'
+            : 'Create a new discount offer for customers'
+        }}
+      </p>
     </div>
 
     <ion-grid fixed>
@@ -22,23 +30,30 @@
           <form [formGroup]="form">
             <ion-input type="text" label="Name" labelPlacement="stacked" fill="outline" formControlName="name"></ion-input>
             <ion-input type="text" label="Code" labelPlacement="stacked" fill="outline" formControlName="code"></ion-input>
-            <ion-input type="text" label="Discount Amount" labelPlacement="stacked" fill="outline" formControlName="discountAmount"></ion-input>
-            <ion-input type="text" label="Min Order Amount" labelPlacement="stacked" fill="outline" formControlName="minOrderAmount"></ion-input>
+            <ion-input type="number" label="Discount Amount (₹)" labelPlacement="stacked" fill="outline" formControlName="discountAmount"></ion-input>
+            <ion-input type="number" label="Min Order Amount (₹)" labelPlacement="stacked" fill="outline" formControlName="minOrderAmount"></ion-input>
             <ion-input type="text" label="Description" labelPlacement="stacked" fill="outline" formControlName="description"></ion-input>
 
             <br>
             <ion-input type="date" label="Expiry Date" labelPlacement="stacked" fill="outline" formControlName="expiry"></ion-input>
             <br>
-            <ion-item>
+
+            <ion-item lines="none">
               <ion-label>Offer Type</ion-label>
-              <ion-select value="1" formControlName="codeType" multiple="false" placeholder="Select Type">
+              <ion-select formControlName="codeType" interface="popover" placeholder="Select Type">
                 <ion-select-option value="1">Free Delivery</ion-select-option>
-                <ion-select-option value="2">Order Above Amount</ion-select-option>
+                <ion-select-option value="2">Flat discount (order above amount)</ion-select-option>
                 <ion-select-option value="3">New User</ion-select-option>
               </ion-select>
             </ion-item>
-            <ion-button (click)="onSubmit()" block color="primary" type="submit" [disabled]="form.invalid">
-              Add Promo
+
+            <ion-item lines="none" *ngIf="isEditMode">
+              <ion-label>Active</ion-label>
+              <ion-toggle formControlName="isActive" slot="end"></ion-toggle>
+            </ion-item>
+
+            <ion-button (click)="onSubmit()" expand="block" color="primary" type="submit" [disabled]="form.invalid">
+              {{ isEditMode ? 'Save Changes' : 'Add Promo' }}
             </ion-button>
           </form>
         </ion-col>

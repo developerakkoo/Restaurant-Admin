@@ -21,26 +21,50 @@
 
     <ion-grid>
       <ion-row>
-        <ion-col size="4" *ngFor="let item of codes">
-          <ion-card>
+        <ion-col size="12" size-md="6" size-lg="4" *ngFor="let item of codes">
+          <ion-card [class.promo-card--expired]="isExpired(item)">
             <ion-card-header>
-              <ion-card-subtitle>Upto Rs {{item.minOrderAmount}}</ion-card-subtitle>
-              <ion-card-title>{{item.discountAmount}}% OFF</ion-card-title>
+              <div class="promo-card__meta">
+                <span class="promo-code-tag">{{ item.code | uppercase }}</span>
+                <ion-badge color="medium" *ngIf="isExpired(item)">Expired</ion-badge>
+                <ion-badge color="success" *ngIf="!isExpired(item)">Active</ion-badge>
+              </div>
+              <ion-card-subtitle>{{ item.name }}</ion-card-subtitle>
+              <ion-card-title>{{ getDiscountLabel(item) }}</ion-card-title>
             </ion-card-header>
+
             <ion-card-content>
-              <ion-item lines="none" color="primary">
-                <ion-label color="dark">
-                  <h2>{{item.code | uppercase}}</h2>
-                </ion-label>
-                <ion-icon slot="end" name="copy-outline"></ion-icon>
-              </ion-item>
-              <ion-button slot="end" (click)="openNotificationModal(item)" expand="block">
-                Notify User
-              </ion-button>
+              <div class="promo-card__details">
+                <p><strong>Type:</strong> {{ getTypeLabel(item) }}</p>
+                <p><strong>Min order:</strong> ₹{{ item.minOrderAmount }}</p>
+                <p><strong>Expiry:</strong> {{ formatExpiry(item.expiry) }}</p>
+                <p class="promo-card__description">{{ item.description }}</p>
+              </div>
+
+              <div class="promo-card__actions">
+                <ion-button
+                  fill="outline"
+                  size="small"
+                  (click)="openNotificationModal(item)"
+                  [disabled]="isExpired(item)"
+                >
+                  Notify User
+                </ion-button>
+                <ion-button fill="outline" size="small" (click)="openEditPromoModal(item)">
+                  Edit / Renew
+                </ion-button>
+                <ion-button fill="clear" color="danger" size="small" (click)="confirmDelete(item)">
+                  Delete
+                </ion-button>
+              </div>
             </ion-card-content>
           </ion-card>
         </ion-col>
       </ion-row>
     </ion-grid>
+
+    <div class="promo-empty" *ngIf="codes.length === 0">
+      <p>No promo codes yet. Create your first offer.</p>
+    </div>
   </div>
 </ion-content>

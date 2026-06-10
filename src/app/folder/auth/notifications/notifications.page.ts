@@ -34,6 +34,13 @@ export class NotificationsPage implements OnInit {
     sent: number;
     failed: number;
     noToken: number;
+    errors?: Array<{
+      userId?: string;
+      userName?: string;
+      code: string;
+      message: string;
+      tokenPrefix?: string;
+    }>;
   } | null = null;
 
   constructor(
@@ -193,9 +200,19 @@ export class NotificationsPage implements OnInit {
     sent: number;
     failed: number;
     noToken: number;
+    errors?: Array<{ code: string; message: string }>;
   } | null) {
     if (!result) {
       await this.presentToast('Notifications sent', 'success');
+      return;
+    }
+
+    if (result.failed > 0 && result.errors?.length) {
+      const firstError = result.errors[0];
+      await this.presentToast(
+        `Failed: ${result.failed}. ${firstError.code}: ${firstError.message}`,
+        'danger'
+      );
       return;
     }
 

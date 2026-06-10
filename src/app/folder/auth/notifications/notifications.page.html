@@ -117,6 +117,16 @@
         <p>Sent: {{ lastResult.sent }}</p>
         <p>Failed: {{ lastResult.failed }}</p>
         <p>No token: {{ lastResult.noToken }}</p>
+        <div *ngIf="lastResult.errors?.length" class="send-errors">
+          <p><strong>Why it failed</strong></p>
+          <ion-item *ngFor="let error of lastResult.errors" lines="none">
+            <ion-label class="ion-text-wrap">
+              <p *ngIf="error.userName">{{ error.userName }}</p>
+              <p>{{ error.code }}</p>
+              <p>{{ error.message }}</p>
+            </ion-label>
+          </ion-item>
+        </div>
       </ion-card-content>
     </ion-card>
 
