@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Reject Verification</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <p>
+    Reject verification for <strong>{{ driverName }}</strong>. Choose whether
+    the driver can re-upload documents or be permanently rejected.
+  </p>
+
+  <ion-list lines="full">
+    <ion-radio-group [(ngModel)]="rejectionType">
+      <ion-item>
+        <ion-radio slot="start" value="reupload"></ion-radio>
+        <ion-label>
+          <h3>Request re-upload</h3>
+          <p>Driver can upload clearer documents and apply again.</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-radio slot="start" value="permanent"></ion-radio>
+        <ion-label>
+          <h3>Permanent rejection</h3>
+          <p>Driver cannot apply again or use the system.</p>
+        </ion-label>
+      </ion-item>
+    </ion-radio-group>
+  </ion-list>
+
+  <ion-item lines="full" class="reason-item">
+    <ion-label position="stacked">Rejection reason (required)</ion-label>
+    <ion-textarea
+      [(ngModel)]="reason"
+      rows="4"
+      placeholder="Explain why the documents were rejected..."
+    ></ion-textarea>
+  </ion-item>
+
+  <ion-button
+    expand="block"
+    color="danger"
+    (click)="confirm()"
+    [disabled]="reason.trim().length < 10"
+  >
+    Confirm Rejection
+  </ion-button>
+</ion-content>

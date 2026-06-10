@@ -1,0 +1,47 @@
+.verification-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.verification-doc-tile {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fff;
+
+  img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  &--empty {
+    cursor: default;
+    background: #f9fafb;
+  }
+
+  &__label {
+    font-weight: 600;
+  }
+}
+
+.pdf-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  background: #f3f4f6;
+  border-radius: 8px;
+
+  ion-icon {
+    font-size: 40px;
+    color: var(--ion-color-primary);
+  }
+}

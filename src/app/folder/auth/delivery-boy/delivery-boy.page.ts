@@ -15,6 +15,7 @@ export class DeliveryBoyPage implements OnInit, OnDestroy {
   boys:any[] = [];
   query:string = "";
   status:string = "";
+  verificationStatusFilter = "";
   private statusSubscription?: Subscription;
 
   constructor(
@@ -56,8 +57,52 @@ export class DeliveryBoyPage implements OnInit, OnDestroy {
     this.getAllDeliveryBoys();
   }
 
+  onVerificationFilterChange(ev: any) {
+    this.verificationStatusFilter = ev.detail.value || '';
+    this.getAllDeliveryBoys();
+  }
+
+  getVerificationLabel(status?: string): string {
+    switch (status) {
+      case 'pending_review':
+        return 'Pending Review';
+      case 'verified':
+        return 'Verified';
+      case 'rejected_reupload':
+        return 'Rejected (Re-upload)';
+      case 'permanently_rejected':
+        return 'Permanently Rejected';
+      default:
+        return 'Not Submitted';
+    }
+  }
+
+  getVerificationColor(status?: string): string {
+    switch (status) {
+      case 'pending_review':
+        return 'warning';
+      case 'verified':
+        return 'success';
+      case 'rejected_reupload':
+        return 'tertiary';
+      case 'permanently_rejected':
+        return 'danger';
+      default:
+        return 'medium';
+    }
+  }
+
   async getAllDeliveryBoys(){
-    this.auth.getAllDeliveryBoys(this.query, 1, 50,"","", "")
+    this.auth.getAllDeliveryBoys(
+      this.query,
+      1,
+      50,
+      '',
+      '',
+      this.status,
+      '',
+      this.verificationStatusFilter
+    )
     .subscribe({
       next:async(value:any) =>{
         console.log(value);

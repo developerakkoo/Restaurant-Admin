@@ -34,6 +34,14 @@
           </div>
           <div class="col-md-6">
             <div class="mb-3">
+              <label class="form-label fw-bold">Verification Status</label>
+              <p class="form-control-plaintext">
+                {{ getVerificationStatusLabel(deliveryBoy?.verificationStatus) }}
+              </p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
               <label class="form-label fw-bold">Activity Status</label>
               <p class="form-control-plaintext">
                 <ion-badge *ngIf="deliveryBoy?.isOnline === true" color="success" mode="ios">Online</ion-badge>
@@ -51,6 +59,51 @@
             <div class="mb-3">
               <label class="form-label fw-bold">Address</label>
               <p class="form-control-plaintext">{{deliveryBoy?.address || 'N/A'}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Verification Documents</h5>
+        <div *ngIf="isPendingVerificationReview" class="verification-actions">
+          <ion-button color="success" size="small" (click)="approveVerification()">
+            Approve
+          </ion-button>
+          <ion-button color="danger" size="small" fill="outline" (click)="openRejectModal()">
+            Reject
+          </ion-button>
+        </div>
+      </div>
+      <div class="card-body">
+        <p *ngIf="deliveryBoy?.rejectionReason" class="text-danger">
+          Last rejection reason: {{ deliveryBoy.rejectionReason }}
+        </p>
+        <div class="row g-3">
+          <div class="col-md-4" *ngFor="let slot of verificationDocSlots">
+            <div
+              class="verification-doc-tile"
+              [class.verification-doc-tile--empty]="!slot.document"
+              (click)="viewDocument(slot)"
+            >
+              <div class="verification-doc-tile__label">{{ slot.label }}</div>
+              <ng-container *ngIf="slot.document; else missingDoc">
+                <img
+                  *ngIf="!isPdfDocument(slot.document)"
+                  [src]="slot.document.document_url"
+                  alt="{{ slot.label }}"
+                />
+                <div *ngIf="isPdfDocument(slot.document)" class="pdf-placeholder">
+                  <ion-icon name="document-text-outline"></ion-icon>
+                  <span>PDF</span>
+                </div>
+                <small>{{ slot.document.createdAt | date: 'medium' }}</small>
+              </ng-container>
+              <ng-template #missingDoc>
+                <p class="text-muted mb-0">Not uploaded</p>
+              </ng-template>
             </div>
           </div>
         </div>

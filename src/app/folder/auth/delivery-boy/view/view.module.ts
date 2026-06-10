@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { ViewPageRoutingModule } from './view-routing.module';
 
 import { ViewPage } from './view.page';
+import { RejectVerificationModalComponent } from './reject-verification-modal.component';
+import { DocumentViewerModalComponent } from './document-viewer-modal.component';
 
 @NgModule({
   imports: [
@@ -15,6 +17,6 @@ import { ViewPage } from './view.page';
     IonicModule,
     ViewPageRoutingModule
   ],
-  declarations: [ViewPage]
+  declarations: [ViewPage, RejectVerificationModalComponent, DocumentViewerModalComponent]
 })
 export class ViewPageModule {}

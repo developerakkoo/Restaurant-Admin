@@ -175,6 +175,14 @@ this.getBanners();
     return this.bannnerImages.filter((item: any) => item.type === 0).length;
   }
 
+  get cartBannerCount(): number {
+    return this.bannnerImages.filter((item: any) => item.type === 1).length;
+  }
+
+  get profileBannerCount(): number {
+    return this.bannnerImages.filter((item: any) => item.type === 3).length;
+  }
+
   // Helper methods for UI
   getTypeClass(type: number): string {
     switch (type) {

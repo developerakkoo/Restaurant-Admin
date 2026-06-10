@@ -1,7 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpService } from 'src/app/services/http.service';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AuthService } from 'src/app/services/auth.service';
+import {
+  AlertController,
+  ModalController,
+  ToastController,
+} from '@ionic/angular';
 import {
   downloadCsv,
   formatCsvDate,
@@ -9,6 +14,14 @@ import {
 } from 'src/app/utils/csv-export.util';
 import { AdminSocketService } from 'src/app/services/admin-socket.service';
 import { Subscription } from 'rxjs';
+import { RejectVerificationModalComponent } from './reject-verification-modal.component';
+import { DocumentViewerModalComponent } from './document-viewer-modal.component';
+
+interface VerificationDocSlot {
+  type: number;
+  label: string;
+  document?: any;
+}
 
 interface Commission {
   orderNumber: number;
@@ -61,6 +74,12 @@ export class ViewPage implements OnInit, OnDestroy {
     lastSettlementDate: null as Date | null
   };
   settlementLoading = false;
+  verificationDocuments: any[] = [];
+  readonly verificationDocSlots: VerificationDocSlot[] = [
+    { type: 11, label: 'Aadhar Card' },
+    { type: 22, label: 'PAN Card' },
+    { type: 33, label: 'Driving License' },
+  ];
   private statusSubscription?: Subscription;
 
   startDate:any;
@@ -69,8 +88,10 @@ export class ViewPage implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private http: HttpService,
+    private auth: AuthService,
     private alertController: AlertController,
     private toastController: ToastController,
+    private modalController: ModalController,
     private adminSocket: AdminSocketService
   ) {}
 
@@ -95,8 +116,128 @@ export class ViewPage implements OnInit, OnDestroy {
 
   ionViewDidEnter(){
     this.getDeliveryBoy(this.id);
+    this.loadVerificationDocuments();
     this.getDeliveryBoyEarnings(this.id);
     this.getDriverSettlementsData(this.id);
+  }
+
+  loadVerificationDocuments() {
+    this.auth.getDeliveryBoyDocuments(this.id).subscribe({
+      next: (res: any) => {
+        this.verificationDocuments = res?.data || [];
+        this.verificationDocSlots.forEach((slot) => {
+          slot.document = this.verificationDocuments.find(
+            (doc) => doc.documentType === slot.type
+          );
+        });
+      },
+      error: () => {
+        this.verificationDocuments = [];
+      },
+    });
+  }
+
+  get isPendingVerificationReview(): boolean {
+    return this.deliveryBoy?.verificationStatus === 'pending_review';
+  }
+
+  getVerificationStatusLabel(status?: string): string {
+    switch (status) {
+      case 'pending_review':
+        return 'Pending Review';
+      case 'verified':
+        return 'Verified';
+      case 'rejected_reupload':
+        return 'Rejected (Re-upload)';
+      case 'permanently_rejected':
+        return 'Permanently Rejected';
+      default:
+        return 'Not Submitted';
+    }
+  }
+
+  isPdfDocument(doc?: any): boolean {
+    const mime = doc?.mimeType || '';
+    const url = doc?.document_url || '';
+    return mime.includes('pdf') || url.toLowerCase().endsWith('.pdf');
+  }
+
+  async viewDocument(slot: VerificationDocSlot) {
+    if (!slot.document?.document_url) {
+      return;
+    }
+
+    const modal = await this.modalController.create({
+      component: DocumentViewerModalComponent,
+      componentProps: {
+        title: slot.label,
+        url: slot.document.document_url,
+        isPdf: this.isPdfDocument(slot.document),
+      },
+    });
+    await modal.present();
+  }
+
+  async approveVerification() {
+    const alert = await this.alertController.create({
+      header: 'Approve Driver',
+      message: 'Approve this driver and allow them to go online?',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Approve',
+          handler: () => {
+            this.auth.approveDriverVerification(this.id).subscribe({
+              next: async () => {
+                await this.showToast('Driver verification approved', 'success');
+                this.getDeliveryBoy(this.id);
+                this.loadVerificationDocuments();
+              },
+              error: async (err: any) => {
+                await this.showToast(
+                  err?.error?.message || 'Approval failed',
+                  'danger'
+                );
+              },
+            });
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async openRejectModal() {
+    const driverName = `${this.deliveryBoy?.firstName || ''} ${
+      this.deliveryBoy?.lastName || ''
+    }`.trim();
+
+    const modal = await this.modalController.create({
+      component: RejectVerificationModalComponent,
+      componentProps: { driverName: driverName || 'Driver' },
+    });
+
+    await modal.present();
+    const { data, role } = await modal.onWillDismiss();
+    if (role !== 'confirm' || !data) {
+      return;
+    }
+
+    this.auth
+      .rejectDriverVerification(this.id, data.rejectionType, data.reason)
+      .subscribe({
+        next: async () => {
+          await this.showToast('Driver verification rejected', 'warning');
+          this.getDeliveryBoy(this.id);
+          this.loadVerificationDocuments();
+        },
+        error: async (err: any) => {
+          await this.showToast(
+            err?.error?.message || 'Rejection failed',
+            'danger'
+          );
+        },
+      });
   }
 
   getDeliveryBoy(id:any){

@@ -299,7 +299,8 @@ export class AuthService {
     startDate: any,
     endDate: any,
     status: any,
-    isOnline?: boolean | string
+    isOnline?: boolean | string,
+    verificationStatus?: string
   ) {
     let url =
       environment.URL +
@@ -310,6 +311,13 @@ export class AuthService {
     }
     if (isOnline !== undefined && isOnline !== null && isOnline !== '') {
       url += `&isOnline=${isOnline}`;
+    }
+    if (
+      verificationStatus !== undefined &&
+      verificationStatus !== null &&
+      verificationStatus !== ''
+    ) {
+      url += `&verificationStatus=${verificationStatus}`;
     }
 
     return this.http.get(url, {
@@ -749,6 +757,46 @@ export class AuthService {
         deliveryBoyId,
         status,
       },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
+      }
+    );
+  }
+
+  getDeliveryBoyDocuments(deliveryBoyId: string) {
+    return this.http.get(
+      environment.URL +
+        `admin/get-all/delivery-boy/documents-deliveryBoyId?userId=${deliveryBoyId}`,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
+      }
+    );
+  }
+
+  approveDriverVerification(deliveryBoyId: string) {
+    return this.http.put(
+      environment.URL + `admin/delivery-boy/verification/approve`,
+      { deliveryBoyId },
+      {
+        headers: {
+          'x-access-token': this.accessToken.value.toString(),
+        },
+      }
+    );
+  }
+
+  rejectDriverVerification(
+    deliveryBoyId: string,
+    rejectionType: 'reupload' | 'permanent',
+    reason: string
+  ) {
+    return this.http.put(
+      environment.URL + `admin/delivery-boy/verification/reject`,
+      { deliveryBoyId, rejectionType, reason },
       {
         headers: {
           'x-access-token': this.accessToken.value.toString(),

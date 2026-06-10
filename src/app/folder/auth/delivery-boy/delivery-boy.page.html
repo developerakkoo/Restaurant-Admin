@@ -24,6 +24,23 @@
 
     <ion-searchbar mode="ios" placeholder="Search delivery boys..." inputmode="decimal" type="decimal" (ionChange)="onSearchChange($event)" [debounce]="250" showCancelButton="always"></ion-searchbar>
 
+    <ion-item lines="none" class="filter-item">
+      <ion-label>Verification</ion-label>
+      <ion-select
+        interface="popover"
+        placeholder="All"
+        [value]="verificationStatusFilter"
+        (ionChange)="onVerificationFilterChange($event)"
+      >
+        <ion-select-option value="">All</ion-select-option>
+        <ion-select-option value="not_submitted">Not Submitted</ion-select-option>
+        <ion-select-option value="pending_review">Pending Review</ion-select-option>
+        <ion-select-option value="verified">Verified</ion-select-option>
+        <ion-select-option value="rejected_reupload">Rejected (Re-upload)</ion-select-option>
+        <ion-select-option value="permanently_rejected">Permanently Rejected</ion-select-option>
+      </ion-select>
+    </ion-item>
+
     <ion-button (click)="openDriverRegisterPage()" fill="solid" color="primary">
       <ion-icon name="add" slot="start"></ion-icon>
       Add Delivery Boy
@@ -42,19 +59,32 @@
               <th>Date</th>
               <th>Full Name</th>
               <th>Phone No</th>
-              <th>Status</th>
+              <th>Online</th>
+              <th>Verification</th>
               <th>Address</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of boys" class="table-row">
+            <tr
+              *ngFor="let item of boys"
+              class="table-row"
+              [class.pending-review-row]="item.verificationStatus === 'pending_review'"
+            >
               <td class="date-cell">{{item.createdAt | date:"fullDate"}}</td>
               <td class="name-cell">{{item?.firstName || "No Name Added"}} {{item?.lastName}}</td>
               <td class="phone-cell">{{item?.phoneNumber}}</td>
               <td class="status-cell">
                 <ion-badge *ngIf="item?.isOnline === true" color="success" mode="ios">Online</ion-badge>
                 <ion-badge *ngIf="item?.isOnline !== true" color="medium" mode="ios">Offline</ion-badge>
+              </td>
+              <td class="verification-cell">
+                <ion-badge [color]="getVerificationColor(item.verificationStatus)" mode="ios">
+                  {{ getVerificationLabel(item.verificationStatus) }}
+                </ion-badge>
+                <small *ngIf="item.verificationDocumentCount !== undefined">
+                  {{ item.verificationDocumentCount }}/3 docs
+                </small>
               </td>
               <td class="address-cell">{{item?.address || "No Address Added"}}</td>
               <td class="actions-cell">

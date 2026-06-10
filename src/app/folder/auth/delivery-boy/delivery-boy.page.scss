@@ -1,1 +1,19 @@
 // Uses design-system.scss
+
+.pending-review-row {
+  background: rgba(var(--ion-color-warning-rgb), 0.08);
+}
+
+.verification-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  small {
+    color: var(--ion-color-medium);
+  }
+}
+
+.filter-item {
+  margin-bottom: 8px;
+}

@@ -60,11 +60,11 @@
               </div>
               <div class="de-feature-card__info">
                 <h3 class="de-feature-card__title">Cart Banner</h3>
-                <p class="de-feature-card__subtitle">Displayed in the cart page</p>
+                <p class="de-feature-card__subtitle">Displayed in the cart page carousel (empty & filled cart)</p>
               </div>
-              <div class="de-feature-card__status" [class.active]="isBannerTypeExists(1)">
-                <ion-icon [name]="isBannerTypeExists(1) ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
-                <span>{{ isBannerTypeExists(1) ? 'Active' : 'Not Set' }}</span>
+              <div class="de-feature-card__status info">
+                <ion-icon name="add-circle-outline"></ion-icon>
+                <span>{{ cartBannerCount }} in cart carousel</span>
               </div>
             </div>
             <div class="de-feature-card__body">
@@ -75,9 +75,9 @@
                   <span>{{ cartImage ? cartImage.name : 'Choose Image' }}</span>
                 </label>
               </div>
-              <ion-button (click)="uploadBanner(1)" expand="block" [disabled]="!cartImage || isBannerTypeExists(1)" color="primary">
+              <ion-button (click)="uploadBanner(1)" expand="block" [disabled]="!cartImage" color="primary">
                 <ion-icon name="upload-outline" slot="start"></ion-icon>
-                {{ isBannerTypeExists(1) ? 'Already Uploaded' : 'Upload Banner' }}
+                Upload Cart Banner
               </ion-button>
             </div>
           </div>
@@ -89,11 +89,11 @@
               </div>
               <div class="de-feature-card__info">
                 <h3 class="de-feature-card__title">Profile Banner</h3>
-                <p class="de-feature-card__subtitle">Displayed in user profile section</p>
+                <p class="de-feature-card__subtitle">Displayed above logout in profile carousel</p>
               </div>
-              <div class="de-feature-card__status" [class.active]="isBannerTypeExists(3)">
-                <ion-icon [name]="isBannerTypeExists(3) ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
-                <span>{{ isBannerTypeExists(3) ? 'Active' : 'Not Set' }}</span>
+              <div class="de-feature-card__status info">
+                <ion-icon name="add-circle-outline"></ion-icon>
+                <span>{{ profileBannerCount }} in profile carousel</span>
               </div>
             </div>
             <div class="de-feature-card__body">
@@ -104,9 +104,9 @@
                   <span>{{ profileImage ? profileImage.name : 'Choose Image' }}</span>
                 </label>
               </div>
-              <ion-button (click)="uploadBanner(3)" expand="block" [disabled]="!profileImage || isBannerTypeExists(3)" color="primary">
+              <ion-button (click)="uploadBanner(3)" expand="block" [disabled]="!profileImage" color="primary">
                 <ion-icon name="upload-outline" slot="start"></ion-icon>
-                {{ isBannerTypeExists(3) ? 'Already Uploaded' : 'Upload Banner' }}
+                Upload Profile Banner
               </ion-button>
             </div>
           </div>
