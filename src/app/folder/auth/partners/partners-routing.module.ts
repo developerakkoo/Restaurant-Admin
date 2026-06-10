@@ -17,7 +17,7 @@ const routes: Routes = [
     loadChildren: () => import('./map/map.module').then( m => m.MapPageModule)
   },
   {
-    path: 'hotels/:lat/:lng/:id',
+    path: 'hotels/:id',
     loadChildren: () => import('./hotels/hotels.module').then( m => m.HotelsPageModule)
   },
   {

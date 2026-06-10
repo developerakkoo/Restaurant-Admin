@@ -6,6 +6,7 @@ import * as dayjs from 'dayjs';
 import { environment } from 'src/environments/environment';
 import { DataService } from './data.service';
 import { AnalyticsMetricsService } from './analytics-metrics.service';
+import { downloadCsv } from 'src/app/utils/csv-export.util';
 import {
   AnalyticsFilterState,
   AnalyticsLoadResult,
@@ -187,13 +188,10 @@ export class AnalyticsService {
       ['Admin Earnings', String(result.earnings.totalEarnings?.adminEarnings ?? 0)],
       ['Reconciliation Passed', String(reconciliation.passed)],
     ];
-    const csv = rows.map((r) => r.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `dropeat-analytics-${filters.startDate}-${filters.endDate}.csv`;
-    a.click();
-    URL.revokeObjectURL(a.href);
+    downloadCsv(
+      `dropeat-analytics-${filters.startDate}-${filters.endDate}.csv`,
+      rows
+    );
   }
 
   computeDelta(current: number, previous: number): number | null {

@@ -1,7 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpService } from 'src/app/services/http.service';
 import { AlertController, ToastController } from '@ionic/angular';
+import {
+  downloadCsv,
+  formatCsvDate,
+  sanitizeFilenamePart,
+} from 'src/app/utils/csv-export.util';
+import { AdminSocketService } from 'src/app/services/admin-socket.service';
+import { Subscription } from 'rxjs';
 
 interface Commission {
   orderNumber: number;
@@ -29,7 +36,7 @@ interface DeliveryBoy {
   templateUrl: './view.page.html',
   styleUrls: ['./view.page.scss'],
 })
-export class ViewPage implements OnInit {
+export class ViewPage implements OnInit, OnDestroy {
   id:any;
   deliveryBoy: any = {};
   earnings:any = [];
@@ -54,6 +61,7 @@ export class ViewPage implements OnInit {
     lastSettlementDate: null as Date | null
   };
   settlementLoading = false;
+  private statusSubscription?: Subscription;
 
   startDate:any;
   endDate:any;
@@ -62,12 +70,27 @@ export class ViewPage implements OnInit {
     private route: ActivatedRoute,
     private http: HttpService,
     private alertController: AlertController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private adminSocket: AdminSocketService
   ) {}
 
   ngOnInit() {
     this.id = this.route.snapshot.paramMap.get('id');
     console.log('Delivery Boy ID:', this.id);
+    this.adminSocket.initAdminSocket();
+    this.statusSubscription = this.adminSocket.onDriverStatusChanged().subscribe((event) => {
+      if (event.userId === this.id) {
+        this.deliveryBoy = {
+          ...this.deliveryBoy,
+          isOnline: event.isOnline,
+          lastSeen: event.lastSeen,
+        };
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.statusSubscription?.unsubscribe();
   }
 
   ionViewDidEnter(){
@@ -283,5 +306,136 @@ export class ViewPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  private getDriverLabel(): string {
+    const firstName = this.deliveryBoy?.firstName ?? '';
+    const lastName = this.deliveryBoy?.lastName ?? '';
+    const fullName = `${firstName} ${lastName}`.trim();
+    return sanitizeFilenamePart(fullName || String(this.id || 'driver'));
+  }
+
+  private async showToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      color,
+      position: 'top',
+    });
+    await toast.present();
+  }
+
+  exportCommissionsToCsv() {
+    const rows = this.getFilteredEarnings();
+    if (!rows.length) {
+      this.showToast('No commission records to export', 'warning');
+      return;
+    }
+
+    const datePart = new Date().toISOString().slice(0, 10);
+    const filename = `driver-commissions-${this.getDriverLabel()}-${this.sortStatus}-${datePart}.csv`;
+    const csvRows: string[][] = [
+      ['Earning ID', 'Order Number', 'Commission Amount', 'Date', 'Status'],
+      ...rows.map((earning) => [
+        earning._id ?? '',
+        String(earning.orderId ?? ''),
+        String(earning.amount ?? ''),
+        formatCsvDate(earning.date),
+        earning.isSettled ? 'Paid' : 'Unpaid',
+      ]),
+    ];
+
+    downloadCsv(filename, csvRows);
+    this.showToast(`Exported ${rows.length} commission record(s)`, 'success');
+  }
+
+  exportSettlementHistoryToCsv() {
+    if (!this.driverSettlements.length) {
+      this.showToast('No settlement history to export', 'warning');
+      return;
+    }
+
+    const datePart = new Date().toISOString().slice(0, 10);
+    const filename = `driver-settlement-history-${this.getDriverLabel()}-${datePart}.csv`;
+    const csvRows: string[][] = [
+      [
+        'Settlement ID',
+        'Settlement Date',
+        'Amount Paid',
+        'Orders Settled Count',
+        'Note',
+      ],
+      ...this.driverSettlements.map((settlement) => [
+        settlement._id ?? '',
+        formatCsvDate(settlement.settlementDate),
+        String(settlement.amountPaid ?? 0),
+        String(settlement.ordersSettled?.length ?? 0),
+        settlement.note ?? '',
+      ]),
+    ];
+
+    downloadCsv(filename, csvRows);
+    this.showToast(
+      `Exported ${this.driverSettlements.length} settlement record(s)`,
+      'success'
+    );
+  }
+
+  exportDetailedSettlementHistoryToCsv() {
+    if (!this.driverSettlements.length) {
+      this.showToast('No settlement history to export', 'warning');
+      return;
+    }
+
+    const datePart = new Date().toISOString().slice(0, 10);
+    const filename = `driver-settlement-details-${this.getDriverLabel()}-${datePart}.csv`;
+    const csvRows: string[][] = [
+      [
+        'Settlement ID',
+        'Settlement Date',
+        'Amount Paid',
+        'Note',
+        'Order ID',
+        'Hotel Name',
+        'Order Amount',
+      ],
+    ];
+
+    for (const settlement of this.driverSettlements) {
+      const orders = settlement.ordersSettled ?? [];
+      if (!orders.length) {
+        csvRows.push([
+          settlement._id ?? '',
+          formatCsvDate(settlement.settlementDate),
+          String(settlement.amountPaid ?? 0),
+          settlement.note ?? '',
+          '',
+          '',
+          '',
+        ]);
+        continue;
+      }
+
+      orders.forEach((earning: any, index: number) => {
+        const order = earning?.orderId ?? {};
+        const orderCode =
+          typeof order === 'object' ? order.orderId ?? earning.orderId ?? '' : earning.orderId ?? '';
+        const hotelName =
+          typeof order === 'object' ? order.hotelId?.hotelName ?? '' : '';
+
+        csvRows.push([
+          index === 0 ? settlement._id ?? '' : '',
+          index === 0 ? formatCsvDate(settlement.settlementDate) : '',
+          index === 0 ? String(settlement.amountPaid ?? 0) : '',
+          index === 0 ? settlement.note ?? '' : '',
+          String(orderCode),
+          hotelName,
+          String(earning.amount ?? 0),
+        ]);
+      });
+    }
+
+    downloadCsv(filename, csvRows);
+    this.showToast('Exported detailed settlement history', 'success');
   }
 }

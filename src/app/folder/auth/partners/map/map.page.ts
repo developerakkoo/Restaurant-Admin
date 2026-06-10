@@ -1,177 +1,240 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { GoogleMap } from '@capacitor/google-maps';
-import { ModalController } from '@ionic/angular';
+import { GoogleMap } from '@angular/google-maps';
+import { ToastController } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
-import { HotelsPage } from '../hotels/hotels.page';
-import {Position } from '@capacitor/geolocation';
-import { Geolocation } from '@capacitor/geolocation';
+
+interface MapLatLng {
+  lat: number;
+  lng: number;
+}
+
+interface MapStyleRule {
+  elementType?: string;
+  featureType?: string;
+  stylers?: Array<{ color?: string }>;
+}
+
+const DEFAULT_CENTER: MapLatLng = { lat: 18.5204, lng: 73.8567 };
+const GEOCODE_DEBOUNCE_MS = 400;
+
+const MAP_DARK_STYLES: MapStyleRule[] = [
+  { elementType: 'geometry', stylers: [{ color: '#242424' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#242424' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#9ca3af' }] },
+  {
+    featureType: 'road',
+    elementType: 'geometry',
+    stylers: [{ color: '#38414e' }],
+  },
+  {
+    featureType: 'road',
+    elementType: 'geometry.stroke',
+    stylers: [{ color: '#212a37' }],
+  },
+  {
+    featureType: 'water',
+    elementType: 'geometry',
+    stylers: [{ color: '#17263c' }],
+  },
+  {
+    featureType: 'poi',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#6b7280' }],
+  },
+];
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.page.html',
   styleUrls: ['./map.page.scss'],
 })
-export class MapPage implements OnInit, OnDestroy {
+export class MapPage implements OnDestroy {
+  @ViewChild(GoogleMap) mapComponent!: GoogleMap;
 
-  @ViewChild('map')
+  partnerId = '';
+  center: MapLatLng = { ...DEFAULT_CENTER };
+  zoom = 16;
+  lat: number | null = null;
+  lng: number | null = null;
+  formattedAddress = '';
+  isGeocoding = false;
+  mapReady = false;
 
-  partnerId:any;
-  mapRef!: ElementRef<HTMLElement>;
-  newMap: GoogleMap | null = null;
-  lat:any;
-  lon:any;
-  coordinates!: Position;
-  location:any;
+  mapOptions: Record<string, unknown> = {
+    disableDefaultUI: false,
+    zoomControl: true,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false,
+    gestureHandling: 'greedy',
+    styles: MAP_DARK_STYLES,
+  };
 
-  // lng:any = "18.5204303";
-  // lon:any = "73.8567437";
-  formattedAddress:any;
+  private geocodeTimer: ReturnType<typeof setTimeout> | null = null;
 
-  reverseGeocodeAddressList:any[] = [];
-  constructor(private route: ActivatedRoute,
+  constructor(
+    private route: ActivatedRoute,
     private router: Router,
-              private http: HttpClient,
-              private modalController: ModalController,
-              private geolocation: Geolocation,
-  ) { 
-  
+    private http: HttpClient,
+    private toastController: ToastController
+  ) {}
 
-  
-    
-    this.location = {lat: this.lat, lng: this.lon}
-    this.reverseGeocoding(this.lat, this.lon);
+  ionViewDidEnter(): void {
+    this.partnerId = this.route.snapshot.paramMap.get('id') || '';
   }
 
-  ngOnInit() {
-    // Component initialization logic will be added here if needed
-    console.log("Map Page");
+  onMapInitialized(_map: unknown): void {
+    this.mapReady = true;
+    void this.recenterOnMe(true);
   }
-  ionViewDidEnter(){
-    this.partnerId = this.route.snapshot.paramMap.get("id");
-    console.log(this.partnerId);
-    this.loadCurrentPosition()
+
+  onMapIdle(): void {
+    this.syncCenterFromMap();
   }
- ngOnDestroy() {
-    if (this.newMap) {
-      this.newMap.destroy();
-      this.newMap = null;
+
+  get hasValidCoords(): boolean {
+    return (
+      this.mapReady &&
+      this.lat != null &&
+      this.lng != null &&
+      !(this.lat === 0 && this.lng === 0)
+    );
+  }
+
+  syncCenterFromMap(): void {
+    const map = this.mapComponent?.googleMap;
+    if (!map) {
+      return;
+    }
+
+    const center = map.getCenter();
+    if (!center) {
+      return;
+    }
+
+    this.lat = center.lat();
+    this.lng = center.lng();
+    this.scheduleGeocode();
+  }
+
+  scheduleGeocode(): void {
+    if (this.geocodeTimer) {
+      clearTimeout(this.geocodeTimer);
+    }
+    this.geocodeTimer = setTimeout(() => {
+      this.reverseGeocode();
+    }, GEOCODE_DEBOUNCE_MS);
+  }
+
+  reverseGeocode(): void {
+    if (this.lat == null || this.lng == null) {
+      return;
+    }
+
+    this.isGeocoding = true;
+    this.http
+      .get<any>(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.lat},${this.lng}&key=${environment.apiKey}`
+      )
+      .subscribe({
+        next: (value) => {
+          this.isGeocoding = false;
+          const result = value?.results?.[0];
+          this.formattedAddress = result?.formatted_address
+            ? result.formatted_address
+            : 'Address lookup unavailable';
+        },
+        error: () => {
+          this.isGeocoding = false;
+          this.formattedAddress = 'Address lookup unavailable';
+        },
+      });
+  }
+
+  async recenterOnMe(silent = false): Promise<void> {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      this.applyFallbackCenter(silent);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.panTo(position.coords.latitude, position.coords.longitude);
+        if (!silent) {
+          void this.presentToast('Centered on your location', 'success');
+        }
+      },
+      () => {
+        this.applyFallbackCenter(silent);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000,
+      }
+    );
+  }
+
+  private applyFallbackCenter(silent: boolean): void {
+    if (!this.mapReady) {
+      this.lat = DEFAULT_CENTER.lat;
+      this.lng = DEFAULT_CENTER.lng;
+      this.center = { ...DEFAULT_CENTER };
+      this.scheduleGeocode();
+    } else {
+      this.panTo(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng);
+    }
+
+    if (!silent) {
+      void this.presentToast(
+        'Location permission denied. Move the map to pin the exact spot.',
+        'warning'
+      );
     }
   }
-  
-  async loadCurrentPosition() {
-    
 
-    const coordinates = await Geolocation.getCurrentPosition({
-      enableHighAccuracy: true,
-    });
+  panTo(lat: number, lng: number): void {
+    this.center = { lat, lng };
+    this.lat = lat;
+    this.lng = lng;
 
-    console.log('Current position:', coordinates);
-    console.log(coordinates);
-    this.createMap();
+    const map = this.mapComponent?.googleMap;
+    if (map) {
+      map.panTo({ lat, lng });
+    }
 
-    this.coordinates = coordinates;
-    this.lat = coordinates.coords.latitude;
-    this.lon = coordinates.coords.longitude;
+    this.scheduleGeocode();
   }
 
-  async createMap() {
-    this.newMap = await GoogleMap.create({
-      id: 'my-cool-map',
-      element: document.getElementById("map")!,
-      apiKey: environment.apiKey,
-      language:"en",
-      config: {
-        draggableCursor:"true",
+  confirmLocation(): void {
+    if (!this.hasValidCoords || this.lat == null || this.lng == null) {
+      return;
+    }
 
-        draggable:true,
-        center: {
-          lat: parseFloat(this.lat),
-          lng:  parseFloat(this.lon)
-        },
-        zoom: 15,
-        
+    this.router.navigate(['folder', 'partners', 'hotels', this.partnerId], {
+      state: {
+        lat: this.lat,
+        lng: this.lng,
+        address: this.formattedAddress,
       },
     });
-// Enable marker clustering
-await this.newMap.enableClustering();
-// Handle marker click
-await this.newMap.setOnMarkerClickListener((event) => {
-  console.log(event);
-  
-});
-
-// Handle marker click
-await this.newMap.setOnMarkerDragEndListener((event) => {
-  console.log(event);
-  this.lat = event['latitude'];
-  this.lon = event['longitude'];
-  this.reverseGeocoding(event['latitude'], event['longitude']);
-  
-});
-await this.newMap.enableCurrentLocation(true);
-    const marker = await this.newMap.addMarker({
-      draggable:true,
-      title:"My Location",
-      iconUrl:"assets/gps.png",
-      iconSize:{
-        width:50,
-        height:50
-      },
-      iconAnchor:{
-        x:25,
-        y:50
-      },
-      isFlat: true,
-      coordinate:{
-        lat: parseFloat(this.lat),
-        lng: parseFloat(this.lon)
-      }
-    })
-   
-    
-  
   }
 
-  reverseGeocoding(lat:any, lng:any){
-    this.http.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${environment.apiKey}`)
-    .subscribe({
-      next:(value:any) =>{
-        console.log(value);
-        this.reverseGeocodeAddressList = value['results'];
-        this.formattedAddress = value['results'][0]['formatted_address'];
-        this.location = value['results'][0]['geometry']['location'];
-      },
-      error(err:any) {
-            console.log(err);
-            
-      },
-    })
+  ngOnDestroy(): void {
+    if (this.geocodeTimer) {
+      clearTimeout(this.geocodeTimer);
+    }
   }
 
-  async presentModal() {
-    
-  
+  private async presentToast(message: string, color: string): Promise<void> {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2500,
+      position: 'bottom',
+      color,
+    });
+    await toast.present();
   }
-  async openAddAddressPage(){
-    const modal = await this.modalController.create({
-      component: HotelsPage,
-      componentProps: { value: this.formattedAddress,location:this.location }
-      });
-    
-      await modal.present();
-    
-      const data = await modal.onDidDismiss();
-      console.log(data);
-  }
-
-  setAddress(){
-    console.log(this.partnerId);
-    
-    this.router.navigate(['folder','partners','hotels', this.lon, this.lat, this.partnerId])
-  }
-
- 
-
 }

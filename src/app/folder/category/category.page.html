@@ -5,6 +5,17 @@
     </ion-buttons>
     <ion-title class="de-header__title">Categories</ion-title>
     <ion-buttons slot="end">
+      <ion-button
+        class="de-header-toolbar-btn"
+        fill="clear"
+        (click)="refreshCategories()"
+        [disabled]="isRefreshing || isLoading">
+        <ion-icon
+          slot="icon-only"
+          name="refresh-outline"
+          [class.spinning]="isRefreshing">
+        </ion-icon>
+      </ion-button>
       <ion-button class="de-header-toolbar-btn" (click)="viewNotifications()" fill="clear">
         <ion-icon slot="icon-only" name="notifications-circle-outline"></ion-icon>
       </ion-button>

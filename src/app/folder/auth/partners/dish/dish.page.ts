@@ -75,12 +75,11 @@ export class DishPage implements OnInit {
   }
   
   loadCategory() {
-    this.auth.getAllCategory().subscribe({
-      next: async (value: any) => {
-        console.log(value);
-        this.categories = value['data']['content'];
+    this.auth.getAllCategoriesForSelect().subscribe({
+      next: (categories) => {
+        this.categories = categories;
       },
-      error: async (error: HttpErrorResponse) => {
+      error: (error: HttpErrorResponse) => {
         console.log(error.error);
       },
     });

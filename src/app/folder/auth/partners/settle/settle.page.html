@@ -59,6 +59,14 @@
       <div class="de-table-toolbar">
         <span class="de-card-header__title">Settlement Details</span>
         <div class="d-flex align-items-center gap-3">
+          <ion-button
+            fill="outline"
+            size="small"
+            class="de-header-toolbar-btn"
+            (click)="exportToCsv()">
+            <ion-icon name="download-outline" slot="start"></ion-icon>
+            Export CSV
+          </ion-button>
           <ion-select
             [value]="sortStatus"
             (ionChange)="onSortStatusChange($event)"

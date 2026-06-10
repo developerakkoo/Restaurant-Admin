@@ -42,6 +42,7 @@
               <th>Date</th>
               <th>Full Name</th>
               <th>Phone No</th>
+              <th>Status</th>
               <th>Address</th>
               <th>Actions</th>
             </tr>
@@ -51,6 +52,10 @@
               <td class="date-cell">{{item.createdAt | date:"fullDate"}}</td>
               <td class="name-cell">{{item?.firstName || "No Name Added"}} {{item?.lastName}}</td>
               <td class="phone-cell">{{item?.phoneNumber}}</td>
+              <td class="status-cell">
+                <ion-badge *ngIf="item?.isOnline === true" color="success" mode="ios">Online</ion-badge>
+                <ion-badge *ngIf="item?.isOnline !== true" color="medium" mode="ios">Offline</ion-badge>
+              </td>
               <td class="address-cell">{{item?.address || "No Address Added"}}</td>
               <td class="actions-cell">
                 <div class="action-buttons">

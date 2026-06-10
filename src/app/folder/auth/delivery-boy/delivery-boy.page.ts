@@ -1,26 +1,43 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
+import { AdminSocketService } from 'src/app/services/admin-socket.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-delivery-boy',
   templateUrl: './delivery-boy.page.html',
   styleUrls: ['./delivery-boy.page.scss'],
 })
-export class DeliveryBoyPage implements OnInit {
-
+export class DeliveryBoyPage implements OnInit, OnDestroy {
   boys:any[] = [];
   query:string = "";
   status:string = "";
-  constructor(private auth:AuthService,
+  private statusSubscription?: Subscription;
+
+  constructor(
+    private auth:AuthService,
     private router: Router,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private adminSocket: AdminSocketService
   ) {}
 
   ngOnInit() {
     console.log('DeliveryBoyPage initialized');
+    this.adminSocket.initAdminSocket();
+    this.statusSubscription = this.adminSocket.onDriverStatusChanged().subscribe((event) => {
+      this.boys = this.boys.map((boy) =>
+        boy._id === event.userId
+          ? { ...boy, isOnline: event.isOnline, lastSeen: event.lastSeen }
+          : boy
+      );
+    });
+  }
+
+  ngOnDestroy() {
+    this.statusSubscription?.unsubscribe();
   }
 
   onSearchChange(ev: any) {

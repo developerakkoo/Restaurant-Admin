@@ -1,8 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActionSheetController, LoadingController, ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
+import { AdminSocketService } from 'src/app/services/admin-socket.service';
+import { Subscription } from 'rxjs';
 import * as XLSX from 'xlsx';
 import {
   OrderStatus,
@@ -20,8 +22,9 @@ interface DeliveryBoy {
   lastName: string;
   phoneNumber: string;
   isBusy?: boolean;
+  isOnline?: boolean;
   activeOrderCount?: number;
-  [key: string]: any; // Allow other fields
+  [key: string]: any;
 }
 
 @Component({
@@ -29,7 +32,7 @@ interface DeliveryBoy {
   templateUrl: './orders.page.html',
   styleUrls: ['./orders.page.scss'],
 })
-export class OrdersPage implements OnInit {
+export class OrdersPage implements OnInit, OnDestroy {
   
   orderId:any;
   orders: any[] = [];
@@ -54,17 +57,47 @@ totalPages: number = 1;
 
   filename:any= "new-sheet.xlsx";
   isRefreshing: boolean = false;
-  constructor(private auth:AuthService,
+  private statusSubscription?: Subscription;
+
+  constructor(
+    private auth:AuthService,
     private router:Router,
     private actionSheetController: ActionSheetController,
     private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private adminSocket: AdminSocketService
   ) {}
 
   ngOnInit() {
     console.log("Ng On Init");
-    // Initialize status options
     this.initializeStatusOptions();
+    this.adminSocket.initAdminSocket();
+    this.statusSubscription = this.adminSocket.onDriverStatusChanged().subscribe((event) => {
+      const existingIndex = this.drivers.findIndex((driver) => driver._id === event.userId);
+      if (event.isOnline) {
+        if (existingIndex >= 0) {
+          this.drivers[existingIndex] = {
+            ...this.drivers[existingIndex],
+            isOnline: true,
+            lastSeen: event.lastSeen,
+          };
+        } else {
+          this.getAllDeliveryBoys();
+        }
+      } else if (existingIndex >= 0) {
+        this.drivers = this.drivers.filter((driver) => driver._id !== event.userId);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.statusSubscription?.unsubscribe();
+  }
+
+  get assignableDrivers(): DeliveryBoy[] {
+    return this.drivers.filter(
+      (driver) => driver.isOnline === true && !driver.isBusy
+    );
   }
 
   /**
@@ -150,13 +183,13 @@ console.log(type);
     
   }
   async getAllDeliveryBoys(){
-    this.auth.getAllDeliveryBoys(this.query, 1, 50,"","", "")
+    this.auth.getAllDeliveryBoys(this.query, 1, 50, "", "", 2, true)
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
-        this.drivers = value['data']['content'];
-        //filter The Array For only unblocked Drivers
-        
+        this.drivers = (value['data']['content'] || []).filter(
+          (driver: DeliveryBoy) => driver.isOnline === true
+        );
       },
       error:async(error:HttpErrorResponse) =>{
         console.log(error.error);
@@ -171,17 +204,21 @@ console.log(type);
       next:async(value:any) =>{
         console.log(value);
         // Handle different response structures
+        let content: any[] = [];
         if (Array.isArray(value['data'])) {
-          this.orders = value['data'];
+          content = value['data'];
         } else if (value['data'] && Array.isArray(value['data']['content'])) {
-          this.orders = value['data']['content'];
+          content = value['data']['content'];
         } else if (value['data'] && Array.isArray(value['data']['data'])) {
-          this.orders = value['data']['data'];
-        } else {
-          this.orders = [];
+          content = value['data']['data'];
         }
+        this.orders = content;
         this.filteredOrders = [...this.orders];
-        this.updatePagination();
+        if (this.searchTerm) {
+          this.filterOrders();
+        } else {
+          this.updatePagination();
+        }
       },
       error:async(error:HttpErrorResponse) =>{
         console.log(error.error);
@@ -359,9 +396,9 @@ private async assignMultipleDrivers(orderId: string, deliveryBoyIds: string[]) {
 filterOrders() {
   const term = this.searchTerm.toLowerCase();
   this.filteredOrders = this.orders.filter(order =>
-    order.orderId.toLowerCase().includes(term) ||
-    order.user?.name.toLowerCase().includes(term) ||
-    order.userAddress?.address.toLowerCase().includes(term)
+    (order.orderId ?? '').toLowerCase().includes(term) ||
+    (order.user?.name ?? '').toLowerCase().includes(term) ||
+    (order.userAddress?.address ?? '').toLowerCase().includes(term)
   );
   this.currentPage = 1;
   this.updatePagination();

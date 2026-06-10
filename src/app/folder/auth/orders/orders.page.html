@@ -84,10 +84,10 @@
     </div>
     </div>
 
-    <div class="de-table-card" *ngIf="orders.length > 0">
+    <div class="de-table-card" *ngIf="filteredOrders.length > 0">
       <div class="de-table-toolbar">
         <span class="de-card-header__title">Order List</span>
-        <span class="de-count-badge">{{ orders.length }} orders</span>
+        <span class="de-count-badge">{{ filteredOrders.length }} orders</span>
       </div>
       <div class="de-table-scroll table-responsive">
         <table class="de-table modern-table">
@@ -103,11 +103,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let order of orders" class="table-row">
+            <tr *ngFor="let order of paginatedOrders" class="table-row">
               <td class="order-id-cell">{{ order.orderId }}</td>
               <td class="date-cell">{{ order.createdAt | date:'short' }}</td>
-              <td class="customer-cell">{{ order.user?.phoneNumber }}</td>
-              <td class="address-cell">{{ order.userAddress?.address }}</td>
+              <td class="customer-cell">
+                {{ order.user?.name || 'N/A' }}
+                <small *ngIf="order.user?.phoneNumber" class="text-muted d-block">{{ order.user.phoneNumber }}</small>
+              </td>
+              <td class="address-cell">{{ order.userAddress?.address || 'N/A' }}</td>
               <td class="amount-cell">{{ order.priceDetails?.totalAmountToPay | currency: 'INR' }}</td>
               <td class="status-cell">
                 <ion-badge [color]="getStatusColor(order.orderStatus ?? order.status ?? 0)" mode="ios" class="status-badge">
@@ -149,11 +152,15 @@
                     placeholder="Select Driver"
                     class="driver-select"
                   >
-                    <ion-select-option *ngFor="let d of drivers" [value]="d._id" [disabled]="d.isBusy">
+                    <ion-select-option *ngFor="let d of assignableDrivers" [value]="d._id">
                       {{d.firstName}} {{d.lastName}}
-                      <span *ngIf="d.isBusy" class="busy-badge"> (Busy)</span>
                     </ion-select-option>
                   </ion-select>
+                  <small
+                    *ngIf="canAdminPerformAction(order?.orderStatus) && ((order?.orderStatus) === 4 || (order?.orderStatus) === 1) && assignableDrivers.length === 0"
+                    class="text-muted">
+                    No online drivers available
+                  </small>
                   
                   <!-- Display assigned delivery boys -->
                   <div *ngIf="order?.assignedDeliveryBoys && order.assignedDeliveryBoys.length > 0" class="assigned-drivers">
@@ -186,7 +193,7 @@
     </div>
 
   <!-- Pagination -->
-    <nav class="de-pagination" *ngIf="orders.length > pageSize">
+    <nav class="de-pagination" *ngIf="filteredOrders.length > pageSize">
       <ul class="pagination" style="display: flex; list-style: none; margin: 0; padding: 0; gap: 8px">
         <li class="page-item" [class.disabled]="currentPage === 1">
           <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
@@ -204,7 +211,7 @@
       </ul>
     </nav>
 
-    <div class="de-empty" *ngIf="orders.length === 0">
+    <div class="de-empty" *ngIf="filteredOrders.length === 0">
       <ion-icon name="receipt-outline" class="de-empty__icon"></ion-icon>
       <h4>No Orders Found</h4>
       <p>Orders will appear here once customers start placing them</p>

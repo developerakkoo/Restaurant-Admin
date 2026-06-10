@@ -1,7 +1,7 @@
 <ion-header class="de-header ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="home"></ion-back-button>
+      <ion-back-button defaultHref="/folder/partners"></ion-back-button>
     </ion-buttons>
     <ion-title class="de-header__title">Register your Hotel</ion-title>
   </ion-toolbar>
@@ -14,26 +14,73 @@
       <p>Add hotel details for this partner</p>
     </div>
 
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="ion-margin-top">
-      <ion-input type="text" formControlName="hotelName" label="Hotel Name" labelPlacement="stacked" fill="outline" placeholder="Enter your hotel name"></ion-input>
-      <br>
+    <div class="de-location-card" *ngIf="lat != null && lng != null">
+      <div class="de-location-card__header">
+        <p class="t-label de-location-card__label">Pinned location</p>
+        <button type="button" class="de-location-card__change" (click)="changeLocation()">
+          Change location
+        </button>
+      </div>
+      <p class="de-location-card__address">
+        {{ pinnedAddress || form.value.address || 'Address from map pin' }}
+      </p>
+      <p class="de-location-card__coords t-mono">
+        {{ lat | number : '1.5-5' }}, {{ lng | number : '1.5-5' }}
+      </p>
+    </div>
 
-      <ion-input type="text" formControlName="address" label="Hotel Address" labelPlacement="stacked" fill="outline" placeholder="Enter Complete hotel address"></ion-input>
-      <br>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="ion-margin-top">
+      <ion-input
+        type="text"
+        formControlName="hotelName"
+        label="Hotel Name"
+        labelPlacement="stacked"
+        fill="outline"
+        placeholder="Enter your hotel name"
+      ></ion-input>
+      <br />
+
+      <ion-input
+        type="text"
+        formControlName="address"
+        label="Hotel Address"
+        labelPlacement="stacked"
+        fill="outline"
+        placeholder="Enter complete hotel address"
+      ></ion-input>
+      <br />
+
       <ion-item>
         <ion-label>Category</ion-label>
-        <ion-select formControlName="categoryId" multiple="true" placeholder="Select here" interface="popover">
-          <ion-select-option *ngFor="let cat of categories" [value]="cat._id">{{cat.name}}</ion-select-option>
+        <ion-select
+          formControlName="categoryId"
+          multiple="true"
+          placeholder="Select here"
+          interface="popover"
+        >
+          <ion-select-option *ngFor="let cat of categories" [value]="cat._id">
+            {{ cat.name }}
+          </ion-select-option>
         </ion-select>
       </ion-item>
 
-      <br>
-      <ion-button size="large" expand="block" color="primary" type="submit" [disabled]="form.invalid">
+      <br />
+      <ion-button
+        size="large"
+        expand="block"
+        color="primary"
+        type="submit"
+        [disabled]="form.invalid"
+      >
         Next
       </ion-button>
     </form>
 
-    <ion-modal [isOpen]="isHotelImageUploadModalOpen" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+    <ion-modal
+      [isOpen]="isHotelImageUploadModalOpen"
+      [initialBreakpoint]="0.75"
+      [breakpoints]="[0, 0.25, 0.5, 0.75]"
+    >
       <ng-template>
         <ion-header class="ion-no-border">
           <ion-toolbar>
@@ -45,7 +92,7 @@
         </ion-header>
         <ion-content class="ion-padding">
           <div class="image-upload-container">
-            <input #f hidden type="file" name="" (change)="uploadImage($event)" id="">
+            <input #f hidden type="file" (change)="uploadImage($event)" />
             <ion-button (click)="f.click()" expand="block" fill="outline" shape="round">
               Select and Upload
             </ion-button>

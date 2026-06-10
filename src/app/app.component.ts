@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { DataService } from './services/data.service';
 import { Router } from '@angular/router';
+import { AdminSocketService } from './services/admin-socket.service';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +32,11 @@ export class AppComponent {
       icon: 'location',
     },
   ];
-  constructor(private data: DataService, private router: Router) {
+  constructor(
+    private data: DataService,
+    private router: Router,
+    private adminSocket: AdminSocketService
+  ) {
     this.checkForLoginStatus();
   }
 
@@ -40,6 +45,7 @@ export class AppComponent {
     console.log(userId);
     if (userId != null || userId != undefined) {
       console.log('userid not null');
+      this.adminSocket.initAdminSocket();
       this.router.navigate(['folder', 'dash']);
       // this.router.navigateByUrl("folder/orders/view/68075aa7b3b25603a1768ebd")
     } else {

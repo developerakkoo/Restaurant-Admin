@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { AddPage } from './add/add.page';
 import { AuthService } from 'src/app/services/auth.service';
-import { HttpErrorResponse, HttpParameterCodec } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
@@ -14,6 +14,8 @@ import { DataService } from 'src/app/services/data.service';
 export class CategoryPage implements OnInit {
   query: string = "";
   cats: any[] = [];
+  isRefreshing = false;
+  isLoading = false;
 
   constructor(
     private router: Router,
@@ -27,7 +29,43 @@ export class CategoryPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.getAllCategory();
+    this.loadCategories();
+  }
+
+  refreshCategories() {
+    this.loadCategories(true);
+  }
+
+  private getCacheKey(): string {
+    return `categories_${this.query}`;
+  }
+
+  loadCategories(fromRefresh = false) {
+    const cacheKey = this.getCacheKey();
+
+    if (fromRefresh) {
+      this.isRefreshing = true;
+    } else {
+      this.isLoading = true;
+    }
+
+    this.auth.getAllCategories(this.query).subscribe({
+      next: async (value: any) => {
+        this.cats = value['data']['content'] ?? [];
+        await this.dataService.set(cacheKey, JSON.stringify(this.cats));
+        this.isLoading = false;
+        this.isRefreshing = false;
+      },
+      error: async (error: HttpErrorResponse) => {
+        console.log(error);
+        const cachedData = await this.dataService.get(cacheKey);
+        if (cachedData) {
+          this.cats = JSON.parse(cachedData);
+        }
+        this.isLoading = false;
+        this.isRefreshing = false;
+      },
+    });
   }
 
   viewNotifications() {
@@ -48,32 +86,7 @@ export class CategoryPage implements OnInit {
 
     const data = await modal.onDidDismiss();
     console.log(data);
-    const cacheKey = `categories_${this.query}`;
-    await this.dataService.remove(cacheKey); // Invalidate cache after deletion
-    this.getAllCategory();
-  }
-
-  async getAllCategory() {
-    const cacheKey = `categories_${this.query}`;
-    const cachedData = await this.dataService.get(cacheKey);
-
-    if (cachedData) {
-      console.log('Using cached data');
-      this.cats = JSON.parse(cachedData);
-      return;
-    }
-
-    this.auth.getAllCategories(this.query)
-      .subscribe({
-        next: async (value: any) => {
-          console.log(value);
-          this.cats = value['data']['content'];
-          await this.dataService.set(cacheKey, JSON.stringify(this.cats)); // Cache the response
-        },
-        error: async (error: HttpErrorResponse) => {
-          console.log(error);
-        }
-      });
+    this.loadCategories();
   }
 
   delete(item: any) {
@@ -81,9 +94,7 @@ export class CategoryPage implements OnInit {
       .subscribe({
         next: async (value: any) => {
           console.log(value);
-          const cacheKey = `categories_${this.query}`;
-          await this.dataService.remove(cacheKey); // Invalidate cache after deletion
-          this.getAllCategory();
+          this.loadCategories();
         },
         error: async (error: HttpErrorResponse) => {
           console.log(error);

@@ -34,6 +34,15 @@
           </div>
           <div class="col-md-6">
             <div class="mb-3">
+              <label class="form-label fw-bold">Activity Status</label>
+              <p class="form-control-plaintext">
+                <ion-badge *ngIf="deliveryBoy?.isOnline === true" color="success" mode="ios">Online</ion-badge>
+                <ion-badge *ngIf="deliveryBoy?.isOnline !== true" color="medium" mode="ios">Offline</ion-badge>
+              </p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
               <label class="form-label fw-bold">Date of Birth</label>
               <p class="form-control-plaintext">{{deliveryBoy?.dateOfBirth || 'N/A'}}</p>
             </div>
@@ -88,6 +97,13 @@
       <div class="de-table-toolbar">
         <span class="de-card-header__title">Commission Details</span>
         <div class="d-flex align-items-center gap-3">
+          <ion-button
+            fill="outline"
+            size="small"
+            (click)="exportCommissionsToCsv()">
+            <ion-icon name="download-outline" slot="start"></ion-icon>
+            Export CSV
+          </ion-button>
           <ion-select
             [value]="sortStatus"
             (ionChange)="onSortStatusChange($event)"
@@ -203,6 +219,22 @@
     <div class="de-table-card shadow-sm mb-4">
       <div class="de-table-toolbar">
         <span class="de-card-header__title">Settlement History</span>
+        <div class="d-flex align-items-center gap-2">
+          <ion-button
+            fill="outline"
+            size="small"
+            (click)="exportSettlementHistoryToCsv()">
+            <ion-icon name="download-outline" slot="start"></ion-icon>
+            Export CSV
+          </ion-button>
+          <ion-button
+            fill="outline"
+            size="small"
+            (click)="exportDetailedSettlementHistoryToCsv()">
+            <ion-icon name="document-text-outline" slot="start"></ion-icon>
+            Export Detailed CSV
+          </ion-button>
+        </div>
       </div>
       <div class="card-body">
         <div *ngIf="settlementLoading" class="text-center my-4">

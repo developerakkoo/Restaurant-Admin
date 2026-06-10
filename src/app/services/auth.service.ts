@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, forkJoin, map, of, switchMap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { DataService } from './data.service';
 import { Form } from '@angular/forms';
@@ -298,17 +298,25 @@ export class AuthService {
     pageSize: any,
     startDate: any,
     endDate: any,
-    status: any
+    status: any,
+    isOnline?: boolean | string
   ) {
-    return this.http.get(
+    let url =
       environment.URL +
-        `admin/get/all-deliveryBoy?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1`,
-      {
-        headers: {
-          'x-access-token': this.accessToken.value,
-        },
-      }
-    );
+      `admin/get/all-deliveryBoy?q=${query}&page=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}&populate=1`;
+
+    if (status !== undefined && status !== null && status !== '') {
+      url += `&status=${status}`;
+    }
+    if (isOnline !== undefined && isOnline !== null && isOnline !== '') {
+      url += `&isOnline=${isOnline}`;
+    }
+
+    return this.http.get(url, {
+      headers: {
+        'x-access-token': this.accessToken.value,
+      },
+    });
   }
 
   deleteDeliveryBoy(deliveryBoyId: any) {
@@ -360,9 +368,30 @@ export class AuthService {
     startDate: any = '',
     endDate: any = ''
   ) {
+    const params: string[] = [
+      `page=${pageNumber}`,
+      `pageSize=${pageSize}`,
+      'populate=1',
+    ];
+
+    if (query) {
+      params.push(`q=${encodeURIComponent(query)}`);
+    }
+    if (status !== undefined && status !== null && status !== '') {
+      params.push(`status=${status}`);
+    }
+    if (hotelId) {
+      params.push(`hotelId=${hotelId}`);
+    }
+    if (startDate) {
+      params.push(`startDate=${startDate}`);
+    }
+    if (endDate) {
+      params.push(`endDate=${endDate}`);
+    }
+
     return this.http.get(
-      environment.URL +
-        `admin/get/populated-order`,
+      environment.URL + `admin/order/get-all?${params.join('&')}`,
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -634,6 +663,47 @@ export class AuthService {
         'x-access-token': this.accessToken.value.toString(),
       },
     });
+  }
+
+  getAllCategoriesForSelect() {
+    const headers = {
+      'x-access-token': this.accessToken.value.toString(),
+    };
+    const fetchPage = (page: number) =>
+      this.http.get<any>(
+        `${environment.URL}admin/category/get/all?pageSize=100&page=${page}`,
+        { headers }
+      );
+
+    return fetchPage(1).pipe(
+      switchMap((first) => {
+        const data = first?.data ?? {};
+        const content = [...(data.content ?? [])];
+        const totalPages = data.totalPages ?? 1;
+
+        if (totalPages <= 1) {
+          return of(
+            content.sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''))
+          );
+        }
+
+        const remainingPages = Array.from(
+          { length: totalPages - 1 },
+          (_, index) => fetchPage(index + 2)
+        );
+
+        return forkJoin(remainingPages).pipe(
+          map((pages) => {
+            for (const page of pages) {
+              content.push(...(page?.data?.content ?? []));
+            }
+            return content.sort((a, b) =>
+              (a.name ?? '').localeCompare(b.name ?? '')
+            );
+          })
+        );
+      })
+    );
   }
 
   uploadImageForMultipleDish(formdata: FormData) {

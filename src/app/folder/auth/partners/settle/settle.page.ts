@@ -2,6 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { HttpService } from 'src/app/services/http.service';
+import {
+  downloadCsv,
+  formatCsvDate,
+  sanitizeFilenamePart,
+} from 'src/app/utils/csv-export.util';
 
 @Component({
   selector: 'app-settle',
@@ -169,5 +174,53 @@ export class SettlePage implements OnInit {
       position: 'top'
     });
     await toast.present();
+  }
+
+  exportToCsv() {
+    const rows = this.getFilteredSettlements();
+    if (!rows.length) {
+      this.showToast('No settlement records to export', 'warning');
+      return;
+    }
+
+    const hotelName =
+      rows[0]?.hotelId?.hotelName ||
+      rows[0]?.hotelId?.ownerName ||
+      this.hotelId ||
+      'partner';
+    const datePart = new Date().toISOString().slice(0, 10);
+    const filename = `partner-settlements-${sanitizeFilenamePart(String(hotelName))}-${this.sortStatus}-${datePart}.csv`;
+
+    const csvRows: string[][] = [
+      [
+        'Settlement ID',
+        'Hotel Name',
+        'Order ID',
+        'Dish',
+        'Quantity',
+        'Partner Price',
+        'Admin Earning',
+        'Total Partner Earning',
+        'Status',
+        'Created At',
+        'Settled At',
+      ],
+      ...rows.map((settlement) => [
+        settlement._id ?? '',
+        settlement.hotelId?.hotelName ?? '',
+        settlement.orderId?.orderId ?? '',
+        settlement.dishId?.name ?? '',
+        String(settlement.quantity ?? ''),
+        String(settlement.partnerPrice ?? ''),
+        String(settlement.adminEarning ?? ''),
+        String(settlement.totalPartnerEarning ?? ''),
+        settlement.isSettled ? 'Settled' : 'Unsettled',
+        formatCsvDate(settlement.createdAt),
+        formatCsvDate(settlement.settledAt),
+      ]),
+    ];
+
+    downloadCsv(filename, csvRows);
+    this.showToast(`Exported ${rows.length} settlement record(s)`, 'success');
   }
 }

@@ -3,7 +3,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": ["jquery", "datatables.net"]
+    "types": ["jquery", "datatables.net", "google.maps"]
   },
   "files": [
     "src/main.ts",
