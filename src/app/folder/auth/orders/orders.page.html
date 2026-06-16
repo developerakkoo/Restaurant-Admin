@@ -121,7 +121,14 @@
                   ></ion-icon>
                   {{ getStatusText(order.orderStatus ?? order.status ?? 0) }}
                 </ion-badge>
-                <p>{{order.orderStatus ?? order.status}}</p>
+                <ion-badge
+                  *ngIf="showRefundPendingBadge(order)"
+                  color="warning"
+                  mode="ios"
+                  class="status-badge mt-1"
+                >
+                  Refund Pending
+                </ion-badge>
               </td>
               <td class="actions-cell">
                 <div class="action-buttons">

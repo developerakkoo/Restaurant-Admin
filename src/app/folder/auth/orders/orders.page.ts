@@ -58,6 +58,7 @@ totalPages: number = 1;
   filename:any= "new-sheet.xlsx";
   isRefreshing: boolean = false;
   private statusSubscription?: Subscription;
+  private orderEventSubscription?: Subscription;
 
   constructor(
     private auth:AuthService,
@@ -88,10 +89,27 @@ totalPages: number = 1;
         this.drivers = this.drivers.filter((driver) => driver._id !== event.userId);
       }
     });
+
+    this.orderEventSubscription = new Subscription();
+    this.orderEventSubscription.add(
+      this.adminSocket.onOrderCancelled().subscribe(() => {
+        this.getAllOrders();
+      })
+    );
+    this.orderEventSubscription.add(
+      this.adminSocket.onRefundRequired().subscribe(async (event) => {
+        await this.presentToast(
+          `Refund required for order ${event?.orderId || ''}`.trim(),
+          'warning'
+        );
+        this.getAllOrders();
+      })
+    );
   }
 
   ngOnDestroy() {
     this.statusSubscription?.unsubscribe();
+    this.orderEventSubscription?.unsubscribe();
   }
 
   get assignableDrivers(): DeliveryBoy[] {
@@ -108,6 +126,7 @@ totalPages: number = 1;
       const allStatuses = getAdminStatuses();
       this.statusOptions = [
         { value: '', label: 'All' },
+        { value: 'needs_refund', label: 'Needs refund' },
         ...allStatuses.map(status => ({
           value: status.toString(),
           label: getStatusName(status),
@@ -199,7 +218,8 @@ console.log(type);
   }
   async getAllOrders(){
     console.log("Get All Orders");
-    this.auth.getAllOrders(this.query, 1, 50, this.status,"",this.startDate,this.endDate)
+    const apiStatus = this.status === 'needs_refund' ? '' : this.status;
+    this.auth.getAllOrders(this.query, 1, 50, apiStatus,"",this.startDate,this.endDate)
     .subscribe({
       next:async(value:any) =>{
         console.log(value);
@@ -211,6 +231,9 @@ console.log(type);
           content = value['data']['content'];
         } else if (value['data'] && Array.isArray(value['data']['data'])) {
           content = value['data']['data'];
+        }
+        if (this.status === 'needs_refund') {
+          content = content.filter((order) => this.orderNeedsRefund(order));
         }
         this.orders = content;
         this.filteredOrders = [...this.orders];
@@ -395,13 +418,34 @@ private async assignMultipleDrivers(orderId: string, deliveryBoyIds: string[]) {
 }
 filterOrders() {
   const term = this.searchTerm.toLowerCase();
-  this.filteredOrders = this.orders.filter(order =>
-    (order.orderId ?? '').toLowerCase().includes(term) ||
-    (order.user?.name ?? '').toLowerCase().includes(term) ||
-    (order.userAddress?.address ?? '').toLowerCase().includes(term)
-  );
+  this.filteredOrders = this.orders.filter(order => {
+    const matchesSearch =
+      (order.orderId ?? '').toLowerCase().includes(term) ||
+      (order.user?.name ?? '').toLowerCase().includes(term) ||
+      (order.userAddress?.address ?? '').toLowerCase().includes(term);
+    const matchesRefund =
+      this.status !== 'needs_refund' || this.orderNeedsRefund(order);
+    return matchesSearch && matchesRefund;
+  });
   this.currentPage = 1;
   this.updatePagination();
+}
+
+orderNeedsRefund(order: any): boolean {
+  const cancelled = [5, 7].includes(Number(order?.orderStatus ?? order?.status));
+  const refundStatus = order?.refundStatus;
+  const paidOnline = ['RAZORPAY', 'UPI'].includes(
+    String(order?.paymentMode || '').toUpperCase()
+  );
+  return (
+    cancelled &&
+    paidOnline &&
+    (refundStatus === 'PENDING' || refundStatus === 'PROCESSING')
+  );
+}
+
+showRefundPendingBadge(order: any): boolean {
+  return this.orderNeedsRefund(order);
 }
 
 updatePagination() {

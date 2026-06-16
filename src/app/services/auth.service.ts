@@ -416,6 +416,18 @@ export class AuthService {
     });
   }
 
+  updateOrderRefund(orderId: string, body: { refundStatus: string; refundMessage?: string }) {
+    return this.http.put(
+      environment.URL + `admin/order/${orderId}/refund`,
+      body,
+      {
+        headers: {
+          'x-access-token': this.accessToken.value,
+        },
+      }
+    );
+  }
+
   getCustomerById(userId: any) {
     return this.http.get(environment.URL + `user/get/user/${userId}`, {
       headers: {

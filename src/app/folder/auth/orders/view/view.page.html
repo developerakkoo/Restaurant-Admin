@@ -12,6 +12,7 @@
     <div class="de-hero">
       <h2>Order Details</h2>
       <p>View customer, restaurant, and delivery information</p>
+      <ion-badge color="primary">{{ orderStatus }}</ion-badge>
     </div>
 
     <div class="container-fluid">
@@ -99,6 +100,53 @@
       </div>
 
       <hr>
+
+      <hr />
+
+      <div class="row" *ngIf="showRefundPanel()">
+        <div class="col-12 mb-3">
+          <div class="card shadow-sm border-warning">
+            <div class="card-header bg-warning text-dark">
+              <h5 class="mb-0">Refund Management</h5>
+            </div>
+            <div class="card-body">
+              <p><strong>Payment Mode:</strong> {{ paymentMode }}</p>
+              <p><strong>Payment ID:</strong> {{ paymentId || 'N/A' }}</p>
+              <p><strong>Refund Amount:</strong> ₹{{ refundAmount }}</p>
+              <p><strong>Current Status:</strong> {{ refundStatus }}</p>
+              <p *ngIf="refundMessage"><strong>Current Message:</strong> {{ refundMessage }}</p>
+
+              <div class="mb-3">
+                <label class="form-label">Refund Status</label>
+                <select class="form-select" [(ngModel)]="refundFormStatus">
+                  <option value="PENDING">PENDING</option>
+                  <option value="PROCESSING">PROCESSING</option>
+                  <option value="COMPLETED">COMPLETED</option>
+                  <option value="FAILED">FAILED</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Customer Refund Message</label>
+                <textarea
+                  class="form-control"
+                  rows="3"
+                  [(ngModel)]="refundFormMessage"
+                  placeholder="Message shown to the customer in the app"
+                ></textarea>
+              </div>
+
+              <button
+                class="btn btn-danger"
+                [disabled]="isSavingRefund"
+                (click)="saveRefundDetails()"
+              >
+                Save Refund Update
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="de-table-card shadow-sm mb-4">
         <div class="de-table-toolbar">

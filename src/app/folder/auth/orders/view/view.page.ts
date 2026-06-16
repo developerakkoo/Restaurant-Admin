@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -10,119 +11,155 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./view.page.scss'],
 })
 export class ViewPage implements OnInit {
-
-  orderId: string;
+  mongoOrderId = '';
+  orderId = '';
+  orderStatus = 0;
   user: any;
   hotel: any;
-  partner:any;
-  delivery:any;
+  partner: any;
+  delivery: any;
   address: any;
   products: any[] = [];
   orderTimeline: any[] = [];
   priceDetails: any;
   assignedDeliveryBoy: any;
-  paymentMode!: string;
+  paymentMode = '';
+  paymentId = '';
   partnerEarning = 0;
-adminEarning = 0;
-  
-subscriptions!:Subscription;
-  isLoading:boolean = false;
-  constructor(private auth:AuthService,
-              private route: ActivatedRoute,
-              private router:Router
+  adminEarning = 0;
+
+  refundStatus = 'NOT_APPLICABLE';
+  refundMessage = '';
+  refundAmount = 0;
+  refundFormStatus = 'PENDING';
+  refundFormMessage = '';
+  isSavingRefund = false;
+
+  subscriptions!: Subscription;
+  isLoading = false;
+
+  constructor(
+    private auth: AuthService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private toastController: ToastController
   ) {
-    this.orderId = this.route.snapshot.paramMap.get("id") as string;
-   }
+    this.mongoOrderId = this.route.snapshot.paramMap.get('id') as string;
+  }
 
   ngOnInit() {
-    console.log("");
     this.getOrder();
-
-    
   }
 
-  ionViewDidLeave(){
-    this.subscriptions.unsubscribe();
+  ionViewDidLeave() {
+    this.subscriptions?.unsubscribe();
   }
 
-  ionViewDidEnter(){
-  }
-
-  getOrder(){
+  getOrder() {
     this.isLoading = true;
-   this.subscriptions =  this.auth.getOrderById(this.orderId)
-    .subscribe({
-      next:async(value:any) =>{
-        console.log("Order Details Detched");
-        
-        console.log(value);
-        this.orderId = value['data']['orderId'];
-        this.assignedDeliveryBoy = value['data']['assignedDeliveryBoy'];
-        this.hotel = value['data']['hotelId'];
-        this.user = value['data']['userId'];
-        this.address = value['data']['address'];
-        this.priceDetails = value['data']['priceDetails']
-        this.orderTimeline = value['data']['orderTimeline'];
-        this.products = value['data']['products'];
-        this.paymentMode = value['data']['paymentMode'];
-        this.delivery = value['data']['assignedDeliveryBoy']['_id'];
-        this.partner = value['data']['hotelId']['userId'];
+    this.subscriptions = this.auth.getOrderById(this.mongoOrderId).subscribe({
+      next: async (value: any) => {
+        const data = value['data'];
+        this.orderId = data['orderId'];
+        this.orderStatus = data['orderStatus'] ?? data['status'] ?? 0;
+        this.assignedDeliveryBoy = data['assignedDeliveryBoy'];
+        this.hotel = data['hotelId'];
+        this.user = data['userId'];
+        this.address = data['address'];
+        this.priceDetails = data['priceDetails'];
+        this.orderTimeline = data['orderTimeline'] || [];
+        this.products = data['products'] || [];
+        this.paymentMode = data['paymentMode'] || '';
+        this.paymentId = data['paymentId'] || '';
+        this.refundStatus = data['refundStatus'] || 'NOT_APPLICABLE';
+        this.refundMessage = data['refundMessage'] || '';
+        this.refundAmount = data['refundAmount'] || data['priceDetails']?.totalAmountToPay || 0;
+        this.refundFormStatus = this.refundStatus === 'NOT_APPLICABLE' ? 'PENDING' : this.refundStatus;
+        this.refundFormMessage = this.refundMessage;
+        this.delivery = data['assignedDeliveryBoy']?._id;
+        this.partner = data['hotelId']?.userId;
+
         let partnerTotal = 0;
-      let userTotal = 0;
+        let userTotal = 0;
 
-      this.products.forEach((item: any) => {
-        const qty = item.quantity || 1;
-        const partnerPrice = item.dishId.partnerPrice || 0;
-        const userPrice = item.dishId.userPrice || 0;
+        this.products.forEach((item: any) => {
+          const qty = item.quantity || 1;
+          const partnerPrice = item.dishId?.partnerPrice || 0;
+          const userPrice = item.dishId?.userPrice || 0;
 
-        partnerTotal += partnerPrice * qty;
-        userTotal += userPrice * qty;
-      });
+          partnerTotal += partnerPrice * qty;
+          userTotal += userPrice * qty;
+        });
 
-      const gst = this.priceDetails.gstAmount || 0;
-      const platformFee = this.priceDetails.platformFee || 0;
-      const discount = this.priceDetails.discount || 0;
+        const discount = this.priceDetails?.discount || 0;
+        const platformFee = this.priceDetails?.platformFee || 0;
 
-      this.partnerEarning = partnerTotal;
-      // Option 1: Exclude GST
-this.adminEarning = userTotal - partnerTotal - discount + platformFee;
-
-// Option 2: Include GST if admin keeps it
-// this.adminEarning = userTotal - partnerTotal - discount + gst + platformFee;
-
-this.partnerEarning = partnerTotal;
+        this.partnerEarning = partnerTotal;
+        this.adminEarning = userTotal - partnerTotal - discount + platformFee;
         this.isLoading = false;
       },
-      error:async(error:HttpErrorResponse) =>{
+      error: async (error: HttpErrorResponse) => {
         console.log(error);
         this.isLoading = false;
-        
-      }
-    })
+      },
+    });
+  }
+
+  showRefundPanel(): boolean {
+    const paidOnline = ['RAZORPAY', 'UPI'].includes(
+      String(this.paymentMode || '').toUpperCase()
+    );
+    const cancelled = [5, 7].includes(Number(this.orderStatus));
+    return paidOnline && cancelled;
+  }
+
+  async saveRefundDetails() {
+    if (
+      ['COMPLETED', 'FAILED'].includes(this.refundFormStatus) &&
+      !String(this.refundFormMessage || '').trim()
+    ) {
+      await this.presentToast('Customer refund message is required', 'danger');
+      return;
+    }
+
+    this.isSavingRefund = true;
+    this.auth
+      .updateOrderRefund(this.mongoOrderId, {
+        refundStatus: this.refundFormStatus,
+        refundMessage: this.refundFormMessage,
+      })
+      .subscribe({
+        next: async () => {
+          await this.presentToast('Refund details updated', 'success');
+          this.getOrder();
+          this.isSavingRefund = false;
+        },
+        error: async (error: HttpErrorResponse) => {
+          await this.presentToast(
+            error?.error?.message || 'Could not update refund',
+            'danger'
+          );
+          this.isSavingRefund = false;
+        },
+      });
   }
 
   viewDetails(type: string) {
-    console.log(`Viewing details of: ${type}`);
-    // You can navigate or open modal etc.
-    if(type == 'customer'){
-      console.log("customer");
-      this.router.navigate(['folder','customer','view',this.user['_id']])
-    }
-
-    else if(type == 'restaurant'){
-      console.log("restaurant");
-      this.router.navigate(['folder','partners','view',this.partner])
-
-      
-    }
-    else if(type == 'delivery'){
-      console.log("delivery");
-      this.router.navigate(['folder','delivery-boy','view',this.delivery])
-
-      
+    if (type == 'customer') {
+      this.router.navigate(['folder', 'customer', 'view', this.user['_id']]);
+    } else if (type == 'restaurant') {
+      this.router.navigate(['folder', 'partners', 'view', this.partner]);
+    } else if (type == 'delivery' && this.delivery) {
+      this.router.navigate(['folder', 'delivery-boy', 'view', this.delivery]);
     }
   }
 
-  
-
+  private async presentToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2500,
+      color,
+    });
+    await toast.present();
+  }
 }
