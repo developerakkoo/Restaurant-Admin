@@ -32,6 +32,7 @@ export class SettingsPage implements OnInit {
   ) {
     this.bonusForm = this.fb.group({
       perDeliveryAmount: ['', [Validators.required, Validators.min(0)]],
+      petrolExpensePerOrder: ['', [Validators.required, Validators.min(0)]],
       bonus16thDelivery: ['', [Validators.required, Validators.min(0)]],
       bonus21stDelivery: ['', [Validators.required, Validators.min(0)]]
     });
@@ -198,6 +199,7 @@ export class SettingsPage implements OnInit {
         console.log(res);
           this.bonusForm.patchValue({
             perDeliveryAmount: res.perDeliveryAmount,
+            petrolExpensePerOrder: res.petrolExpensePerOrder ?? 5,
             bonus16thDelivery: res.bonus16thDelivery,
             bonus21stDelivery: res.bonus21stDelivery
           });

@@ -188,7 +188,9 @@
                   </ion-checkbox>
                 </th>
                 <th>Order Number</th>
-                <th>Commission Amount</th>
+                <th>Commission</th>
+                <th>Petrol</th>
+                <th>Total</th>
                 <th>Date</th>
                 <th>Status</th>
               </tr>
@@ -202,6 +204,8 @@
                   </ion-checkbox>
                 </td>
                 <td>Order #{{commission.orderId}}</td>
+                <td>₹{{getEarningCommission(commission)}}</td>
+                <td>₹{{getEarningPetrol(commission)}}</td>
                 <td>₹{{commission.amount}}</td>
                 <td>{{commission.date | date:'medium'}}</td>
                 <td>
@@ -211,7 +215,7 @@
                 </td>
               </tr>
               <tr *ngIf="!getFilteredEarnings()?.length">
-                <td colspan="5" class="text-center">No commission records found</td>
+                <td colspan="7" class="text-center">No commission records found</td>
               </tr>
             </tbody>
           </table>
@@ -219,7 +223,8 @@
         <div class="d-flex justify-content-end mt-3" *ngIf="selectedEarnings.length > 0">
           <div class="d-flex align-items-center gap-3">
             <div class="alert alert-info mb-0">
-              Selected Amount: ₹{{getSelectedAmount()}}
+              Commission: ₹{{getSelectedCommission()}} + Petrol: ₹{{getSelectedPetrol()}} =
+              ₹{{getSelectedAmount()}}
             </div>
             <ion-button
               color="primary"
@@ -300,6 +305,8 @@
                 <tr>
                   <th>Settlement ID</th>
                   <th>Date</th>
+                  <th>Commission</th>
+                  <th>Petrol</th>
                   <th>Amount Paid</th>
                   <th>Orders Settled</th>
                   <th>Note</th>
@@ -310,6 +317,8 @@
                 <tr *ngFor="let settlement of driverSettlements">
                   <td>#{{settlement?._id?.slice(-6)}}</td>
                   <td>{{settlement?.settlementDate | date:'medium'}}</td>
+                  <td>₹{{getSettlementCommissionTotal(settlement)}}</td>
+                  <td>₹{{getSettlementPetrolTotal(settlement)}}</td>
                   <td>₹{{settlement?.amountPaid || 0}}</td>
                   <td>{{settlement?.ordersSettled?.length || 0}}</td>
                   <td>{{settlement?.note || '—'}}</td>

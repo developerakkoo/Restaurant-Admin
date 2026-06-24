@@ -351,6 +351,49 @@ export class ViewPage implements OnInit, OnDestroy {
     return this.selectedEarnings.reduce((acc, curr) => acc + (curr.amount || 0), 0);
   }
 
+  getEarningCommission(earning: any): number {
+    return earning?.commissionAmount ?? earning?.amount ?? 0;
+  }
+
+  getEarningPetrol(earning: any): number {
+    return earning?.petrolExpense ?? 0;
+  }
+
+  getSelectedCommission(): number {
+    return this.selectedEarnings.reduce(
+      (acc, curr) => acc + this.getEarningCommission(curr),
+      0
+    );
+  }
+
+  getSelectedPetrol(): number {
+    return this.selectedEarnings.reduce(
+      (acc, curr) => acc + this.getEarningPetrol(curr),
+      0
+    );
+  }
+
+  getSettlementCommissionTotal(settlement: any): number {
+    if (settlement?.commissionTotal != null) {
+      return settlement.commissionTotal;
+    }
+    return (settlement?.ordersSettled ?? []).reduce(
+      (total: number, earning: any) =>
+        total + this.getEarningCommission(earning),
+      0
+    );
+  }
+
+  getSettlementPetrolTotal(settlement: any): number {
+    if (settlement?.petrolTotal != null) {
+      return settlement.petrolTotal;
+    }
+    return (settlement?.ordersSettled ?? []).reduce(
+      (total: number, earning: any) => total + this.getEarningPetrol(earning),
+      0
+    );
+  }
+
   async markSettlement() {
     if (this.selectedEarnings.length === 0) {
       return;
@@ -419,14 +462,18 @@ export class ViewPage implements OnInit, OnDestroy {
 
   async viewSettlementDetails(settlement: any) {
     const orders = settlement?.ordersSettled || [];
+    const commissionTotal = this.getSettlementCommissionTotal(settlement);
+    const petrolTotal = this.getSettlementPetrolTotal(settlement);
     const ordersList = orders.length
       ? orders
           .map((earning: any, index: number) => {
             const order = earning?.orderId || {};
             const orderCode = order?.orderId || earning?.orderId || 'N/A';
             const hotelName = order?.hotelId?.hotelName || 'N/A';
-            const amount = earning?.amount || 0;
-            return `${index + 1}. Order #${orderCode} (${hotelName}) - ₹${amount}`;
+            const commission = this.getEarningCommission(earning);
+            const petrol = this.getEarningPetrol(earning);
+            const total = earning?.amount || commission + petrol;
+            return `${index + 1}. Order #${orderCode} (${hotelName}) - Commission ₹${commission} + Petrol ₹${petrol} = ₹${total}`;
           })
           .join('<br>')
       : 'No orders included in this settlement.';
@@ -435,6 +482,8 @@ export class ViewPage implements OnInit, OnDestroy {
       header: 'Settlement Details',
       message: `
         <p><strong>Date:</strong> ${settlement?.settlementDate ? new Date(settlement.settlementDate).toLocaleString() : 'N/A'}</p>
+        <p><strong>Commission Total:</strong> ₹${commissionTotal}</p>
+        <p><strong>Petrol Total:</strong> ₹${petrolTotal}</p>
         <p><strong>Amount Paid:</strong> ₹${settlement?.amountPaid || 0}</p>
         <p><strong>Orders Settled:</strong> ${orders.length}</p>
         ${settlement?.note ? `<p><strong>Note:</strong> ${settlement.note}</p>` : ''}
@@ -476,10 +525,20 @@ export class ViewPage implements OnInit, OnDestroy {
     const datePart = new Date().toISOString().slice(0, 10);
     const filename = `driver-commissions-${this.getDriverLabel()}-${this.sortStatus}-${datePart}.csv`;
     const csvRows: string[][] = [
-      ['Earning ID', 'Order Number', 'Commission Amount', 'Date', 'Status'],
+      [
+        'Earning ID',
+        'Order Number',
+        'Commission',
+        'Petrol',
+        'Total',
+        'Date',
+        'Status',
+      ],
       ...rows.map((earning) => [
         earning._id ?? '',
         String(earning.orderId ?? ''),
+        String(this.getEarningCommission(earning)),
+        String(this.getEarningPetrol(earning)),
         String(earning.amount ?? ''),
         formatCsvDate(earning.date),
         earning.isSettled ? 'Paid' : 'Unpaid',
@@ -502,6 +561,8 @@ export class ViewPage implements OnInit, OnDestroy {
       [
         'Settlement ID',
         'Settlement Date',
+        'Commission Total',
+        'Petrol Total',
         'Amount Paid',
         'Orders Settled Count',
         'Note',
@@ -509,6 +570,8 @@ export class ViewPage implements OnInit, OnDestroy {
       ...this.driverSettlements.map((settlement) => [
         settlement._id ?? '',
         formatCsvDate(settlement.settlementDate),
+        String(this.getSettlementCommissionTotal(settlement)),
+        String(this.getSettlementPetrolTotal(settlement)),
         String(settlement.amountPaid ?? 0),
         String(settlement.ordersSettled?.length ?? 0),
         settlement.note ?? '',
@@ -534,22 +597,32 @@ export class ViewPage implements OnInit, OnDestroy {
       [
         'Settlement ID',
         'Settlement Date',
+        'Commission Total',
+        'Petrol Total',
         'Amount Paid',
         'Note',
         'Order ID',
         'Hotel Name',
-        'Order Amount',
+        'Order Commission',
+        'Order Petrol',
+        'Order Total',
       ],
     ];
 
     for (const settlement of this.driverSettlements) {
       const orders = settlement.ordersSettled ?? [];
+      const settlementCommission = this.getSettlementCommissionTotal(settlement);
+      const settlementPetrol = this.getSettlementPetrolTotal(settlement);
       if (!orders.length) {
         csvRows.push([
           settlement._id ?? '',
           formatCsvDate(settlement.settlementDate),
+          String(settlementCommission),
+          String(settlementPetrol),
           String(settlement.amountPaid ?? 0),
           settlement.note ?? '',
+          '',
+          '',
           '',
           '',
           '',
@@ -563,15 +636,21 @@ export class ViewPage implements OnInit, OnDestroy {
           typeof order === 'object' ? order.orderId ?? earning.orderId ?? '' : earning.orderId ?? '';
         const hotelName =
           typeof order === 'object' ? order.hotelId?.hotelName ?? '' : '';
+        const commission = this.getEarningCommission(earning);
+        const petrol = this.getEarningPetrol(earning);
 
         csvRows.push([
           index === 0 ? settlement._id ?? '' : '',
           index === 0 ? formatCsvDate(settlement.settlementDate) : '',
+          index === 0 ? String(settlementCommission) : '',
+          index === 0 ? String(settlementPetrol) : '',
           index === 0 ? String(settlement.amountPaid ?? 0) : '',
           index === 0 ? settlement.note ?? '' : '',
           String(orderCode),
           hotelName,
-          String(earning.amount ?? 0),
+          String(commission),
+          String(petrol),
+          String(earning.amount ?? commission + petrol),
         ]);
       });
     }
