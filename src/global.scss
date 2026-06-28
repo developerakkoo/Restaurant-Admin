@@ -178,3 +178,10 @@ ion-badge {
     font-size: 0.85rem;
     border-radius: 4px;
   }
+
+  .settlement-details-alert .alert-message {
+    white-space: pre-line;
+    text-align: left;
+    max-height: 60vh;
+    overflow-y: auto;
+  }

@@ -464,35 +464,38 @@ export class ViewPage implements OnInit, OnDestroy {
     const orders = settlement?.ordersSettled || [];
     const commissionTotal = this.getSettlementCommissionTotal(settlement);
     const petrolTotal = this.getSettlementPetrolTotal(settlement);
-    const ordersList = orders.length
-      ? orders
-          .map((earning: any, index: number) => {
-            const order = earning?.orderId || {};
-            const orderCode = order?.orderId || earning?.orderId || 'N/A';
-            const hotelName = order?.hotelId?.hotelName || 'N/A';
-            const commission = this.getEarningCommission(earning);
-            const petrol = this.getEarningPetrol(earning);
-            const total = earning?.amount || commission + petrol;
-            return `${index + 1}. Order #${orderCode} (${hotelName}) - Commission ₹${commission} + Petrol ₹${petrol} = ₹${total}`;
-          })
-          .join('<br>')
-      : 'No orders included in this settlement.';
+
+    const orderLines = orders.length
+      ? orders.map((earning: any, index: number) => {
+          const order = earning?.orderId || {};
+          const orderCode = order?.orderId || earning?.orderId || 'N/A';
+          const hotelName = order?.hotelId?.hotelName || 'N/A';
+          const commission = this.getEarningCommission(earning);
+          const petrol = this.getEarningPetrol(earning);
+          const total = earning?.amount || commission + petrol;
+          return `${index + 1}. Order #${orderCode} (${hotelName}) - Commission ₹${commission} + Petrol ₹${petrol} = ₹${total}`;
+        })
+      : ['No orders included in this settlement.'];
+
+    const messageParts = [
+      `Date: ${settlement?.settlementDate ? new Date(settlement.settlementDate).toLocaleString() : 'N/A'}`,
+      `Commission Total: ₹${commissionTotal}`,
+      `Petrol Total: ₹${petrolTotal}`,
+      `Amount Paid: ₹${settlement?.amountPaid || 0}`,
+      `Orders Settled: ${orders.length}`,
+    ];
+
+    if (settlement?.note) {
+      messageParts.push(`Note: ${settlement.note}`);
+    }
+
+    messageParts.push('', 'Orders:', ...orderLines);
 
     const alert = await this.alertController.create({
       header: 'Settlement Details',
-      message: `
-        <p><strong>Date:</strong> ${settlement?.settlementDate ? new Date(settlement.settlementDate).toLocaleString() : 'N/A'}</p>
-        <p><strong>Commission Total:</strong> ₹${commissionTotal}</p>
-        <p><strong>Petrol Total:</strong> ₹${petrolTotal}</p>
-        <p><strong>Amount Paid:</strong> ₹${settlement?.amountPaid || 0}</p>
-        <p><strong>Orders Settled:</strong> ${orders.length}</p>
-        ${settlement?.note ? `<p><strong>Note:</strong> ${settlement.note}</p>` : ''}
-        <div style="text-align:left;margin-top:10px">
-          <p><strong>Orders:</strong></p>
-          <div style="font-size: 0.9rem; line-height: 1.4;">${ordersList}</div>
-        </div>
-      `,
-      buttons: ['Close']
+      message: messageParts.join('\n'),
+      cssClass: 'settlement-details-alert',
+      buttons: ['Close'],
     });
 
     await alert.present();

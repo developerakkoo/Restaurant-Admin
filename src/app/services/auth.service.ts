@@ -504,13 +504,17 @@ export class AuthService {
     });
   }
 
-  updateCharges(handling: string, gst: any, id: any) {
+  updateCharges(handling: string, gst: any, id: any, gstIsActive?: boolean) {
+    const body: Record<string, unknown> = {
+      gstPercentage: gst,
+      platformFee: handling,
+    };
+    if (gstIsActive !== undefined) {
+      body['gstIsActive'] = gstIsActive;
+    }
     return this.http.put(
       environment.URL + `admin/update/data/${id}`,
-      {
-        gstPercentage: gst,
-        platformFee: handling,
-      },
+      body,
       {
         headers: {
           'x-access-token': this.accessToken.value,
@@ -519,9 +523,9 @@ export class AuthService {
     );
   }
 
-  updateGstToggleStatus(value: boolean) {
+  updateGstToggleStatus(value: boolean, id: string) {
     return this.http.put(
-      environment.URL + `admin/update/data/66785354755cf19b149aa305`,
+      environment.URL + `admin/update/data/${id}`,
       {
         gstIsActive: value,
       },
