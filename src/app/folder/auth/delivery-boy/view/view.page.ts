@@ -278,6 +278,8 @@ export class ViewPage implements OnInit, OnDestroy {
     this.settlementLoading = true;
     this.http.getDriverSettlements(id, startDate, endDate).subscribe({
       next: (res: any) => {
+        console.log('Driver Settlements Data');
+        console.log(res);
         this.settlementLoading = false;
         const responseData = res?.data || res || [];
         const settlementsArray = Array.isArray(responseData) ? responseData : [];
@@ -352,7 +354,7 @@ export class ViewPage implements OnInit, OnDestroy {
   }
 
   getEarningCommission(earning: any): number {
-    return earning?.commissionAmount ?? earning?.amount ?? 0;
+    return earning?.deliveryCharges ?? 0;
   }
 
   getEarningPetrol(earning: any): number {

@@ -8,7 +8,7 @@ export const environment = {
   URL: 'https://dropeat.techlapse.co.in/api/v1/',
   SOCKET_URL: 'https://dropeat.techlapse.co.in',
   // URL: 'http://192.168.1.14:8000/api/v1/',
-  apiKey: 'AIzaSyBZpWLVERR-bDIsI1JGePSFPXraMlhAnP4',
+  apiKey: 'AIzaSyAkJZmIzMrE7ffEuq1jplSuPMXAyJj-3YU',
 };
 
 /*
